@@ -1,0 +1,99 @@
+/* 
+En este set de datos, podría estar en un archivo, y en una futura versión
+con alguna UI amigable para toquetear fórmulas
+*/
+definiciones = {
+    "indicadores":[
+        {
+            "id":1,
+            "desc":"Tiempo promedio en proyectos",
+            "formula":"TiempoPromEnProy/TiempoPromEstables",
+            "agrupadopor":"du,diciplina"
+        },
+        {
+            "id":2,
+            "desc":"Nivel de Fit en las asignaciones",
+            "formula":"TiempoHastaPedirRotacion",
+            "agrupadopor":"empresa,du,diciplina"
+        }        
+    ],
+    "variables":[
+        {
+            "var":"TiempoPromEnProy",
+            "desc":"Corresponde al tiempo promedio de cada uno de los miembros",
+            "agruparpor":"",
+            "formula":{
+                "operacion":"op_promedio",
+                "agruparpor":"du,disciplina",
+                "valores":[
+                    {
+                        "operacion":"ta_asignaciones",
+                        "agruparpor":"du,disciplina",
+                        "valores":[
+                            {
+                            "mostrar":"b_fechaDiff(b_date(r_fechaAlta),b_hoy())",
+                            "filtros":["b_null('fechaFin')"],
+                            "agruparpor":["du","disciplina"]
+                            }
+                        ]
+                    }
+                ]
+            }            
+        },
+        {
+            "var":"TiempoPromEstables",
+            "desc":"Tiempo promedio en proyectos de los miembros que están en la empresa hace mas de 5 años.",
+            "agruparpor":"",
+            "formula":{
+                "operacion":"op_promedio",
+                "valores":[
+                    {
+                        "operacion":"ta_asignaciones",
+                        "agruparpor":"du,disciplina",
+                        "valores":[
+                            {
+                            "mostrar":"b_fechaDiff(b_date(r_fechaAlta),b_hoy())",
+                            "filtros":[
+                                "b_null('fechaFin')"
+                            ]
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+
+    ],
+    "ponderaciones":[
+        {
+            "indicador":"1",
+            "fechaDesde":"2000-01-01",
+            "valores":[
+                {"valorHasta":"1000","ponderacion":1},
+                {"valorHasta":"10000","ponderacion":3},
+                {"valorHasta":"100000","ponderacion":5},
+                {"valorHasta":"10000000000","ponderacion":10}
+            ]
+        },
+        {
+            "indicador":"1",
+            "fechaDesde":"2010-01-01",
+            "valores":[
+                {"valorHasta":"1000","ponderacion":1},
+                {"valorHasta":"10000","ponderacion":3},
+                {"valorHasta":"100000","ponderacion":5},
+                {"valorHasta":"10000000000","ponderacion":10}
+            ]
+        },
+        {
+            "indicador":"2",
+            "fechaDesde":"2000-01-01",
+            "valores":[
+                {"valorHasta":"1000","ponderacion":1},
+                {"valorHasta":"10000","ponderacion":3},
+                {"valorHasta":"100000","ponderacion":5},
+                {"valorHasta":"10000000000","ponderacion":10}
+            ]
+        }
+    ]
+}
