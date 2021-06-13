@@ -1,12 +1,17 @@
-delete from asignaciones;
-delete from proyectos;
-delete from clientes;
+delete from user_asignaciones;
+delete from user_proyectos;
+delete from user_clientes;
+delete from user_motivos;
 
+delete from indicadoresValores;
+delete from variablesValores;
+
+delete from ponderaciones;
 delete from indicadores;
 delete from variables;
 
 delete from usuarios;
-delete from motivos;
+
 
 insert into usuarios (id, nombre, apellido, email) 
 values 
@@ -16,19 +21,19 @@ values
 (4, 'Andres','Saenz','asaenz'),
 (5, 'Rocio','rocio','rocio');
 
-insert into motivos (id, descripcion)
+insert into user_motivos (id, descripcion)
 VALUES
 (1,'fin del proyecto'),
 (2,'pedido de rotación'),
 (3,'salida de la empresa');
 
-insert into clientes (id, nombre)
+insert into user_clientes (id, nombre)
 values 
 (1,"Cashflows"),
 (2, "AT&T"),
 (3, "Google");
 
-insert into proyectos (id, descripcion, clienteId)
+insert into user_proyectos (id, descripcion, clienteId)
 values 
 (1,"payments",1),
 (2,"gateway",1),
@@ -36,7 +41,7 @@ values
 (4,"CRM",2),
 (5,"IA",3);
 
-insert into asignaciones (empresa, du, disciplina, usuarioId, proyectoId, FechaAlta, fechaFin, motivoId)
+insert into user_asignaciones (empresa, du, disciplina, usuarioId, proyectoId, FechaAlta, fechaFin, motivoId)
 values 
 ("Endava","BAD","AP",1,1,"2000-01-01","2005-01-05",1),
 ("Endava","BAD","AP",1,1,"2005-01-06","2010-10-30",2),
@@ -67,6 +72,31 @@ values
 ("TiempoPromEnProy","Corresponde al tiempo promedio de cada uno de los miembros", "Select count(1) as cant from proyectos",""),
 ("TiempoPromEstables","Tiempo promedio en proyectos de los miembros que están en la empresa hace mas de 5 años.","select count(1) as cant from clientes",""),
 ("TiempoHastaPedirRotacion","Tiempo esperado hasta pedir rotacion","select count(1) as cant from clientes","");
+
+
+insert into ponderaciones (indicadorId, fechaDesde, valorHasta, ponderacion)
+values 
+(1,"2000-01-01",100,5),
+(1,"2000-01-01",1000,4),
+(1,"2000-01-01",10000,3),
+(1,"2000-01-01",1000000,2),
+(1,"2000-01-01",10000000000,1),
+(1,"2010-01-01",500,5),
+(1,"2010-01-01",5000,4),
+(1,"2010-01-01",50000,3),
+(1,"2010-01-01",5000000,2),
+(1,"2010-01-01",50000000000,1),
+(2,"2000-01-01",100,5),
+(2,"2000-01-01",1000,4),
+(2,"2000-01-01",10000,3),
+(2,"2000-01-01",1000000,2),
+(2,"2000-01-01",10000000000,1),
+(2,"2015-01-01",500,5),
+(2,"2015-01-01",5000,4),
+(2,"2015-01-01",50000,3),
+(2,"2015-01-01",5000000,2),
+(2,"2015-01-01",50000000000,1);
+
 
 
 
