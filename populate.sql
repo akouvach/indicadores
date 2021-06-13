@@ -69,9 +69,9 @@ values
 
 insert into variables (id, descripcion, formula, agrupadopor)
 values 
-("TiempoPromEnProy","Corresponde al tiempo promedio de cada uno de los miembros", "Select count(1) as cant from proyectos",""),
-("TiempoPromEstables","Tiempo promedio en proyectos de los miembros que están en la empresa hace mas de 5 años.","select count(1) as cant from clientes",""),
-("TiempoHastaPedirRotacion","Tiempo esperado hasta pedir rotacion","select count(1) as cant from clientes","");
+("TiempoPromEnProy","Corresponde al tiempo promedio de cada uno de los miembros", "Select count(1) as cant from user_proyectos;",""),
+("TiempoPromEstables","Tiempo promedio en proyectos de los miembros que están en la empresa hace mas de 5 años.","select count(1) as cant from user_clientes;",""),
+("TiempoHastaPedirRotacion","Tiempo esperado hasta pedir rotacion","select count(1) as cant from user_clientes;","");
 
 
 insert into ponderaciones (indicadorId, fechaDesde, valorHasta, ponderacion)

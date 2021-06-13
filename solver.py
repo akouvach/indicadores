@@ -1,7 +1,7 @@
 import db
 
 db.getVariables()
-
+#db.dbEjecutar("select count(1) as cant from variables;")
 
 """ function cargarVariables(){
     //esta función va a calcular los valores y los cargará en

@@ -23,6 +23,23 @@ def closeDb(conn):
 
     return True
 
+def dbEjecutar(stmt):
+    try:
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+        sqlite_select_Query = stmt
+        cursor.execute(sqlite_select_Query)
+        record = cursor.fetchall()
+        print("Resultado de la consulta: ", record)
+        cursor.close()
+
+    except sqlite3.Error as error:
+        print("Error while connecting to sqlite", error)
+    finally:
+        if dbConn:
+            closeDb(dbConn)
+            print("The SQLite connection is closed")
+    return record
 
 
 def getDbVersion():
@@ -59,6 +76,9 @@ def getVariables():
             print("Id: ", row[0])
             print("descripcion: ", row[1])
             print("formula: ", row[2])
+            stmt = row[2]
+            rdo = dbEjecutar(stmt)
+            print("resultado de la formula:",rdo[0][0])
             print("agruparpor: ", row[3])
             print("\n")
 
