@@ -1,6 +1,10 @@
 delete from asignaciones;
 delete from proyectos;
 delete from clientes;
+
+delete from indicadores;
+delete from variables;
+
 delete from usuarios;
 delete from motivos;
 
@@ -52,4 +56,19 @@ inner join usuarios u on (u.id = a.usuarioid)
 left join motivos m on (a.motivoId = m.id)
 */
 
+insert into indicadores (id,descripcion, formula, agrupadopor)
+values 
+(1,"Tiempo promedio en proyectos","TiempoPromEnProy/TiempoPromEstables",""),
+(2,"Nivel de Fit en las asignaciones","TiempoHastaPedirRotacion","empresa, du, disciplina");
 
+
+insert into variables (id, descripcion, formula, agrupadopor)
+values 
+("TiempoPromEnProy","Corresponde al tiempo promedio de cada uno de los miembros", "Select count(1) as cant from proyectos",""),
+("TiempoPromEstables","Tiempo promedio en proyectos de los miembros que están en la empresa hace mas de 5 años.","select count(1) as cant from clientes",""),
+("TiempoHastaPedirRotacion","Tiempo esperado hasta pedir rotacion","select count(1) as cant from clientes","");
+
+
+
+
+            
