@@ -1,10 +1,14 @@
 import sqlite3
+from datetime import date
+from datetime import datetime
+
+
 DBNAME = "indicadores.db"
 
 def openDb():
     try:
         sqliteConnection = sqlite3.connect(DBNAME)
-        print("Database connected successfully")
+        #print("Database connected successfully")
 
     except sqlite3.Error as error:
         print("Error while connecting to sqlite", error)
@@ -15,7 +19,7 @@ def openDb():
 def closeDb(conn):
     try:
         conn.close()
-        print("Database successfully closed")
+        #print("Database successfully closed")
 
     except sqlite3.Error as error:
         print("Error while closing", error)
@@ -23,80 +27,114 @@ def closeDb(conn):
 
     return True
 
-def dbEjecutar(stmt):
+def dbEjecutar(stmt, data_tuple=()):
     try:
         dbConn = openDb()
         cursor = dbConn.cursor()
-        sqlite_select_Query = stmt
-        cursor.execute(sqlite_select_Query)
+        if len(data_tuple) == 0:
+            cursor.execute(stmt)
+        else:
+            cursor.execute(stmt,data_tuple)
         record = cursor.fetchall()
-        print("Resultado de la consulta: ", record)
+        #print("Resultado de la consulta: ", stmt, data_tuple, "--->", record)
         cursor.close()
+        return record
 
     except sqlite3.Error as error:
-        print("Error while connecting to sqlite", error)
+        print("Error while dbEjecutar", error)
     finally:
         if dbConn:
             closeDb(dbConn)
-            print("The SQLite connection is closed")
-    return record
+            #print("The SQLite connection is closed")
 
 
 def getDbVersion():
     try:
-        dbConn = openDb()
-        cursor = dbConn.cursor()
-        sqlite_select_Query = "select sqlite_version();"
-        cursor.execute(sqlite_select_Query)
-        record = cursor.fetchall()
+        record = dbEjecutar("select sqlite_version();")
         print("SQLite Database Version is: ", record)
-        cursor.close()
-
+        return record
     except sqlite3.Error as error:
-        print("Error while connecting to sqlite", error)
-    finally:
-        if dbConn:
-            closeDb(dbConn)
-            print("The SQLite connection is closed")
+        print("error obtainin de version")
 
 
 
 def getVariables():
     try:
+        records = dbEjecutar("select * from variables;")
+        return records
+
+    except :
+        print("Error al recuperar las variables")
+
+
+
+def getIndicadores():
+    try:
+        records = dbEjecutar("select * from indicadores;")
+        return records
+
+    except :
+        print("Error al recuperar los indicadores")
+
+
+def variablesValoresInsert(l_variableId,l_fecha, l_valor, l_essimulacion=0):
+    try:
+        print("inserting in valoresVariables...\n")
         dbConn = openDb()
         cursor = dbConn.cursor()
-        sqlite_select_Query = "select * from variables;"
-        cursor.execute(sqlite_select_Query)
 
+        sqlite_insert_query = """INSERT INTO variablesValores
+                            (variableId, fecha, valor, essimulacion) 
+                            VALUES (?,?,?,?);"""
+        data_tuple = (l_variableId, l_fecha, l_valor, l_essimulacion)
+        count = cursor.execute(sqlite_insert_query,data_tuple )
+        dbConn.commit()
 
-        records = cursor.fetchall()
-        print("Total rows are:  ", len(records))
-        print("Printing each row", records[0])
-        for row in records:
-            print("Id: ", row[0])
-            print("descripcion: ", row[1])
-            print("formula: ", row[2])
-            stmt = row[2]
-            rdo = dbEjecutar(stmt)
-            print("resultado de la formula:",rdo[0][0])
-            print("agruparpor: ", row[3])
-            print("\n")
-
+        print("Insert Total rows are:  ", count)
         cursor.close()
-
+        
     except sqlite3.Error as error:
-        print("Error while connecting to variables", error)
+        print("Error while inserting to  variablesValores", error)
     finally:
         if dbConn:
             closeDb(dbConn)
-            print("The SQLite connection is closed")
+            #print("The SQLite connection is closed")
+
+
+def indicadoresValoresInsert(l_indicadorId,l_fecha, l_valor, l_essimulacion=0):
+    try:
+        print("inserting in IndicadoresVariables...\n")
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+
+        sqlite_insert_query = """INSERT INTO indicadoresValores
+                            (indicadorId, fecha, valor, essimulacion) 
+                            VALUES (?,?,?,?);"""
+        data_tuple = (l_indicadorId, l_fecha, l_valor, l_essimulacion)
+        count = cursor.execute(sqlite_insert_query,data_tuple )
+        dbConn.commit()
+
+        print("Insert indicadores are:  ", count)
+        cursor.close()
+        
+    except sqlite3.Error as error:
+        print("Error while inserting to  indicadoresValores", error)
+    finally:
+        if dbConn:
+            closeDb(dbConn)
+            #print("The SQLite connection is closed")
 
 
 
-
-
-
-
-
-
-
+def getValorIndicador(l_indicadorId, l_fecha = datetime.today(),l_essimulacion=0):
+    stmt = """
+        select vv.valor 
+        from 
+        (select * from variablesValores where variableId = ?) vv
+        inner join (select max(fecha) as maxFecha from variablesValores 
+        where variableId = ? and fecha<=?) ult
+        on (vv.fecha = ult.maxFecha)"""
+    data_tuple = (l_indicadorId, l_indicadorId, l_fecha)
+    rdo = dbEjecutar(stmt, data_tuple)
+    print("resultado:",rdo)
+    return rdo[0][0]

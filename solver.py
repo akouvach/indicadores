@@ -1,6 +1,100 @@
+from sqlite3.dbapi2 import Error
 import db
+from datetime import date
+from datetime import datetime
 
-db.getVariables()
+#db.calcularIndicadores()
+
+def calcularVariables():
+    try:
+        records = db.getVariables()
+        print("Total rows are:  ", len(records))
+        #print("Printing each row", records[0])
+        for row in records:
+            print("Id: ", row[0])
+            print("descripcion: ", row[1])
+            print("formula: ", row[2])
+            stmt = row[2]
+            rdo = db.dbEjecutar(stmt)[0][0]
+            print("agruparpor: ", row[3])
+            db.variablesValoresInsert(row[0],datetime.today(), rdo, 0)
+
+    except :
+        print("Error calculatin variables")
+
+def calcularIndicadores():
+    try:
+        records = db.getIndicadores()
+        print("Total rows are:  ", len(records))
+        operators = set('+-*/()')
+        op_out = []    #This holds the operators that are found in the string (left to right)
+        num_out = []   #this holds the non-operators that are found in the string (left to right)
+        buff = []            
+        variable = ""
+        acumulando=False
+
+        for row in records:
+            print("Id: ", row[0])
+            print("descripcion: ", row[1])
+            print("formula: ", row[2])
+            print("agruparpor: ", row[3])
+            # para cada indicador debo obtener el valor de cada variable
+            # y reemplazarlo por su valor para finalmente evaluar toda la expresión
+            indicador = row[0]
+            formula = row[2]
+            variable = ""
+            acumulando=False
+            myDict = {}
+
+            for c in formula:  #examine 1 character at a time
+                #print(c)
+                if c=="}":
+                    #termino de acumular para detectar una variable
+                    #print("variable detectada:", variable)
+                    myDict[variable]= db.getValorIndicador(variable)
+                    
+                    variable=""
+                    acumulando=False
+                
+                if acumulando:
+                    variable += c
+                
+                if c=="{":
+                    #empieza una nueva variable
+                    variable=""
+                    acumulando=True
+                
+            print("final:", myDict)
+            for v in myDict:
+                #print(v, myDict[v])
+                formula = formula.replace("{" + v + "}",str(myDict[v]))
+            print ("formula final:", formula)
+            rdoIndicador = eval(formula)
+            print("indicador:",rdoIndicador)
+            db.indicadoresValoresInsert(indicador,datetime.today(), rdoIndicador,0)
+
+            #agrego el valor a los indicadores
+
+                
+            
+            """
+            while k < 10:
+            # dynamically create key
+            key = ...
+            # calculate value
+            value = ...
+            a[key] = value 
+            k += 1 
+            """
+
+    except:
+        print("Error calculating variables", )
+
+
+#calcularVariables()
+calcularIndicadores()
+
+
 #db.dbEjecutar("select count(1) as cant from variables;")
 
 """ function cargarVariables(){

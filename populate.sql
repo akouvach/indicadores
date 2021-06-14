@@ -63,8 +63,8 @@ left join motivos m on (a.motivoId = m.id)
 
 insert into indicadores (id,descripcion, formula, agrupadopor)
 values 
-(1,"Tiempo promedio en proyectos","TiempoPromEnProy/TiempoPromEstables",""),
-(2,"Nivel de Fit en las asignaciones","TiempoHastaPedirRotacion","empresa, du, disciplina");
+(1,"Tiempo promedio en proyectos","{TiempoPromEnProy}/{TiempoPromEstables}",""),
+(2,"Nivel de Fit en las asignaciones","{TiempoHastaPedirRotacion}*5","empresa, du, disciplina");
 
 
 insert into variables (id, descripcion, formula, agrupadopor)
@@ -99,6 +99,21 @@ values
 
 
 
+/*
+select vv.valor 
+from 
+(select * from variablesValores where variableId = 'TiempoPromEnProy') vv
+inner join (select max(fecha) as maxFecha from variablesValores where variableId = 'TiempoPromEnProy' and fecha<'2021-07-01') ult
+on (vv.fecha = ult.maxFecha)
+*/
 
+/*
+Select i.* from 
+(Select * from indicadoresValores where indicadorId = 1) i
+inner join 
+(Select max(fecha) maxFecha from indicadoresValores aux where indicadorId = 1 and fecha<'2021-07-01') m
+on (i.fecha = m.maxFecha)
+
+*/
 
             
