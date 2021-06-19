@@ -3,7 +3,6 @@ import db
 from datetime import date
 from datetime import datetime
 
-#db.calcularIndicadores()
 
 def calcularVariables():
     try:
@@ -91,7 +90,8 @@ def calcularIndicadores():
         print("Error calculating variables", )
 
 
-#calcularVariables()
+db.crearYcargarDb()
+calcularVariables()
 calcularIndicadores()
 
 

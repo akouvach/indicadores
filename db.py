@@ -27,6 +27,22 @@ def closeDb(conn):
 
     return True
 
+def crearYcargarDb():
+    try:
+        print("creando y cargando datos en bd...")
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+        sql_file = open("populate.sql")
+        sql_as_string = sql_file.read()
+        cursor.executescript(sql_as_string)
+        print("se terminó de cargar los datos..")
+    except sqlite3.Error as error:
+        print("Error while crearYCargarDB", error)
+    finally:
+        if dbConn:
+            closeDb(dbConn)
+            #print("The SQLite connection is closed")
+
 def dbEjecutar(stmt, data_tuple=()):
     try:
         dbConn = openDb()
