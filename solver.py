@@ -15,10 +15,22 @@ def calcularVariables():
             print("descripcion: ", row[1])
             print("formula: ", row[2])
             stmt = row[2]
-            rdo = db.dbEjecutar(stmt)[0][0]
+            rdo = db.dbEjecutar(stmt)
+            print("resultados:", rdo)
             print("agruparpor: ", row[3])
-            print("voy a insertar en variablesValores:",row[0],datetime.today(), rdo, 0)
-            db.variablesValoresInsert(row[0],datetime.today(), rdo, 0)
+            miFecha = datetime.today()
+            if row[3]=="":
+                #no tiene agrupamiento, se espera una sola fila y columna
+                db.variablesValoresInsert(row[0],miFecha, "", rdo[0][0], 0)
+            else:
+                #hay que recorrer los resultados e insertar una fila por cada grupo
+                for fila in rdo:
+                    cols = len(fila)
+                    valor = fila[cols-1]
+                    grupo=';'.join(map(str, fila[:cols-1]))
+                    db.variablesValoresInsert(row[0],miFecha,grupo,valor, 0)
+                    print("Fila:",fila)
+
         print("Fin calculo de variables....")
 
     except :
@@ -90,7 +102,7 @@ def calcularIndicadores():
 
 #db.crearYcargarDb()
 calcularVariables()
-calcularIndicadores()
+#calcularIndicadores()
 
 
 #db.dbEjecutar("select count(1) as cant from variables;")

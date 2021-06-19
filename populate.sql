@@ -2,6 +2,7 @@ delete from user_asignaciones;
 delete from user_proyectos;
 delete from user_clientes;
 delete from user_motivos;
+delete from user_usuarios;
 
 delete from indicadoresValores;
 delete from variablesValores;
@@ -10,10 +11,8 @@ delete from ponderaciones;
 delete from indicadores;
 delete from variables;
 
-delete from usuarios;
 
-
-insert into usuarios (id, nombre, apellido, email) 
+insert into user_usuarios (id, nombre, apellido, email) 
 values 
 (1, 'Matias','Salmeri','msalmeri'),
 (2, 'Diego','Diego','diego'),
@@ -44,10 +43,16 @@ values
 insert into user_asignaciones (empresa, du, disciplina, usuarioId, proyectoId, FechaAlta, fechaFin, motivoId)
 values 
 ("Endava","BAD","AP",1,1,"2000-01-01","2005-01-05",1),
-("Endava","BAD","AP",1,1,"2005-01-06","2010-10-30",2),
-("Endava","BAD","AP",1,1,"2010-11-01",null,null),
-("Endava","BAD","PDM",1,1,"2002-01-01","2003-01-31",2),
-("Endava","BAD","PDM",1,1,"2003-02-01","2008-10-30",3);
+("Endava","DEV","AP",1,2,"2005-01-06","2010-10-30",2),
+("Endava","BAD","AP",1,4,"2010-11-01",null,null),
+("Endava","ROS","PDM",2,4,"2002-01-01","2003-01-31",2),
+("Endava","ROS","PDM",2,2,"2003-02-01","2008-10-30",3),
+("Endava","BAD","DEV",3,4,"2002-01-01","2003-01-31",2),
+("Endava","BAD","DEV",3,2,"2003-02-01","2008-10-30",3),
+("Endava","ROS","DEV",4,2,"2020-02-01","2020-11-30",3),
+("Endava","BAD","DEV",4,4,"2020-11-30",null,null),
+("Endava","ROS","PDR",5,2,"2018-02-01","2019-10-30",3),
+("Endava","BAD","PDR",5,4,"2019-10-30",null,null);
 
 /*
 Select * from 
@@ -69,8 +74,8 @@ values
 
 insert into variables (id, descripcion, formula, agrupadopor)
 values 
-("TiempoPromEnProy","Corresponde al tiempo promedio de cada uno de los miembros", "Select count(1) as cant from user_proyectos;",""),
-("TiempoPromEstables","Tiempo promedio en proyectos de los miembros que están en la empresa hace mas de 5 años.","select count(1) as cant from user_clientes;",""),
+("TiempoPromEnProy","Corresponde al tiempo promedio (en dias) de cada uno de los miembros", "Select  ua.du, ua.disciplina, avg(cast( (julianday(iif(fechaFin is null,date('now'),fechaFin)) - julianday(FechaAlta)) as Integer)) as promedioDias from user_asignaciones ua group by ua.du, ua.disciplina;","du,disciplina"),
+("TiempoPromEstables","Tiempo promedio en proyectos de los miembros que están en la empresa hace mas de 5 años.","Select  ua.du, ua.disciplina,avg(cast( (julianday(iif(ua.fechaFin is null,date('now'),ua.fechaFin)) - julianday(ua.FechaAlta)) as Integer)) as promedioDias from user_asignaciones ua inner join (select aux.usuarioId from user_asignaciones aux group by usuarioId having (max(iif(aux.fechaFin is null, date('now'),aux.fechafin)) - min(aux.fechaalta)) >= 5 ) leg on (leg.usuarioId = ua.usuarioid) group by ua.du, ua.disciplina ;","du,disciplina"),
 ("TiempoHastaPedirRotacion","Tiempo esperado hasta pedir rotacion","select count(1) as cant from user_clientes;","");
 
 
@@ -99,6 +104,8 @@ values
 
 
 
+
+
 /*
 select vv.valor 
 from 
@@ -113,6 +120,22 @@ Select i.* from
 inner join 
 (Select max(fecha) maxFecha from indicadoresValores aux where indicadorId = 1 and fecha<'2021-07-01') m
 on (i.fecha = m.maxFecha)
+
+*/
+
+/*
+Datos de asignaciones:
+
+Select cast( (julianday(iif(fechaFin is null,date('now'),fechaFin)) - julianday(FechaAlta)) as Integer) as antigDias, * 
+from 
+((user_asignaciones ua
+inner join user_proyectos up
+on (ua.proyectoId = up.id)
+)
+inner join user_clientes uc
+on (uc.id = up.clienteId)
+) inner join user_usuarios uu
+on (uu.id = ua.usuarioId)
 
 */
 

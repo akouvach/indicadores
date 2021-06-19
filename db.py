@@ -93,16 +93,16 @@ def getIndicadores():
         print("Error al recuperar los indicadores")
 
 
-def variablesValoresInsert(l_variableId,l_fecha, l_valor, l_essimulacion=0):
+def variablesValoresInsert(l_variableId,l_fecha=datetime.today(), l_grupo = '', l_valor=-1, l_essimulacion=0):
     try:
         print("inserting in valoresVariables...")
         dbConn = openDb()
         cursor = dbConn.cursor()
 
         sqlite_insert_query = """INSERT INTO variablesValores
-                            (variableId, fecha, valor, essimulacion) 
-                            VALUES (?,?,?,?);"""
-        data_tuple = (l_variableId, l_fecha, l_valor, l_essimulacion)
+                            (variableId, fecha, grupo, valor, essimulacion) 
+                            VALUES (?,?,?,?,?);"""
+        data_tuple = (l_variableId, l_fecha, l_grupo, l_valor, l_essimulacion)
         count = cursor.execute(sqlite_insert_query,data_tuple )
         dbConn.commit()
 
