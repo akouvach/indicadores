@@ -6,23 +6,29 @@ from datetime import datetime
 
 def calcularVariables():
     try:
+        print("Calculando variables....")
         records = db.getVariables()
         print("Total rows are:  ", len(records))
         #print("Printing each row", records[0])
         for row in records:
-            print("Id: ", row[0])
+            print("\nId: ", row[0])
             print("descripcion: ", row[1])
             print("formula: ", row[2])
             stmt = row[2]
             rdo = db.dbEjecutar(stmt)[0][0]
             print("agruparpor: ", row[3])
+            print("voy a insertar en variablesValores:",row[0],datetime.today(), rdo, 0)
             db.variablesValoresInsert(row[0],datetime.today(), rdo, 0)
+        print("Fin calculo de variables....")
 
     except :
-        print("Error calculatin variables")
+        print("Error calculating variables")
 
 def calcularIndicadores():
     try:
+        print("--------------------------------------------")
+        print("------Calculando indicadores ----------------")
+        print("--------------------------------------------")
         records = db.getIndicadores()
         print("Total rows are:  ", len(records))
         operators = set('+-*/()')
@@ -49,7 +55,7 @@ def calcularIndicadores():
                 #print(c)
                 if c=="}":
                     #termino de acumular para detectar una variable
-                    #print("variable detectada:", variable)
+                    print("variable detectada:", variable)
                     myDict[variable]= db.getValorIndicador(variable)
                     
                     variable=""
@@ -75,22 +81,14 @@ def calcularIndicadores():
             #agrego el valor a los indicadores
 
                 
-            
-            """
-            while k < 10:
-            # dynamically create key
-            key = ...
-            # calculate value
-            value = ...
-            a[key] = value 
-            k += 1 
-            """
+        print("----------Terminó de calcular indicadores ---------------")
+
 
     except:
         print("Error calculating variables", )
 
 
-db.crearYcargarDb()
+#db.crearYcargarDb()
 calcularVariables()
 calcularIndicadores()
 

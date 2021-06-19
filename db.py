@@ -52,7 +52,7 @@ def dbEjecutar(stmt, data_tuple=()):
         else:
             cursor.execute(stmt,data_tuple)
         record = cursor.fetchall()
-        #print("Resultado de la consulta: ", stmt, data_tuple, "--->", record)
+        print("Resultado de la consulta: ", stmt, data_tuple, "--->", record)
         cursor.close()
         return record
 
@@ -95,7 +95,7 @@ def getIndicadores():
 
 def variablesValoresInsert(l_variableId,l_fecha, l_valor, l_essimulacion=0):
     try:
-        print("inserting in valoresVariables...\n")
+        print("inserting in valoresVariables...")
         dbConn = openDb()
         cursor = dbConn.cursor()
 
@@ -150,7 +150,10 @@ def getValorIndicador(l_indicadorId, l_fecha = datetime.today(),l_essimulacion=0
         inner join (select max(fecha) as maxFecha from variablesValores 
         where variableId = ? and fecha<=?) ult
         on (vv.fecha = ult.maxFecha)"""
-    data_tuple = (l_indicadorId, l_indicadorId, l_fecha)
+    data_tuple = (l_indicadorId, l_indicadorId, l_fecha.strftime("%Y-%m-%d %H:%M:%S.%f"))
     rdo = dbEjecutar(stmt, data_tuple)
     print("resultado:",rdo)
-    return rdo[0][0]
+    if not rdo:
+        return -1
+    else:
+        return rdo[0][0]
