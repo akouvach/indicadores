@@ -4,7 +4,6 @@ from datetime import datetime
 import varios
 
 
-
 def calcularVariables():
     try:
         print("Calculando variables....")
@@ -37,6 +36,71 @@ def calcularVariables():
     except :
         print("Error calculating variables")
 
+def calcularIndicador(indicador,formula,agruparpor):
+    try:
+        myDict = {}
+
+        #obtengo la lista de variables que participan de la
+        #formula de un indicador para después, ir a buscar
+        #sus valores.
+        vars = varios.getVariableList(formula)
+        
+        if(agruparpor==""):
+            #si no se agrupa, el valor de la variable
+            #debería traer un solo valor
+
+            #recorro la lista y busco los valores
+            for v in vars: 
+                #busco el valor y devuelvo la primer fila y columna 
+                myDict[v]= db.getValorIndicador(v)[0][0]
+        
+            # con el conjunto de valores recuperados
+            # proceso la formula y almaceno su valor
+            for v in myDict:
+                formula = formula.replace("{" + v + "}",str(myDict[v]))
+            rdoIndicador = eval(formula)
+            rdoPonderado = db.getPonderacionIndicador(indicador,datetime.today(),rdoIndicador)[0][0]
+            db.indicadoresValoresInsert(indicador,"",datetime.today(), rdoPonderado,0)
+
+        else:
+            #corresponde a un indicador que debería tener
+            #asociadas variables también agrupadas.
+            for v in vars:  
+                print("------analizando variable: ",v,"-------------")
+                #voy a buscar todos los valores para cada 
+                # variable del presente indicador que 
+                # se supone estar agrupado
+                
+                rdo = db.getValorIndicador(v)
+                for fila in rdo:
+                    # fila[0] se supone que tiene el grupo
+                    # y fila[1] el valor para la presente variable 
+                    myDict[v+fila[0]]=fila[1]
+
+            # ya está el diccionario actualizado
+            # voy a buscar el total de grupos para los cuales
+            # calcular el valor del indicador
+            # en caso de no existir dicho grupo se reemplazará
+            # con 1            
+
+            grupos = db.getGruposIndicador(indicador)
+            for g in grupos:
+                formuAux=formula
+                for v in vars:
+                    auxGrupo = v+g[0]
+                    if(auxGrupo not in myDict):
+                        #lo agrego al diccionario con valor 1
+                        myDict[auxGrupo] = 1
+                    formuAux = formuAux.replace("{" + v + "}",str(myDict[auxGrupo]))
+                #para cada grupo calculo la fórmula
+                rdoIndicador = eval(formuAux)
+                rdoPonderado = db.getPonderacionIndicador(indicador,datetime.today(),rdoIndicador)[0][0]
+                db.indicadoresValoresInsert(indicador,g[0],datetime.today(), rdoPonderado,0)
+
+
+    except Exception as error:
+        print("Error en el calculo de indicador..",error)
+
 def calcularIndicadores():
     try:
         print("--------------------------------------------")
@@ -55,80 +119,8 @@ def calcularIndicadores():
             indicador = row[0]
             formula = row[2]
             agruparpor = row[3]
-            myDict = {}
 
-            #obtengo la lista de variables que participan de la
-            #formula de un indicador para después, ir a buscar
-            #sus valores.
-            vars = varios.getVariableList(formula)
-            
-            if(agruparpor==""):
-                #si no se agrupa, el valor de la variable
-                #debería traer un solo valor
-
-                #recorro la lista y busco los valores
-                for v in vars: 
-                    #busco el valor y devuelvo la primer fila y columna 
-                    myDict[v]= db.getValorIndicador(v)[0][0]
-           
-                # con el conjunto de valores recuperados
-                # proceso la formula y almaceno su valor
-                for v in myDict:
-                    #print(v, myDict[v])
-                    formula = formula.replace("{" + v + "}",str(myDict[v]))
-                print ("formula final:", formula)
-                rdoIndicador = eval(formula)
-                print("indicador:",rdoIndicador)
-                rdoPonderado = db.getPonderacionIndicador(indicador,datetime.today(),rdoIndicador)[0][0]
-                print("rdo ponderado:",rdoPonderado)
-                db.indicadoresValoresInsert(indicador,"",datetime.today(), rdoPonderado,0)
-
-            else:
-                #corresponde a un indicador que debería tener
-                #asociadas variables también agrupadas.
-                for v in vars:  
-                    print("------analizando variable: ",v,"-------------")
-                    #voy a buscar todos los valores para cada 
-                    # variable del presente indicador que 
-                    # se supone estar agrupado
-                    
-                    rdo = db.getValorIndicador(v)
-                    print("-----------------rdo-------------")
-                    for fila in rdo:
-                        # fila[0] se supone que tiene el grupo
-                        # y fila[1] el valor para la presente variable 
-                        myDict[v+fila[0]]=fila[1]
-
-                # ya está el diccionario actualizado
-                # voy a buscar el total de grupos para los cuales
-                # calcular el valor del indicador
-                # en caso de no existir dicho grupo se reemplazará
-                # con 1            
-        
-                grupos = db.getGruposIndicador(indicador)
-                for g in grupos:
-                    for v in vars:
-                        auxGrupo = v+g[0]
-                        if(auxGrupo not in myDict):
-                            #lo agrego al diccionario con valor 1
-                            myDict[auxGrupo] = 1
-
-                print("dict:",myDict)
-
-                #para cada grupo calculo la fórmula
-                for g in grupos:
-                    print("-----grupo {} -------".format(g))
-                    formuAux=formula
-                    for v in vars:
-                        auxGrupo = v+g[0]
-                        formuAux = formuAux.replace("{" + v + "}",str(myDict[auxGrupo]))
-                    #formAux debería estar con los valores para el primer grupo
-                    print("grupo {}, valor:{}".format(g,formuAux))
-                    rdoIndicador = eval(formuAux)
-                    print("indicador:",rdoIndicador)
-                    rdoPonderado = db.getPonderacionIndicador(indicador,datetime.today(),rdoIndicador)[0][0]
-                    print("rdo ponderado:",rdoPonderado)
-                    db.indicadoresValoresInsert(indicador,g[0],datetime.today(), rdoPonderado,0)
+            calcularIndicador(indicador,formula,agruparpor)
 
         print("----------Terminó de calcular indicadores ---------------")
 
