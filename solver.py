@@ -1,7 +1,8 @@
 from sqlite3.dbapi2 import Error
 import db
-from datetime import date
 from datetime import datetime
+import varios
+
 
 
 def calcularVariables():
@@ -43,13 +44,7 @@ def calcularIndicadores():
         print("--------------------------------------------")
         records = db.getIndicadores()
         print("Total rows are:  ", len(records))
-        operators = set('+-*/()')
-        op_out = []    #This holds the operators that are found in the string (left to right)
-        num_out = []   #this holds the non-operators that are found in the string (left to right)
-        buff = []            
-        variable = ""
-        acumulando=False
-
+    
         for row in records:
             print("Id: ", row[0])
             print("descripcion: ", row[1])
@@ -59,38 +54,73 @@ def calcularIndicadores():
             # y reemplazarlo por su valor para finalmente evaluar toda la expresión
             indicador = row[0]
             formula = row[2]
-            variable = ""
-            acumulando=False
+            agruparpor = row[3]
             myDict = {}
 
-            for c in formula:  #examine 1 character at a time
-                #print(c)
-                if c=="}":
-                    #termino de acumular para detectar una variable
-                    print("variable detectada:", variable)
-                    myDict[variable]= db.getValorIndicador(variable)
-                    
-                    variable=""
-                    acumulando=False
-                
-                if acumulando:
-                    variable += c
-                
-                if c=="{":
-                    #empieza una nueva variable
-                    variable=""
-                    acumulando=True
-                
-            print("final:", myDict)
-            for v in myDict:
-                #print(v, myDict[v])
-                formula = formula.replace("{" + v + "}",str(myDict[v]))
-            print ("formula final:", formula)
-            rdoIndicador = eval(formula)
-            print("indicador:",rdoIndicador)
-            db.indicadoresValoresInsert(indicador,datetime.today(), rdoIndicador,0)
+            #obtengo la lista de variables que participan de la
+            #formula de un indicador para después, ir a buscar
+            #sus valores.
+            vars = varios.getVariableList(formula)
+            
+            if(agruparpor==""):
+                #si no se agrupa, el valor de la variable
+                #debería traer un solo valor
 
-            #agrego el valor a los indicadores
+                #recorro la lista y busco los valores
+                for v in vars: 
+                    #busco el valor y devuelvo la primer fila y columna 
+                    myDict[v]= db.getValorIndicador(v)[0][0]
+           
+                # con el conjunto de valores recuperados
+                # proceso la formula y almaceno su valor
+                for v in myDict:
+                    #print(v, myDict[v])
+                    formula = formula.replace("{" + v + "}",str(myDict[v]))
+                print ("formula final:", formula)
+                rdoIndicador = eval(formula)
+                print("indicador:",rdoIndicador)
+                db.indicadoresValoresInsert(indicador,"",datetime.today(), rdoIndicador,0)
+
+            else:
+                #corresponde a un indicador que debería tener
+                #asociadas variables también agrupadas.
+                for v in vars:  
+                    print("------analizando variable: ",v,"-------------")
+                    #voy a buscar todos los valores para cada 
+                    # variable del presente indicador que 
+                    # se supone estar agrupado
+                    
+                    rdo = db.getValorIndicador(v)
+                    print("-----------------rdo-------------")
+                    for fila in rdo:
+                        # fila[0] se supone que tiene el grupo
+                        # y fila[1] el valor para la presente variable 
+                        myDict[v+fila[0]]=fila[1]
+
+                print("dict:",myDict)
+                # ya está el diccionario actualizado
+                # voy a buscar el total de grupos para los cuales
+                # calcular el valor del indicador
+                # en caso de no existir dicho grupo se reemplazará
+                # con -1            
+        
+                grupos = db.getGruposIndicador(indicador)
+                for g in grupos:
+                    for v in vars:
+                        auxGrupo = v+g[0]
+                        print("analizando..",auxGrupo)
+                        if(auxGrupo in myDict):
+                            print("grupo:",g,myDict[auxGrupo])
+                        else:
+                            print("grupo:",auxGrupo, " valor no encontrado")
+
+                # for v in myDict:
+                #     #print(v, myDict[v])
+                #     formula = formula.replace("{" + v + "}",str(myDict[v]))
+                # print ("formula final:", formula)
+                # rdoIndicador = eval(formula)
+                # print("indicador:",rdoIndicador)
+                #db.indicadoresValoresInsert(indicador,datetime.today(), rdoIndicador,0)
 
                 
         print("----------Terminó de calcular indicadores ---------------")
@@ -101,8 +131,8 @@ def calcularIndicadores():
 
 
 #db.crearYcargarDb()
-calcularVariables()
-#calcularIndicadores()
+#calcularVariables()
+calcularIndicadores()
 
 
 #db.dbEjecutar("select count(1) as cant from variables;")

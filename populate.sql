@@ -43,7 +43,7 @@ values
 insert into user_asignaciones (empresa, du, disciplina, usuarioId, proyectoId, FechaAlta, fechaFin, motivoId)
 values 
 ("Endava","BAD","AP",1,1,"2000-01-01","2005-01-05",1),
-("Endava","DEV","AP",1,2,"2005-01-06","2010-10-30",2),
+("Endava","BAD","AP",1,2,"2005-01-06","2010-10-30",2),
 ("Endava","BAD","AP",1,4,"2010-11-01",null,null),
 ("Endava","ROS","PDM",2,4,"2002-01-01","2003-01-31",2),
 ("Endava","ROS","PDM",2,2,"2003-02-01","2008-10-30",3),
@@ -68,7 +68,7 @@ left join motivos m on (a.motivoId = m.id)
 
 insert into indicadores (id,descripcion, formula, agrupadopor)
 values 
-(1,"Tiempo promedio en proyectos","{TiempoPromEnProy}/{TiempoPromEstables}",""),
+(1,"Tiempo promedio en proyectos","{TiempoPromEnProy}/{TiempoPromEstables}","du,disciplina"),
 (2,"Nivel de Fit en las asignaciones","{TiempoHastaPedirRotacion}*5","empresa, du, disciplina");
 
 
