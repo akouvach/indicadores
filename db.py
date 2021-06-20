@@ -133,7 +133,7 @@ def indicadoresValoresInsert(l_indicadorId,l_grupo="", l_fecha=datetime.today(),
         sqlite_insert_query = """INSERT INTO indicadoresValores
                             (indicadorId, grupo,fecha, valor, essimulacion) 
                             VALUES (?,?,?,?,?);"""
-        data_tuple = (l_indicadorId, l_fecha, l_grupo, l_valor, l_essimulacion)
+        data_tuple = (l_indicadorId, l_grupo,l_fecha, l_valor, l_essimulacion)
         count = cursor.execute(sqlite_insert_query,data_tuple )
         dbConn.commit()
 
@@ -165,7 +165,26 @@ def getValorIndicador(l_indicadorId, l_fecha = datetime.today(),l_essimulacion=0
     else:
         return rdo
         
-
+def getPonderacionIndicador(l_indicadorId, l_fecha = datetime.today(), l_valorHasta=-1):
+    stmt = """
+        Select i.ponderacion
+        from 
+        (select * from ponderaciones where indicadorid=?) i
+        inner join 
+        (select indicadorId,max(fechaDesde) as maxFecha 
+        from ponderaciones where indicadorid = ? and fechaDesde <= ?) ultFecha
+        on (ultFecha.indicadorid = i.indicadorId and i.fechaDesde = ultFecha.maxFecha)
+        where valorHasta > ?
+        order by valorHasta asc
+        limit 1"""
+    data_tuple = (l_indicadorId, l_indicadorId, l_fecha.strftime("%Y-%m-%d %H:%M:%S.%f"), l_valorHasta)
+    rdo = dbEjecutar(stmt, data_tuple)
+    print("resultado ponderaciones:",rdo)
+    if not rdo:
+        return -1
+    else:
+        return rdo
+        
 def getGruposIndicador(l_indicadorId, l_fecha = datetime.today()):
     #voy a buscar la variables que componen a un indicador
     indicador = getIndicadores(l_indicadorId)
