@@ -103,9 +103,7 @@ def calcularIndicador(indicador,formula,agruparpor):
 
 def calcularIndicadores():
     try:
-        print("--------------------------------------------")
         print("------Calculando indicadores ----------------")
-        print("--------------------------------------------")
         records = db.getIndicadores()
         print("Total rows are:  ", len(records))
     
