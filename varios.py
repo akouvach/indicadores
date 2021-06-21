@@ -8,9 +8,7 @@ def getVariableList(text,start="{",end="}"):
             lenStart = len(start)
             lenEnd = len(end)
             sGroup = match.group()[lenStart:len(match.group())-lenEnd]
-            #print(sGroup)
             elem.append(sGroup)
-        # Print match
         #print('Match "{}" found at: [{},{}]'.format(sGroup, sStart,sEnd))
         return elem
     except Exception as error:

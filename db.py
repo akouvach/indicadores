@@ -34,6 +34,7 @@ def crearYcargarDb():
         print("se terminó de cargar los datos..")
     except sqlite3.Error as error:
         print("Error while crearYCargarDB", error)
+        raise Exception("Error en la carga de base de datos")
     finally:
         if dbConn:
             closeDb(dbConn)
@@ -52,6 +53,7 @@ def dbEjecutar(stmt, data_tuple=()):
 
     except sqlite3.Error as error:
         print("Error while dbEjecutar", error)
+        raise Exception("error en la ejecucion en la base de datos")
     finally:
         if dbConn:
             closeDb(dbConn)
@@ -132,6 +134,7 @@ def indicadoresValoresInsert(l_indicadorId,l_grupo="", l_fecha=datetime.today(),
         
     except sqlite3.Error as error:
         print("Error while inserting to  indicadoresValores", error)
+        raise Exception("error al insertar IndicadoresValores")
     finally:
         if dbConn:
             closeDb(dbConn)

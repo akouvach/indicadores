@@ -6,22 +6,25 @@ import varios
 
 def calcularVariables():
     try:
-        print("Calculando variables....")
+        print("----Calculando variables....")
         records = db.getVariables()
         print("Total rows are:  ", len(records))
-        #print("Printing each row", records[0])
         for row in records:
-            print("\nId: ", row[0])
-            print("descripcion: ", row[1])
-            print("formula: ", row[2])
-            stmt = row[2]
+            variableId = row[0]
+            variableDescripcion = row[1]
+            formula = row[2]
+            agrupadopor = row[3]
+            print("\nId:{} desc: {} formula: {} agrup:{} "
+            .format(variableId, variableDescripcion,formula,agrupadopor))
+            
+            stmt = formula
             rdo = db.dbEjecutar(stmt)
-            print("resultados:", rdo)
-            print("agruparpor: ", row[3])
+            
             miFecha = datetime.today()
-            if row[3]=="":
+            
+            if agrupadopor=="":
                 #no tiene agrupamiento, se espera una sola fila y columna
-                db.variablesValoresInsert(row[0],miFecha, "", rdo[0][0], 0)
+                db.variablesValoresInsert(variableId,miFecha, "", rdo[0][0], 0)
             else:
                 #hay que recorrer los resultados e insertar una fila por cada grupo
                 for fila in rdo:
@@ -29,15 +32,16 @@ def calcularVariables():
                     valor = fila[cols-1]
                     grupo=';'.join(map(str, fila[:cols-1]))
                     db.variablesValoresInsert(row[0],miFecha,grupo,valor, 0)
-                    print("Fila:",fila)
 
         print("Fin calculo de variables....")
 
-    except :
-        print("Error calculating variables")
+    except Exception as error:
+        print("Error calculating variables", error)
 
 def calcularIndicador(indicador,formula,agruparpor):
     try:
+        # en este diccionario voy a colocar los resultados parciales de las
+        # variables intervinientes para este indicador.
         myDict = {}
 
         #obtengo la lista de variables que participan de la
@@ -58,8 +62,10 @@ def calcularIndicador(indicador,formula,agruparpor):
             # proceso la formula y almaceno su valor
             for v in myDict:
                 formula = formula.replace("{" + v + "}",str(myDict[v]))
+            
             rdoIndicador = eval(formula)
             rdoPonderado = db.getPonderacionIndicador(indicador,datetime.today(),rdoIndicador)[0][0]
+            
             db.indicadoresValoresInsert(indicador,"",datetime.today(), rdoPonderado,0)
 
         else:
@@ -95,6 +101,7 @@ def calcularIndicador(indicador,formula,agruparpor):
                 #para cada grupo calculo la fórmula
                 rdoIndicador = eval(formuAux)
                 rdoPonderado = db.getPonderacionIndicador(indicador,datetime.today(),rdoIndicador)[0][0]
+            
                 db.indicadoresValoresInsert(indicador,g[0],datetime.today(), rdoPonderado,0)
 
 
@@ -108,22 +115,21 @@ def calcularIndicadores():
         print("Total rows are:  ", len(records))
     
         for row in records:
-            print("Id: ", row[0])
-            print("descripcion: ", row[1])
-            print("formula: ", row[2])
-            print("agruparpor: ", row[3])
-            # para cada indicador debo obtener el valor de cada variable
-            # y reemplazarlo por su valor para finalmente evaluar toda la expresión
             indicador = row[0]
             formula = row[2]
             agruparpor = row[3]
 
+            # para cada indicador debo obtener el valor de cada variable
+            # y reemplazarlo por su valor para finalmente evaluar toda la expresión
+
+            print("---Id:{} Descripcion:{} \n---Formula: {}, agrupadopor: {}"
+            .format(indicador,row[1],formula,agruparpor))
             calcularIndicador(indicador,formula,agruparpor)
 
         print("----------Terminó de calcular indicadores ---------------")
 
-    except:
-        print("Error calculating variables", )
+    except Exception as error:
+        print("Error calculating variables",error )
 
 #db.crearYcargarDb()
 calcularVariables()
