@@ -69,14 +69,17 @@ left join motivos m on (a.motivoId = m.id)
 insert into indicadores (id,descripcion, formula, agrupadopor)
 values 
 (1,"Tiempo promedio en proyectos","{TiempoPromEnProy}/{TiempoPromEstables}","du,disciplina"),
-(2,"Nivel de Fit en las asignaciones","{TiempoHastaPedirRotacion}*5","empresa, du, disciplina");
+(2,"Nivel de Fit en las asignaciones","{TiempoHastaPedirRotacion}*5","empresa, du, disciplina"),
+(3,"Adecuación de ofertas en el mercado","{TasaDeRechazo}","disciplina,grade,ubicacion");
 
 
 insert into variables (id, descripcion, formula, agrupadopor)
 values 
 ("TiempoPromEnProy","Corresponde al tiempo promedio (en dias) de cada uno de los miembros", "Select  ua.du, ua.disciplina, avg(cast( (julianday(iif(fechaFin is null,date('now'),fechaFin)) - julianday(FechaAlta)) as Integer)) as promedioDias from user_asignaciones ua group by ua.du, ua.disciplina;","du,disciplina"),
 ("TiempoPromEstables","Tiempo promedio en proyectos de los miembros que están en la empresa hace mas de 5 años.","Select  ua.du, ua.disciplina,avg(cast( (julianday(iif(ua.fechaFin is null,date('now'),ua.fechaFin)) - julianday(ua.FechaAlta)) as Integer)) as promedioDias from user_asignaciones ua inner join (select aux.usuarioId from user_asignaciones aux group by usuarioId having (max(iif(aux.fechaFin is null, date('now'),aux.fechafin)) - min(aux.fechaalta)) >= 5 ) leg on (leg.usuarioId = ua.usuarioid) group by ua.du, ua.disciplina ;","du,disciplina"),
-("TiempoHastaPedirRotacion","Tiempo esperado hasta pedir rotacion","select count(1) as cant from user_clientes;","");
+("TiempoHastaPedirRotacion","Tiempo esperado hasta pedir rotacion","select count(1) as cant from user_clientes;",""),
+("TasaDeRechazo","Cantidad de ofertas rechazadas/total de ofertas realizadas","Select disciplina, Grade, ubicacion,cast(sum(iif(Extension_de_oferta<>'Aceptada',1,0)) as real) / cast (count(1) as real) as TasaRechazos from ST_New_Hires_PowerMyKPI group by disciplina, Grade,ubicacion;","disciplina, Grade,ubicacion");
+
 
 
 insert into ponderaciones (indicadorId, fechaDesde, valorHasta, ponderacion)
@@ -100,10 +103,12 @@ values
 (2,"2015-01-01",5000,4),
 (2,"2015-01-01",50000,3),
 (2,"2015-01-01",5000000,2),
-(2,"2015-01-01",50000000000,1);
-
-
-
+(2,"2015-01-01",50000000000,1),
+(3,"2015-01-01",500,5),
+(3,"2015-01-01",5000,4),
+(3,"2015-01-01",50000,3),
+(3,"2015-01-01",5000000,2),
+(3,"2015-01-01",50000000000,1);
 
 
 /*

@@ -93,7 +93,7 @@ def getIndicadores(indicador=0):
 
 def variablesValoresInsert(l_variableId,l_fecha=datetime.today(), l_grupo = '', l_valor=-1, l_essimulacion=0):
     try:
-        print("inserting in valoresVariables...")
+        # print("inserting in valoresVariables...")
         dbConn = openDb()
         cursor = dbConn.cursor()
 
@@ -104,7 +104,7 @@ def variablesValoresInsert(l_variableId,l_fecha=datetime.today(), l_grupo = '', 
         count = cursor.execute(sqlite_insert_query,data_tuple )
         dbConn.commit()
 
-        print("Insert Total rows are:  ", count)
+        # print("Insert Total rows are:  ", count)
         cursor.close()
         
     except sqlite3.Error as error:
