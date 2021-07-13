@@ -153,7 +153,7 @@ insert into "indicadoresValores_pivot" (indicadorId, grupo, Fecha, valor, esSimu
 	select '1','ROS;DEV','2021-06-20 06:59:55.929535','5','0', 	'ROS', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDM','2021-06-20 06:59:55.951228','5','0', 	'ROS', 'PDM', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDR','2021-06-20 06:59:55.972929','4','0', 	'ROS', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '2','','2021-06-20 06:59:56.016187','5','0', 		'BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
+	select '2','1;BAD;DEV','2021-06-20 06:59:56.016187','5','0','BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;AP','2021-06-20 07:04:49.546338','5','0', 	'BAD', 'AP', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;DEV','2021-06-20 07:04:49.566480','5','0', 	'BAD', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;PDR','2021-06-20 07:04:49.585432','4','0', 	'BAD', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
@@ -161,7 +161,7 @@ insert into "indicadoresValores_pivot" (indicadorId, grupo, Fecha, valor, esSimu
 	select '1','ROS;DEV','2021-06-20 07:04:49.666705','5','0', 	'ROS', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDM','2021-06-20 07:04:49.696879','5','0', 	'ROS', 'PDM', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDR','2021-06-20 07:04:49.718237','4','0', 	'ROS', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '2','','2021-06-20 07:04:49.782634','5','0', 		'BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
+	select '2','1;BAD;DEV','2021-06-20 07:04:49.782634','5','0','BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;AP','2021-06-20 11:54:40.244360','5','0', 	'BAD', 'AP', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;DEV','2021-06-20 11:54:40.254367','5','0', 	'BAD', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;PDR','2021-06-20 11:54:40.260393','4','0', 	'BAD', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
@@ -169,7 +169,7 @@ insert into "indicadoresValores_pivot" (indicadorId, grupo, Fecha, valor, esSimu
 	select '1','ROS;DEV','2021-06-20 11:54:40.275382','5','0', 	'ROS', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDM','2021-06-20 11:54:40.281360','5','0', 	'ROS', 'PDM', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDR','2021-06-20 11:54:40.288362','4','0', 	'ROS', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '2','','2021-06-20 11:54:40.308385','5','0', 		'BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
+	select '2','1;BAD;DEV','2021-06-20 11:54:40.308385','5','0','BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;AP','2021-06-21 07:16:29.430087','5','0', 	'BAD', 'AP', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;DEV','2021-06-21 07:16:29.430087','5','0', 	'BAD', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;PDR','2021-06-21 07:16:29.445707','4','0', 	'BAD', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
@@ -177,7 +177,7 @@ insert into "indicadoresValores_pivot" (indicadorId, grupo, Fecha, valor, esSimu
 	select '1','ROS;DEV','2021-06-21 07:16:29.461778','5','0', 	'ROS', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDM','2021-06-21 07:16:29.468777','5','0', 	'ROS', 'PDM', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDR','2021-06-21 07:16:29.474777','4','0', 	'ROS', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '2','','2021-06-21 07:16:29.480970','5','0', 		'BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
+	select '2','1;BAD;DEV','2021-06-21 07:16:29.480970','5','0','BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;AP','2021-06-21 07:18:32.394689','5','0', 	'BAD', 'AP', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;DEV','2021-06-21 07:18:32.400693','5','0', 	'BAD', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;PDR','2021-06-21 07:18:32.405690','4','0', 	'BAD', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
@@ -185,7 +185,7 @@ insert into "indicadoresValores_pivot" (indicadorId, grupo, Fecha, valor, esSimu
 	select '1','ROS;DEV','2021-06-21 07:18:32.414106','5','0', 	'ROS', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDM','2021-06-21 07:18:32.414106','5','0', 	'ROS', 'PDM', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDR','2021-06-21 07:18:32.414106','4','0', 	'ROS', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '2','','2021-06-21 07:18:32.437104','5','0', 		'', '', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
+	select '2','1;ROS;DEV','2021-06-21 07:18:32.437104','5','0','ROS', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;AP','2021-06-21 07:18:51.256682','5','0', 	'BAD', 'AP', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;DEV','2021-06-21 07:18:51.272310','5','0', 	'BAD', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;PDR','2021-06-21 07:18:51.272310','4','0', 	'BAD', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
@@ -193,7 +193,7 @@ insert into "indicadoresValores_pivot" (indicadorId, grupo, Fecha, valor, esSimu
 	select '1','ROS;DEV','2021-06-21 07:18:51.293105','5','0', 	'ROS', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDM','2021-06-21 07:18:51.299098','5','0', 	'ROS', 'PDM', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDR','2021-06-21 07:18:51.305100','4','0', 	'ROS', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '2','','2021-06-21 07:18:51.313167','5','0', 		'BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
+	select '2','1;ROS;DEV','2021-06-21 07:18:51.313167','5','0','ROS', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;AP','2021-06-21 07:30:22.987806','5','0', 	'BAD', 'AP', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;DEV','2021-06-21 07:30:22.987806','5','0', 	'BAD', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;PDR','2021-06-21 07:30:22.987806','4','0', 	'BAD', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
@@ -201,7 +201,7 @@ insert into "indicadoresValores_pivot" (indicadorId, grupo, Fecha, valor, esSimu
 	select '1','ROS;DEV','2021-06-21 07:30:23.003430','5','0', 	'ROS', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDM','2021-06-21 07:30:23.003430','5','0', 	'ROS', 'PDM', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDR','2021-06-21 07:30:23.003430','4','0', 	'ROS', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '2','','2021-06-21 07:30:23.032710','5','0', 		'BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
+	select '2','1;ROS;DEV','2021-06-21 07:30:23.032710','5','0','ROS', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;AP','2021-07-04 18:32:37.519717','5','0', 	'BAD', 'AP', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;DEV','2021-07-04 18:32:37.543530','5','0', 	'BAD', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;PDR','2021-07-04 18:32:37.577412','4','0', 	'BAD', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
@@ -209,38 +209,38 @@ insert into "indicadoresValores_pivot" (indicadorId, grupo, Fecha, valor, esSimu
 	select '1','ROS;DEV','2021-07-04 18:32:37.625966','5','0', 	'ROS', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDM','2021-07-04 18:32:37.651994','5','0', 	'ROS', 'PDM', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDR','2021-07-04 18:32:37.682428','4','0', 	'ROS', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '2','','2021-07-04 18:32:37.721224','5','0', 		'BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
+	select '2','1;ROS;DEV','2021-07-04 18:32:37.721224','5','0','ROS', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','DEV;AP','2021-07-04 18:32:43.312399','5','0', 	'DEV', 'AP', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;DEV','2021-07-04 18:32:43.325235','5','0', 	'ROS', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDM','2021-07-04 18:32:43.353994','5','0', 	'ROS', 'PDM', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDR','2021-07-04 18:32:43.373221','4','0', 	'ROS', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;AP','2021-07-04 18:32:43.387778','5','0', 	'BAD', 'AP', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;DEV','2021-07-04 18:32:43.408313','5','0', 	'BAD', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '2','','2021-07-04 18:32:43.443225','5','0', 		'BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;EN;AMBA','2021-07-04 18:32:43.485284','5','0', 	NULL, NULL, 1, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;EN;Cordoba','2021-07-04 18:32:43.507816','5','0', NULL, NULL, 1, 'EN', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;EN;Otros','2021-07-04 18:32:43.523015','5','0', 	NULL, NULL, 1, 'EN', 'Otros', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;SE;AMBA','2021-07-04 18:32:43.538242','5','0', 	NULL, NULL, 1, 'SE', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;ST;AMBA','2021-07-04 18:32:43.552408','5','0', 	NULL, NULL, 1, 'ST', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;ST;Cordoba','2021-07-04 18:32:43.565052','5','0', NULL, NULL, 1, 'ST', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;ST;Otros','2021-07-04 18:32:43.574277','5','0', 	NULL, NULL, 1, 'ST', 'Otros', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;TL;AMBA','2021-07-04 18:32:43.589050','5','0', 	NULL, NULL, 1, 'TL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;TL;Cordoba','2021-07-04 18:32:43.599459','5','0', NULL, NULL, 1, 'TL', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;TL;Otros','2021-07-04 18:32:43.609181','5','0', 	NULL, NULL, 1, 'TL', 'Otros', NULL, NULL, NULL, NULL, NULL union 
-	select '3','2;CL;AMBA','2021-07-04 18:32:43.627069','5','0', 	NULL, NULL, 2, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','2;CL;Cordoba','2021-07-04 18:32:43.639827','5','0', NULL, NULL, 2, 'CL', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','2;EN;AMBA','2021-07-04 18:32:43.652360','5','0', 	NULL, NULL, 2, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','2;JT;AMBA','2021-07-04 18:32:43.664066','5','0', 	NULL, NULL, 2, 'JT', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','2;SE;Cordoba','2021-07-04 18:32:43.674769','5','0', NULL, NULL, 2, 'SE', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','3;CL;AMBA','2021-07-04 18:32:43.686354','5','0', 	NULL, NULL, 3, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','3;EN;AMBA','2021-07-04 18:32:43.698224','5','0', 	NULL, NULL, 3, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','3;ST;AMBA','2021-07-04 18:32:43.709298','5','0', 	NULL, NULL, 3, 'ST', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;CL;AMBA','2021-07-04 18:32:43.722368','5','0', 	NULL, NULL, 4, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;EN;AMBA','2021-07-04 18:32:43.733963','5','0', 	NULL, NULL, 4, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;EN;Cordoba','2021-07-04 18:32:43.740974','5','0', NULL, NULL, 4, 'EN', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;ST;Cordoba','2021-07-04 18:32:43.756387','5','0', NULL, NULL, 4, 'ST', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;ST;Otros','2021-07-04 18:32:43.763540','5','0', 	NULL, NULL, 4, 'ST', 'Otros', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;TL;AMBA','2021-07-04 18:32:43.778689','5','0', 	NULL, NULL, 4, 'TL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '2','1;ROS;DEV','2021-07-04 18:32:43.443225','5','0','ROS', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;EN;AMBA','2021-07-04 18:32:43.485284','5','0', 	NULL, 1, NULL, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;EN;Cordoba','2021-07-04 18:32:43.507816','5','0', NULL, 1, NULL, 'EN', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;EN;Otros','2021-07-04 18:32:43.523015','5','0', 	NULL, 1, NULL, 'EN', 'Otros', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;SE;AMBA','2021-07-04 18:32:43.538242','5','0', 	NULL, 1, NULL, 'SE', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;ST;AMBA','2021-07-04 18:32:43.552408','5','0', 	NULL, 1, NULL, 'ST', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;ST;Cordoba','2021-07-04 18:32:43.565052','5','0', NULL, 1, NULL, 'ST', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;ST;Otros','2021-07-04 18:32:43.574277','5','0', 	NULL, 1, NULL, 'ST', 'Otros', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;TL;AMBA','2021-07-04 18:32:43.589050','5','0', 	NULL, 1, NULL, 'TL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;TL;Cordoba','2021-07-04 18:32:43.599459','5','0', NULL, 1, NULL, 'TL', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;TL;Otros','2021-07-04 18:32:43.609181','5','0', 	NULL, 1, NULL, 'TL', 'Otros', NULL, NULL, NULL, NULL, NULL union 
+	select '3','2;CL;AMBA','2021-07-04 18:32:43.627069','5','0', 	NULL, 2, NULL, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','2;CL;Cordoba','2021-07-04 18:32:43.639827','5','0', NULL, 2, NULL, 'CL', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','2;EN;AMBA','2021-07-04 18:32:43.652360','5','0', 	NULL, 2, NULL, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','2;JT;AMBA','2021-07-04 18:32:43.664066','5','0', 	NULL, 2, NULL, 'JT', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','2;SE;Cordoba','2021-07-04 18:32:43.674769','5','0', NULL, 2, NULL, 'SE', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','3;CL;AMBA','2021-07-04 18:32:43.686354','5','0', 	NULL, 3, NULL, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','3;EN;AMBA','2021-07-04 18:32:43.698224','5','0', 	NULL, 3, NULL, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','3;ST;AMBA','2021-07-04 18:32:43.709298','5','0', 	NULL, 3, NULL, 'ST', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;CL;AMBA','2021-07-04 18:32:43.722368','5','0', 	NULL, 4, NULL, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;EN;AMBA','2021-07-04 18:32:43.733963','5','0', 	NULL, 4, NULL, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;EN;Cordoba','2021-07-04 18:32:43.740974','5','0', NULL, 4, NULL, 'EN', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;ST;Cordoba','2021-07-04 18:32:43.756387','5','0', NULL, 4, NULL, 'ST', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;ST;Otros','2021-07-04 18:32:43.763540','5','0', 	NULL, 4, NULL, 'ST', 'Otros', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;TL;AMBA','2021-07-04 18:32:43.778689','5','0', 	NULL, 4, NULL, 'TL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;AP','2021-07-04 18:35:07.310038','5','0', 		'BAD', 'AP', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;DEV','2021-07-04 18:35:07.332286','5','0', 		'BAD', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','BAD;PDR','2021-07-04 18:35:07.364628','4','0', 		'BAD', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
@@ -248,28 +248,28 @@ insert into "indicadoresValores_pivot" (indicadorId, grupo, Fecha, valor, esSimu
 	select '1','ROS;DEV','2021-07-04 18:35:07.411101','5','0', 		'ROS', 'DEV', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDM','2021-07-04 18:35:07.435816','5','0', 		'ROS', 'PDM', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
 	select '1','ROS;PDR','2021-07-04 18:35:07.457021','4','0', 		'ROS', 'PDR', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '2','','2021-07-04 18:35:07.501371','5','0', 			'BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;EN;AMBA','2021-07-04 18:35:07.543962','5','0', 	NULL, NULL, 1, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;EN;Cordoba','2021-07-04 18:35:07.576034','5','0', NULL, NULL, 1, 'EN', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;EN;Otros','2021-07-04 18:35:07.608480','5','0', 	NULL, NULL, 1, 'EN', 'Otros', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;SE;AMBA','2021-07-04 18:35:07.635777','5','0', 	NULL, NULL, 1, 'SE', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;ST;AMBA','2021-07-04 18:35:07.658984','5','0', 	NULL, NULL, 1, 'ST', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;ST;Cordoba','2021-07-04 18:35:07.688352','5','0', NULL, NULL, 1, 'ST', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;ST;Otros','2021-07-04 18:35:07.718465','5','0', 	NULL, NULL, 1, 'ST', 'Otros', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;TL;AMBA','2021-07-04 18:35:07.749121','5','0', 	NULL, NULL, 1, 'TL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;TL;Cordoba','2021-07-04 18:35:07.777313','5','0', NULL, NULL, 1, 'TL', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','1;TL;Otros','2021-07-04 18:35:07.789009','5','0', 	NULL, NULL, 1, 'TL', 'Otros', NULL, NULL, NULL, NULL, NULL union 
-	select '3','2;CL;AMBA','2021-07-04 18:35:07.825956','5','0', 	NULL, NULL, 2, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','2;CL;Cordoba','2021-07-04 18:35:07.859535','5','0', NULL, NULL, 2, 'CL', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','2;EN;AMBA','2021-07-04 18:35:07.885507','5','0', 	NULL, NULL, 2, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','2;JT;AMBA','2021-07-04 18:35:07.900651','5','0', 	NULL, NULL, 2, 'JT', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','2;SE;Cordoba','2021-07-04 18:35:07.928210','5','0', NULL, NULL, 2, 'SE', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','3;CL;AMBA','2021-07-04 18:35:07.959976','5','0', 	NULL, NULL, 3, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','3;EN;AMBA','2021-07-04 18:35:07.984140','5','0', 	NULL, NULL, 3, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','3;ST;AMBA','2021-07-04 18:35:08.002561','5','0', 	NULL, NULL, 3, 'ST', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;CL;AMBA','2021-07-04 18:35:08.011530','5','0', 	NULL, NULL, 4, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;EN;AMBA','2021-07-04 18:35:08.046232','5','0', 	NULL, NULL, 4, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;EN;Cordoba','2021-07-04 18:35:08.069646','5','0', NULL, NULL, 4, 'EN', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;ST;Cordoba','2021-07-04 18:35:08.098463','5','0', NULL, NULL, 4, 'ST', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;ST;Otros','2021-07-04 18:35:08.124983','5','0', 	NULL, NULL, 4, 'ST', 'Otros', NULL, NULL, NULL, NULL, NULL union 
-	select '3','4;TL;AMBA','2021-07-04 18:35:08.154170','5','0', 	NULL, NULL, 4, 'TL', 'AMBA', NULL, NULL, NULL, NULL, NULL
+	select '2','1;BAD;DEV','2021-07-04 18:35:07.501371','5','0', 	'BAD', 'DEV', 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL union 	
+	select '3','1;EN;AMBA','2021-07-04 18:35:07.543962','5','0', 	NULL, 1, NULL, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;EN;Cordoba','2021-07-04 18:35:07.576034','5','0', NULL, 1, NULL, 'EN', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;EN;Otros','2021-07-04 18:35:07.608480','5','0', 	NULL, 1, NULL, 'EN', 'Otros', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;SE;AMBA','2021-07-04 18:35:07.635777','5','0', 	NULL, 1, NULL, 'SE', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;ST;AMBA','2021-07-04 18:35:07.658984','5','0', 	NULL, 1, NULL, 'ST', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;ST;Cordoba','2021-07-04 18:35:07.688352','5','0', NULL, 1, NULL, 'ST', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;ST;Otros','2021-07-04 18:35:07.718465','5','0', 	NULL, 1, NULL, 'ST', 'Otros', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;TL;AMBA','2021-07-04 18:35:07.749121','5','0', 	NULL, 1, NULL, 'TL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;TL;Cordoba','2021-07-04 18:35:07.777313','5','0', NULL, 1, NULL, 'TL', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','1;TL;Otros','2021-07-04 18:35:07.789009','5','0', 	NULL, 1, NULL, 'TL', 'Otros', NULL, NULL, NULL, NULL, NULL union 
+	select '3','2;CL;AMBA','2021-07-04 18:35:07.825956','5','0', 	NULL, 2, NULL, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','2;CL;Cordoba','2021-07-04 18:35:07.859535','5','0', NULL, 2, NULL, 'CL', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','2;EN;AMBA','2021-07-04 18:35:07.885507','5','0', 	NULL, 2, NULL, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','2;JT;AMBA','2021-07-04 18:35:07.900651','5','0', 	NULL, 2, NULL, 'JT', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','2;SE;Cordoba','2021-07-04 18:35:07.928210','5','0', NULL, 2, NULL, 'SE', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','3;CL;AMBA','2021-07-04 18:35:07.959976','5','0', 	NULL, 3, NULL, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','3;EN;AMBA','2021-07-04 18:35:07.984140','5','0', 	NULL, 3, NULL, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','3;ST;AMBA','2021-07-04 18:35:08.002561','5','0', 	NULL, 3, NULL, 'ST', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;CL;AMBA','2021-07-04 18:35:08.011530','5','0', 	NULL, 4, NULL, 'CL', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;EN;AMBA','2021-07-04 18:35:08.046232','5','0', 	NULL, 4, NULL, 'EN', 'AMBA', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;EN;Cordoba','2021-07-04 18:35:08.069646','5','0', NULL, 4, NULL, 'EN', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;ST;Cordoba','2021-07-04 18:35:08.098463','5','0', NULL, 4, NULL, 'ST', 'Cordoba', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;ST;Otros','2021-07-04 18:35:08.124983','5','0', 	NULL, 4, NULL, 'ST', 'Otros', NULL, NULL, NULL, NULL, NULL union 
+	select '3','4;TL;AMBA','2021-07-04 18:35:08.154170','5','0', 	NULL, 4, NULL, 'TL', 'AMBA', NULL, NULL, NULL, NULL, NULL
