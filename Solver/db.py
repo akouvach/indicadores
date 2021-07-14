@@ -1,12 +1,13 @@
 import sqlite3
 from datetime import datetime
 import varios
+import os
 
-DBNAME = "indicadores.db"
+DBNAME = "DataModel/indicadores.db"
 
 def openDb():
     try:
-        sqliteConnection = sqlite3.connect(DBNAME)
+        sqliteConnection = sqlite3.connect(os.path.abspath(DBNAME))
         return sqliteConnection
 
     except sqlite3.Error as error:
@@ -116,16 +117,16 @@ def variablesValoresInsert(l_variableId,l_fecha=datetime.today(), l_grupo = '', 
             #print("The SQLite connection is closed")
 
 
-def indicadoresValoresInsert(l_indicadorId,l_grupo="", l_fecha=datetime.today(), l_valor=-1, l_essimulacion=0):
+def indicadoresValoresInsert(l_indicadorId,l_grupo="", l_fecha=datetime.today(), l_valor=-1, l_essimulacion=0, l_valorPonderado = -1):
     try:
         #print("inserting in IndicadoresVariables...\n")
         dbConn = openDb()
         cursor = dbConn.cursor()
 
         sqlite_insert_query = """INSERT INTO indicadoresValores
-                            (indicadorId, grupo,fecha, valor, essimulacion) 
-                            VALUES (?,?,?,?,?);"""
-        data_tuple = (l_indicadorId, l_grupo,l_fecha, l_valor, l_essimulacion)
+                            (indicadorId, grupo,fecha, valor, essimulacion, valorPonderado) 
+                            VALUES (?,?,?,?,?,?);"""
+        data_tuple = (l_indicadorId, l_grupo,l_fecha, l_valor, l_essimulacion, l_valorPonderado)
         count = cursor.execute(sqlite_insert_query,data_tuple )
         dbConn.commit()
 

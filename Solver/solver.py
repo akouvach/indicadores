@@ -66,7 +66,7 @@ def calcularIndicador(indicador,formula,agruparpor):
             rdoIndicador = eval(formula)
             rdoPonderado = db.getPonderacionIndicador(indicador,datetime.today(),rdoIndicador)[0][0]
             
-            db.indicadoresValoresInsert(indicador,"",datetime.today(), rdoPonderado,0)
+            db.indicadoresValoresInsert(indicador,"",datetime.today(), rdoIndicador,0, rdoPonderado)
 
         else:
             #corresponde a un indicador que debería tener
@@ -102,7 +102,7 @@ def calcularIndicador(indicador,formula,agruparpor):
                 rdoIndicador = eval(formuAux)
                 rdoPonderado = db.getPonderacionIndicador(indicador,datetime.today(),rdoIndicador)[0][0]
             
-                db.indicadoresValoresInsert(indicador,g[0],datetime.today(), rdoPonderado,0)
+                db.indicadoresValoresInsert(indicador,g[0],datetime.today(), rdoIndicador,0, rdoPonderado)
 
 
     except Exception as error:
