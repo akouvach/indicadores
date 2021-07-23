@@ -19,7 +19,8 @@ jobs:
        uses: actions/cache@v2
        with:
          path: /tmp/.buildx-cache
-         key: ${{ runner.os }}-buildx-${{ github.sha }}
+         key: ${{ runner.os }}-buildx-${{ github.sha }} 
+         cache: "enabled"
          restore-keys: |
            ${{ runner.os }}-buildx-    
      - name: Login to Docker Hub
@@ -35,7 +36,6 @@ jobs:
          file: ./Dockerfile
          builder: ${{ steps.buildx.outputs.name }}
          push: true
-         cache: enabled
          tags:  ${{ secrets.DOCKER_HUB_USERNAME }}/simplewhale:latest
          cache-from: type=local,src=/tmp/.buildx-cache
          cache-to: type=local,dest=/tmp/.buildx-cache
