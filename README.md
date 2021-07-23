@@ -33,3 +33,8 @@ docker run --rm -d --network mysqlnet --name rest-server -p 5000:5000  python-do
 
 para usar composer.. 
 docker-compose -f docker-compose.dev.yml up --build
+
+
+para relacionar github y dockerhub
+docker login -u akouvach
+pat d29d7126-e24d-4ab9-927f-0629c18d11b7
