@@ -11,8 +11,8 @@ El .pbix debería encontrar el .db: Para que esto suceda hay que instalarse un d
 para conteinizar:
 Sacar pywin32==301 del requirements.txt
 
-docker build --tag python-docker .
-docker run -d -p 5000:5000 --name powerMyKpi python-docker
+docker build --tag powermykpi .
+docker run -d -p 5000:5000 --name kpi powermykpi
 
 
 Create volume for mysql

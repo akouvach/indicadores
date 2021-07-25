@@ -1,63 +1,77 @@
-import mysql.connector
+# import mysql.connector
 import json
 from flask import Flask
+import Solver.db as db1
 
 app = Flask(__name__)
 
 @app.route('/')
-def hello_world():
-  return 'Hello, Docker!'
+def inicio():  
+  return """
+  <h1>Power My Kpi</h1>
 
-@app.route('/widgets')
-def get_widgets() :
-  mydb = mysql.connector.connect(
-    host="mysqldb",
-    user="root",
-    password="p@ssw0rd1",
-    database="inventory"
-  )
-  cursor = mydb.cursor()
+  <form action='/resultados'>
+  <button>Mostrar resultados</button>
+  </form>
+  """
+
+@app.route('/resultados')
+def resultados():  
+  cursor = db1.getResultados()
+  return json.dumps(cursor)
 
 
-  cursor.execute("SELECT * FROM widgets")
 
-  row_headers=[x[0] for x in cursor.description] #this will extract row headers
+# @app.route('/widgets')
+# def get_widgets() :
+#   mydb = mysql.connector.connect(
+#     host="mysqldb",
+#     user="root",
+#     password="p@ssw0rd1",
+#     database="inventory"
+#   )
+#   cursor = mydb.cursor()
 
-  results = cursor.fetchall()
-  json_data=[]
-  for result in results:
-    json_data.append(dict(zip(row_headers,result)))
 
-  cursor.close()
+#   cursor.execute("SELECT * FROM widgets")
 
-  return json.dumps(json_data)
+#   row_headers=[x[0] for x in cursor.description] #this will extract row headers
 
-@app.route('/initdb')
-def db_init():
-  mydb = mysql.connector.connect(
-    host="mysqldb",
-    user="root",
-    password="p@ssw0rd1"
-  )
-  cursor = mydb.cursor()
+#   results = cursor.fetchall()
+#   json_data=[]
+#   for result in results:
+#     json_data.append(dict(zip(row_headers,result)))
 
-  cursor.execute("DROP DATABASE IF EXISTS inventory")
-  cursor.execute("CREATE DATABASE inventory")
-  cursor.close()
+#   cursor.close()
 
-  mydb = mysql.connector.connect(
-    host="mysqldb",
-    user="root",
-    password="p@ssw0rd1",
-    database="inventory"
-  )
-  cursor = mydb.cursor()
+#   return json.dumps(json_data)
 
-  cursor.execute("DROP TABLE IF EXISTS widgets")
-  cursor.execute("CREATE TABLE widgets (name VARCHAR(255), description VARCHAR(255))")
-  cursor.close()
+# @app.route('/initdb')
+# def db_init():
+#   mydb = mysql.connector.connect(
+#     host="mysqldb",
+#     user="root",
+#     password="p@ssw0rd1"
+#   )
+#   cursor = mydb.cursor()
 
-  return 'init database'
+#   cursor.execute("DROP DATABASE IF EXISTS inventory")
+#   cursor.execute("CREATE DATABASE inventory")
+#   cursor.close()
+
+#   mydb = mysql.connector.connect(
+#     host="mysqldb",
+#     user="root",
+#     password="p@ssw0rd1",
+#     database="inventory"
+#   )
+#   cursor = mydb.cursor()
+
+#   cursor.execute("DROP TABLE IF EXISTS widgets")
+#   cursor.execute("CREATE TABLE widgets (name VARCHAR(255), description VARCHAR(255))")
+#   cursor.close()
+
+#   return 'init database'
 
 if __name__ == "__main__":
   app.run(host ='0.0.0.0')

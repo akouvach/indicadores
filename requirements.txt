@@ -53,7 +53,7 @@ pyzmq==22.1.0
 Quandl==3.6.1
 requests==2.25.1
 six==1.16.0
-torch==1.9.0
+# torch==1.9.0
 tornado==6.1
 traitlets==5.0.5
 typing-extensions==3.10.0.0

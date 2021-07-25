@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-import varios
+import Solver.varios as v
 import os
 
 DBNAME = "DataModel/indicadores.db"
@@ -75,6 +75,14 @@ def getVariables():
 
     except Exception as error:
         print("Error al recuperar las variables..",error)
+
+def getResultados():
+    try:
+        records = dbEjecutar("select * from IndicadoresValores;")
+        return records
+
+    except Exception as error:
+        print("Error al recuperar los resultados de los indicadores..",error)
 
 
 def getIndicadores(indicador=0):
@@ -190,7 +198,7 @@ def getGruposIndicador(l_indicadorId, l_fecha = datetime.today()):
         #voy a buscar la variables que componen a un indicador
         indicador = getIndicadores(l_indicadorId)
         formula = indicador[0][2]
-        variables = varios.getVariableList(formula)
+        variables = v.getVariableList(formula)
         filtroIndicadores =""
         for v in variables:
             if(filtroIndicadores!=""):
