@@ -1,10 +1,13 @@
+import random
 from sqlite3.dbapi2 import Error
 import db
+from datetime import date
 from datetime import datetime
+from datetime import timedelta
 import varios
 
 
-def calcularVariables():
+def calcularVariables(miFecha = datetime.today()):
     try:
         print("----Calculando variables....")
         records = db.getVariables()
@@ -19,8 +22,6 @@ def calcularVariables():
             
             stmt = formula
             rdo = db.dbEjecutar(stmt)
-            
-            miFecha = datetime.today()
             
             if agrupadopor=="":
                 #no tiene agrupamiento, se espera una sola fila y columna
@@ -38,7 +39,7 @@ def calcularVariables():
     except Exception as error:
         print("Error calculating variables", error)
 
-def calcularIndicador(indicador,formula,agruparpor):
+def calcularIndicador(indicador,formula,agruparpor, miFecha, aleatorio=0):
     try:
         # en este diccionario voy a colocar los resultados parciales de las
         # variables intervinientes para este indicador.
@@ -64,9 +65,13 @@ def calcularIndicador(indicador,formula,agruparpor):
                 formula = formula.replace("{" + v + "}",str(myDict[v]))
             
             rdoIndicador = eval(formula)
-            rdoPonderado = db.getPonderacionIndicador(indicador,datetime.today(),rdoIndicador)[0][0]
+            if(aleatorio!=0):
+                #le pongo algún valor aleatorio
+                rdoIndicador = rdoIndicador + random.random()*100
+
+            rdoPonderado = db.getPonderacionIndicador(indicador,miFecha,rdoIndicador)[0][0]
             
-            db.indicadoresValoresInsert(indicador,"",datetime.today(), rdoIndicador,0, rdoPonderado)
+            db.indicadoresValoresInsert(indicador,"",miFecha, rdoIndicador,0, rdoPonderado)
 
         else:
             #corresponde a un indicador que debería tener
@@ -100,15 +105,20 @@ def calcularIndicador(indicador,formula,agruparpor):
                     formuAux = formuAux.replace("{" + v + "}",str(myDict[auxGrupo]))
                 #para cada grupo calculo la fórmula
                 rdoIndicador = eval(formuAux)
-                rdoPonderado = db.getPonderacionIndicador(indicador,datetime.today(),rdoIndicador)[0][0]
+
+                if(aleatorio!=0):
+                    #le pongo algún valor aleatorio
+                    rdoIndicador = rdoIndicador + random.random()*100
+
+                rdoPonderado = db.getPonderacionIndicador(indicador,miFecha,rdoIndicador)[0][0]
             
-                db.indicadoresValoresInsert(indicador,g[0],datetime.today(), rdoIndicador,0, rdoPonderado)
+                db.indicadoresValoresInsert(indicador,g[0],miFecha, rdoIndicador,0, rdoPonderado)
 
 
     except Exception as error:
         print("Error en el calculo de indicador..",error)
 
-def calcularIndicadores():
+def calcularIndicadores(miFecha = datetime.today()):
     try:
         print("------Calculando indicadores ----------------")
         records = db.getIndicadores()
@@ -124,16 +134,35 @@ def calcularIndicadores():
 
             print("---Id:{} Descripcion:{} \n---Formula: {}, agrupadopor: {}"
             .format(indicador,row[1],formula,agruparpor))
-            calcularIndicador(indicador,formula,agruparpor)
+            calcularIndicador(indicador,formula,agruparpor,miFecha,1)
 
         print("----------Terminó de calcular indicadores ---------------")
 
     except Exception as error:
         print("Error calculating variables",error )
 
+def eliminarResultados():
+    db.eliminarResultados()
+
 #db.crearYcargarDb()
-calcularVariables()
-calcularIndicadores()
+def cargarDatos():
+    #calcular de enero hasta hoy. dia a día
+    inicio = date(2021,1,1)
+    fin    = date(2021,7,1)
 
+    lista_fechas = [inicio + timedelta(days=d) for d in range((fin - inicio).days + 1)] 
 
+    eliminarResultados()
+    calcularVariables()
+    
+    for fecha in lista_fechas:
+        calcularIndicadores(fecha)
+
+    # calcularValores()
+
+def calcularValores(miFecha = date.today()):
+    calcularVariables()
+    calcularIndicadores(miFecha)
+
+    
 #db.dbEjecutar("select count(1) as cant from variables;")

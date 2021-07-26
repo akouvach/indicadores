@@ -1,7 +1,7 @@
 # import mysql.connector
 import json
 from flask import Flask
-import Solver.db as db1
+import db as db1
 
 app = Flask(__name__)
 
@@ -13,6 +13,12 @@ def inicio():
   <form action='/resultados'>
   <button>Mostrar resultados</button>
   </form>
+
+  <form action='/cargardatos'>
+  <button>Mostrar resultados</button>
+  </form>
+
+
   """
 
 @app.route('/resultados')
@@ -20,6 +26,10 @@ def resultados():
   cursor = db1.getResultados()
   return json.dumps(cursor)
 
+@app.route('/cargardatos')
+def cargardatos():  
+  cursor = db1.getResultados()
+  return json.dumps(cursor)
 
 
 # @app.route('/widgets')

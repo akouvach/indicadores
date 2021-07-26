@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-import Solver.varios as v
+import varios 
 import os
 
 DBNAME = "DataModel/indicadores.db"
@@ -50,6 +50,7 @@ def dbEjecutar(stmt, data_tuple=()):
             cursor.execute(stmt,data_tuple)
         record = cursor.fetchall()
         cursor.close()
+        dbConn.commit()
         return record
 
     except sqlite3.Error as error:
@@ -67,6 +68,15 @@ def getDbVersion():
         return record
     except sqlite3.Error as error:
         print("error obtaining de version")
+
+def eliminarResultados():
+    try:
+        records = dbEjecutar("delete from variablesValores;")
+        records = dbEjecutar("delete from indicadoresValores;")
+        return records
+
+    except Exception as error:
+        print("Error al eliminar indicadores valores..",error)
 
 def getVariables():
     try:
@@ -198,7 +208,7 @@ def getGruposIndicador(l_indicadorId, l_fecha = datetime.today()):
         #voy a buscar la variables que componen a un indicador
         indicador = getIndicadores(l_indicadorId)
         formula = indicador[0][2]
-        variables = v.getVariableList(formula)
+        variables = varios.getVariableList(formula)
         filtroIndicadores =""
         for v in variables:
             if(filtroIndicadores!=""):

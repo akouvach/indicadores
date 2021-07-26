@@ -14,3 +14,4 @@ def getVariableList(text,start="{",end="}"):
     except Exception as error:
         print("Error al obtener la lista de variables de la formula..",error)
 
+
