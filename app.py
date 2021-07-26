@@ -1,7 +1,7 @@
 # import mysql.connector
 import json
 from flask import Flask
-import db as db1
+import Solver.db as db1
 
 app = Flask(__name__)
 
