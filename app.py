@@ -15,7 +15,7 @@ def inicio():
   </form>
 
   <form action='/cargardatos'>
-  <button>Mostrar resultados</button>
+  <button>Cargar datos</button>
   </form>
 
 
