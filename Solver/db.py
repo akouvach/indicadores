@@ -8,6 +8,7 @@ DBNAME = "DataModel/indicadores.db"
 def openDb():
     try:
         sqliteConnection = sqlite3.connect(os.path.abspath(DBNAME))
+        sqliteConnection.row_factory = sqlite3.Row
         return sqliteConnection
 
     except sqlite3.Error as error:
