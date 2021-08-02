@@ -1,6 +1,7 @@
 # import mysql.connector
 import json
 from flask import Flask
+from flask import Response
 import Solver.db as db1
 
 app = Flask(__name__)
@@ -14,17 +15,32 @@ def inicio():
   <button>Mostrar resultados</button>
   </form>
 
-  <form action='/cargardatos'>
-  <button>Mostrar resultados</button>
-  </form>
+
 
 
   """
+  #   <form action='/cargardatos'>
+  # <button>Cargar datos</button>
+  # </form>
 
-@app.route('/resultados')
+
+@app.route('/resultados/')
 def resultados():  
   cursor = db1.getResultados()
-  return json.dumps(cursor)
+  # content = "{" + '"' + "data" + '"' + ":" + json.dumps(cursor) + "}"
+  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+  content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
+  # content =  json_object 
+  # print(json_object)
+  # json_object = "{" + '"' + "data" + '"' + ":" + json.loads([dict(ix) for ix in cursor])+ "}"
+
+  # return content
+
+  return Response(content, 
+            mimetype='application/json',
+            headers={'Content-Disposition':'attachment;filename=indicadores.json'})
+
+
 
 @app.route('/cargardatos')
 def cargardatos():  
