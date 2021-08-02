@@ -1,70 +1,167 @@
+import datetime
+import sqlite3
+
 import numpy as np
 import pandas as pd
+import db
 
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.metrics import r2_score
+
 
 # Lectura de datos
-data = pd.read_csv(...)
+cnx = sqlite3.connect("C:\\Users\\asanz\\git\\indicadores\\DataModel\\indicadores.db")
+data = pd.read_sql_query("SELECT * FROM indicadoresValores", cnx)
+data = data[data["esSimulacion"] == 0]
+data.dropna(axis=0, inplace=True)
 
-# Se inspeccionan los datos atípicos utilizando la regla de los 3 sigmas
-ds = float(data['indicador'].std())
-mean = float(data['indicador'].mean())
 
-r3s_inf = round(mean - 3*ds, 5)
-r3s_sup = round(mean + 3*ds, 5)
+# Creación de dataframes
+def create_indicadores_dict(data=data):
+    data_indicadores = data[["indicadorId", "grupo"]]
+    any_empty_string_mask = (data_indicadores == "").any(axis=1)
+    data_indicadores = data_indicadores.loc[~any_empty_string_mask]
+    indicadores_dict = {}
+    for indicador in data_indicadores["indicadorId"].unique():
+        indicador_df = data_indicadores[data_indicadores["indicadorId"] == indicador]
+        indicador_groups = indicador_df["grupo"].unique()
+        indicadores_dict[indicador] = indicador_groups
+        
+    return indicadores_dict
 
-# Los datos atípicos son llevados a la expresión de dato nulo
-data_n = data[(data['indicador'] <= r3s_inf) | (data['indicador'] >= r3s_sup)] = np.nan
 
-# Se interpolan los datos nulos
-data_n = data_n.interpolate()
+def create_indicador_dataframe(data=data, indicadores_dict=create_indicadores_dict()):
+    dataframes = {}
+    for key, values in indicadores_dict.items():
+        for value in values:
+            indicador_mask = (data["indicadorId"] == key)
+            group_mask = (data["grupo"] == value)
+            indicador_group_df = data[indicador_mask & group_mask][["Fecha", "valor"]]
+            dataframes[(key, value)] = indicador_group_df
+    return dataframes
 
-# Se establece el look back del modelo. Este define cuantos pasos temporales previos serán tomados en cuenta
-# para predecir la siguiente instacia de la serie de tiempo
-look_back = 90
 
-# Se crea el conjunto de datos para el modelo a partir de la serie de tiempo y la ventana de look back
-X = np.zeros((data_n.shape[0] - look_back - 1, look_back))
-y = np.zeros(data_n.shape[0] - look_back - 1)
+def clean_dataframe(dataframe):
+    dataframe.rename(columns={"valor": "valor"}, inplace=True)
 
-for i in range(X.shape[0]):
-    X[i,:] = data_n.iloc[i: i+look_back]['indicador']
-    y[i] = data_n.iloc[i+look_back]
+    # Se inspeccionan los datos atípicos utilizando la regla de los 3 sigmas
+    ds = float(dataframe["valor"].std())
+    mean = float(dataframe["valor"].mean())
 
-# Se separa el conjunto de datos en dos partes, una para el entrenamiento y otra para la evaluación de los
-# resultados (últimos 30 días)
-n_split = int(X.shape[0] - 30)
+    r3s_inf = round(mean - 3*ds, 5)
+    r3s_sup = round(mean + 3*ds, 5)
 
-X_train = X[:n_split, :]
-y_train = y[:n_split]
+    # Los datos atípicos son llevados a la expresión de dato nulo
+    #data_n = data.copy()
+    dataframe[(dataframe["valor"] <= r3s_inf) | (dataframe["valor"] >= r3s_sup)] = np.nan
 
-X_test = X[n_split:, :]
-y_test = y[n_split:]
+    # Se interpolan los datos nulos
+    dataframe.interpolate(inplace=True)
+    dataframe.set_index("Fecha", inplace=True)
 
-# Se crea el modelo a utilizar para predecir
-bosque = RandomForestRegressor(
-    n_estimators=100,
-    max_depth=10,
-    min_samples_split=2,
-    min_samples_leaf=1,
-    oob_score=True,
-    n_jobs=-1,
-    random_state=42
-)
 
-bosque.fit(X_train, y_train)
-    
-y_test_pred = bosque.predict(X_test)
-y_train_pred = bosque.predict(X_train)
+def train_test_split(dataframe, threshold=180, split=3):
+    if dataframe.shape[0] < threshold:
+        return
+    # Se hace limpieza del dataframe
+    clean_dataframe(dataframe)
 
-# Con el modelo de One-Step ya entrenado, se utiliza el método recursivo para hacer Multi-Step Prediction
-y_ms_test_pred = []
-x = X_test[0, :]
+    # Se establece el look back del modelo. Este define cuantos pasos temporales previos serán tomados en cuenta
+    # para predecir la siguiente instacia de la serie de tiempo
+    look_back = 90
+    # día_1, día_2, ..., día_penúltimo, día_final                   -
+    # [1,     2,    ..., n-1,           n]                          |
+    # [2,     3,    ..., n-1,           n] shape[0] - look_back (cantidad de días para separar train/test)
+    # ...                                                           |
+    # |-------------look_back------------>                          v
 
-for i in range(y_test.size):
-    y_os_pred = bosque.predict(x.reshape(1,-1))
-    y_ms_test_pred.append(y_os_pred)
-    x = np.append(x[1:], y_os_pred)
+    # Se crea el conjunto de datos para el modelo a partir de la serie de tiempo y la ventana de look back
+    X = np.zeros((dataframe.shape[0] - look_back, look_back))
+    y = np.zeros(dataframe.shape[0] - look_back)
 
-y_test_pred_ms = np.array(y_ms_test_pred)
-y_train_pred_ms = bosque.predict(X_train)
+    for i in range(X.shape[0]):
+        X[i,:] = dataframe.iloc[i: i+look_back]['valor']
+        y[i] = dataframe.iloc[i+look_back]['valor']
+
+    # Se separa el conjunto de datos en dos partes, una para el entrenamiento y otra para la evaluación de los
+    # resultados (últimos 30 días)
+    n_split = int(X.shape[0] * (1 - 1/split))
+
+    X_train = X[:n_split, :]
+    y_train = y[:n_split]
+
+    X_test = X[n_split:, :]
+    y_test = y[n_split:]
+
+    return X_train, X_test, y_train, y_test
+
+
+def run_machine_learning_model(data=create_indicador_dataframe().items()):
+    for indicador, df in data:
+        # Se realiza la separación de los datos en entrenamiento y testeo
+        X_train, X_test, y_train, y_test = train_test_split(df)
+
+        # Se crea el modelo a utilizar para predecir
+        model = RandomForestRegressor(
+            n_estimators=100,
+            max_depth=10,
+            min_samples_split=2,
+            min_samples_leaf=1,
+            oob_score=True,
+            n_jobs=-1,
+            random_state=42
+        )
+        model.fit(X_train, y_train)
+        
+        # Valores predichos para comprobación del modelo
+        y_test_pred = model.predict(X_test)
+        y_train_pred = model.predict(X_train)
+
+        r2_test = r2_score(y_test, y_test_pred)
+        r2_train = r2_score(y_train, y_train_pred)
+        # if r2_test < 0.5 or r2_train < 0.5:
+        #     continue
+
+        # Con el modelo de One-Step ya entrenado, se utiliza el método recursivo para hacer Multi-Step Prediction
+        y_ms_futuro_pred = []
+
+        # Se toma la última instancia del X_test ya que son los parámetros al límite del ahora en el tiempo
+        X_ms_futuro = X_test[0, :]
+
+        # La idea es ir modificando el X_ms_futuro con cada iteración, moviéndose un paso en el tiempo hacia adelante
+        # y utilizando la instancia calculada para completar dicho desplazamiento
+        for i in range(y_test.size):
+            y_os_pred = model.predict(X_ms_futuro.reshape(1, -1))
+            y_ms_futuro_pred.append(y_os_pred)
+            X_ms_futuro = np.append(X_ms_futuro[1:], y_os_pred)
+
+        y_ms_futuro_pred = np.array(y_ms_futuro_pred)
+        fecha_futuro = [datetime.date.today() + datetime.timedelta(days=i) for i in range(31)]
+
+        df_futuro = pd.DataFrame(
+            data={
+                "indicadorId": [indicador[0]]*len(y_ms_futuro_pred),
+                "grupo": [indicador[1]]*len(y_ms_futuro_pred),
+                "Fecha": fecha_futuro,
+                "valor": np.squeeze(y_ms_futuro_pred),
+                "esSimulacion": [0]*len(y_ms_futuro_pred),
+                "esPrediccion": [1]*len(y_ms_futuro_pred)
+            }
+        )
+        breakpoint() # QUITAR ESTO -----------------------------------------------------------------------------------------------------
+
+        for i in range(len(y_ms_futuro_pred)):
+            valor_ponderado_futuro = db.getPonderacionIndicador( ## NO FUNCIONA ---------------------------------------------------------
+                l_indicadorId=indicador[0],
+                l_valorHasta=y_ms_futuro_pred[i]
+            )
+
+            db.indicadoresValoresInsert(                         ## NO FUNCIONA ---------------------------------------------------------
+                indicador[0],
+                indicador[1],
+                fecha_futuro[i],
+                y_ms_futuro_pred[i],
+                0,
+                # 1, columna esPrediccion
+                valor_ponderado_futuro
+            )
