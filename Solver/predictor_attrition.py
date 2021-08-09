@@ -12,30 +12,33 @@ from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
 # Lectura de datos
 cnx = sqlite3.connect("C:\\Users\\asanz\\git\\indicadores\\DataModel\\indicadores.db")
-data1 = pd.read_sql_query("SELECT * FROM ST_d2_general_data", cnx)                     # NECESITO SABER DE DONDE SACAR ESTO -------------------------------------
+# data1 = pd.read_sql_query("SELECT * FROM ST_d2_general_data", cnx)                     # NECESITO SABER DE DONDE SACAR ESTO -------------------------------------
+data1 = pd.read_excel("C:\\Users\\asanz\\git\\random\\data_science\\DataSetInnoLab.xlsx")
 
 
-data = data1[data1["NumCompaniesWorked"] != "NA"]
-data = data[data["TotalWorkingYears"] != "NA"]
-list_borrar = [
-    "EmployeeID", "Age", "DistanceFromHome", "Education", "JobLevel", "MonthlyIncome", "NumCompaniesWorked", "PercentSalaryHike",
-    "StockOptionLevel", "TotalWorkingYears", "TrainingTimesLastYear", "YearsAtCompany", "YearsSinceLastPromotion", "YearsWithCurrManager"
-]
-for i in list_borrar:
-    data[i] = pd.to_numeric(data[i])
+# data = data1[data1["NumCompaniesWorked"] != "NA"] #### esto para base de datos ------------------------
+# data = data[data["TotalWorkingYears"] != "NA"]
+# list_borrar = [
+#     "EmployeeID", "Age", "DistanceFromHome", "Education", "JobLevel", "MonthlyIncome", "NumCompaniesWorked", "PercentSalaryHike",
+#     "StockOptionLevel", "TotalWorkingYears", "TrainingTimesLastYear", "YearsAtCompany", "YearsSinceLastPromotion", "YearsWithCurrManager"
+# ]
+# for i in list_borrar:
+#     data[i] = pd.to_numeric(data[i])
 
 
-def process_data(data=data):
+def process_data(data=data1):
     # Eliminación de datos nulos
     data_n = data.dropna(axis=0)
 
     # Columnas con un único dato
     unique_data_cols = [i for i in data_n.columns if pd.unique(data_n[i]).size == 1]
     data_n.drop(unique_data_cols, axis=1, inplace=True)
+    data_n.rename(columns={"EmployeeNumber": "EmployeeID"}, inplace=True)
 
     le = LabelEncoder()
     data_n["Attrition"] = le.fit_transform(data_n["Attrition"])
     data_n["Gender"] = le.fit_transform(data_n["Gender"])
+    data_n["OverTime"] = le.fit_transform(data_n["OverTime"])
 
     # Se identifica la columna objetivo
     X = data_n.drop("Attrition", axis=1)
@@ -150,3 +153,7 @@ probability = run_machine_learning_model()
 result_df = pd.concat([data1, probability], axis=1)
 breakpoint()
 # result_df.to_excel("output.xlsx")
+
+# aa = result_df[["Attrition", "probability"]]
+# ((aa["probability"] >= 50) == (aa["Attrition"] == "Yes")).sum()
+# len((aa["probability"] >= 50) == (aa["Attrition"] == "Yes"))
