@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-from Solver import varios
+import varios
 import os
 
 DBNAME = "DataModel/indicadores.db"
