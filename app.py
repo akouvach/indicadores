@@ -2,31 +2,29 @@
 import json
 from flask import Flask
 from flask import Response
+from flask import request
+from flask import render_template
+
 import Solver.db as db1
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates")
 
 @app.route('/')
 def inicio():  
-  return """
-  <h1>Power My Kpi</h1>
-
-  <form action='/resultados'>
-  <button>Mostrar resultados</button>
-  </form>
+  return render_template('index.html')
 
 
+@app.route('/status')
+def status():  
+  param = request.ars.get("params1","no contiene este parametro")
+  return 'El parametro es {}'.format(param)
 
 
-  """
-  #   <form action='/cargardatos'>
-  # <button>Cargar datos</button>
-  # </form>
-
-
+@app.route('/resultados/<int:nroIndicador>/')
 @app.route('/resultados/')
-def resultados():  
-  cursor = db1.getResultados()
+def resultados(nroIndicador=0):  
+  print("el indicador es:", nroIndicador)
+  cursor = db1.getResultados(nroIndicador)
   # content = "{" + '"' + "data" + '"' + ":" + json.dumps(cursor) + "}"
   json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
   content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
@@ -40,6 +38,24 @@ def resultados():
             mimetype='application/json',
             headers={'Content-Disposition':'attachment;filename=indicadores.json'})
 
+
+@app.route('/resultados_pivot/<int:nroIndicador>/')
+@app.route('/resultados_pivot/')
+def resultados_pivot(nroIndicador=0):  
+  print("el indicador es:", nroIndicador)
+  cursor = db1.getResultados_pivot(nroIndicador)
+  # content = "{" + '"' + "data" + '"' + ":" + json.dumps(cursor) + "}"
+  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+  content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
+  # content =  json_object 
+  # print(json_object)
+  # json_object = "{" + '"' + "data" + '"' + ":" + json.loads([dict(ix) for ix in cursor])+ "}"
+
+  # return content
+
+  return Response(content, 
+            mimetype='application/json',
+            headers={'Content-Disposition':'attachment;filename=indicadores.json'})
 
 
 @app.route('/cargardatos')

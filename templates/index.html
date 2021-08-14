@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power my KPI</title>
+    <link rel="stylesheet" href="{{ url_for('static',filename='css/w3.css') }}">
+</head>
+<body>
+    
+    <div class="w3-container">
+        <h1>Power my KPI</h1>
+
+
+
+            <form action='/resultados'>
+                <button>Mostrar resultados</button>
+            </form>
+            <p>
+                /resultados (trae todo)
+                <br>/resultados/1 (trae el los resultados del indicador 1)
+                <br>/resultados_pivot (trae los datos de pivot)
+                <br>/resultados_pivot/1 (trae los datos de pivot del indicador 1)
+            </p>
+
+
+      </div>
+
+      <script src="{{ url_for('static',filename='js/mijs.js') }}"></script>
+</body>
+</html>
