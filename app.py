@@ -58,6 +58,28 @@ def resultados_pivot(nroIndicador=0):
             headers={'Content-Disposition':'attachment;filename=indicadores.json'})
 
 
+@app.route('/sources/<nombre>/')
+def getSources(nombre=''): 
+  misTablas = db1.getMisTablas()
+  encontrado=False
+  for n in misTablas:
+    if nombre == n[0]:
+      encontrado=True
+      break
+  print("encontrado",encontrado)
+
+  if encontrado:
+    cursor = db1.getTabla(nombre)
+    # content = "{" + '"' + "data" + '"' + ":" + json.dumps(cursor) + "}"
+    json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+    content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
+  else:
+    content = "Tabla no encontrada"
+  
+  return Response(content, 
+            mimetype='application/json',
+            headers={'Content-Disposition':'attachment;filename=indicadores.json'})
+
 @app.route('/cargardatos')
 def cargardatos():  
   cursor = db1.getResultados()
