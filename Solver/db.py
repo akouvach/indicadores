@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-import varios
+import Solver.varios
 import os
 
 DBNAME = "DataModel/indicadores.db"
@@ -87,15 +87,49 @@ def getVariables():
     except Exception as error:
         print("Error al recuperar las variables..",error)
 
-def getResultados():
+def getResultados(l_indicador=0):
     try:
-        records = dbEjecutar("select * from IndicadoresValores;")
+        stmt = ""
+        if(l_indicador==0):
+            stmt = "select * from IndicadoresValores;"
+        else:
+            stmt = "select * from IndicadoresValores where indicadorId = " + str(l_indicador) + ";"
+        records = dbEjecutar(stmt)
         return records
 
     except Exception as error:
         print("Error al recuperar los resultados de los indicadores..",error)
 
+def getResultados_pivot(l_indicador=0):
+    try:
+        stmt = ""
+        if(l_indicador==0):
+            stmt = "select * from IndicadoresValores_pivot;"
+        else:
+            stmt = "select * from IndicadoresValores_pivot where indicadorId = " + str(l_indicador) + ";"
+        records = dbEjecutar(stmt)
+        return records
 
+    except Exception as error:
+        print("Error al recuperar los resultados de los indicadores_pivot..",error)
+
+def getMisTablas():
+    try:
+        stmt = "select * from mistablas order by name;"
+        records = dbEjecutar(stmt)
+        return records
+
+    except Exception as error:
+        print("Error al recuperar las tablas existentes",error)
+
+def getTabla(nombre):
+    try:
+        stmt = "select * from " + nombre + " limit 100;"
+        records = dbEjecutar(stmt)
+        return records
+
+    except Exception as error:
+        print("Error al recuperar el valor de la tabla " + nombre,error)
 def getIndicadores(indicador=0):
     try:
         stmt = "select * from indicadores"

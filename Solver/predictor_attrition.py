@@ -12,11 +12,12 @@ from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
 # Lectura de datos
 cnx = sqlite3.connect("C:\\Users\\asanz\\git\\indicadores\\DataModel\\indicadores.db")
-# data1 = pd.read_sql_query("SELECT * FROM ST_d2_general_data", cnx)                     # NECESITO SABER DE DONDE SACAR ESTO -------------------------------------
-data1 = pd.read_excel("C:\\Users\\asanz\\git\\random\\data_science\\DataSetInnoLab.xlsx")
+data = pd.read_excel("C:\\Users\\asanz\\git\\random\\data_science\\DataSetInnoLab.xlsx")
+# data = pd.read_sql_query("SELECT * FROM ST_d2_general_data", cnx)
 
 
-# data = data1[data1["NumCompaniesWorked"] != "NA"] #### esto para base de datos ------------------------
+# Caso Base de datos:
+# data = data[data["NumCompaniesWorked"] != "NA"]
 # data = data[data["TotalWorkingYears"] != "NA"]
 # list_borrar = [
 #     "EmployeeID", "Age", "DistanceFromHome", "Education", "JobLevel", "MonthlyIncome", "NumCompaniesWorked", "PercentSalaryHike",
@@ -26,7 +27,7 @@ data1 = pd.read_excel("C:\\Users\\asanz\\git\\random\\data_science\\DataSetInnoL
 #     data[i] = pd.to_numeric(data[i])
 
 
-def process_data(data=data1):
+def process_data(data=data):
     # Eliminación de datos nulos
     data_n = data.dropna(axis=0)
 
@@ -149,11 +150,13 @@ def run_machine_learning_model(data=split_data()):
 
     return result
 
-probability = run_machine_learning_model()
-result_df = pd.concat([data1, probability], axis=1)
-breakpoint()
-# result_df.to_excel("output.xlsx")
 
-# aa = result_df[["Attrition", "probability"]]
-# ((aa["probability"] >= 50) == (aa["Attrition"] == "Yes")).sum()
-# len((aa["probability"] >= 50) == (aa["Attrition"] == "Yes"))
+if __name__ == "__main__":
+    probability = run_machine_learning_model()
+    result_df = pd.concat([data, probability], axis=1)
+    breakpoint()
+
+    # result_df.to_excel("output.xlsx")
+    # test = result_df[["Attrition", "probability"]]
+    # ((test["probability"] >= 50) == (test["Attrition"] == "Yes")).sum()
+    # len((test["probability"] >= 50) == (test["Attrition"] == "Yes"))

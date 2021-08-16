@@ -165,3 +165,8 @@ def run_machine_learning_model(data=create_indicador_dataframe().items()):
                 # 1, columna esPrediccion
                 valor_ponderado_futuro
             )
+
+
+if __name__ == "__main__":
+    machine_learning = run_machine_learning_model()
+    breakpoint()
