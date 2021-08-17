@@ -1,4 +1,6 @@
-const BASE_API="http://localhost:5000/";
+// const BASE_API="http://localhost:5000/";
+
+const BASE_API="https://powermykpi.azurewebsites.net/";
 
 
 function ui_mostrarTabla(lugar,datos){
