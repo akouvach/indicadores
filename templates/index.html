@@ -7,16 +7,28 @@
     <title>Power my KPI</title>
     <link rel="stylesheet" href="{{ url_for('static',filename='css/w3.css') }}">
 </head>
-<body>
+<body onload="inicializar();">
     
     <div class="w3-container">
         <h1>Power my KPI</h1>
+            <table class='w3-table'>
+                <tr>
+                    <td><label for="misSources">Sources</label></td>
+                </tr>
+                <tr>
+                    <td><div id="sources"></div></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><hr size=1 color=grey></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><div id="resultados"></div></td>
+                </tr>
+                
+            </table></div>
+            
 
-
-
-            <form action='/resultados'>
-                <button>Mostrar resultados</button>
-            </form>
+            <hr size=5 color=darkblue>
             <p>
                 /resultados (trae todo)
                 <br>/resultados/1 (trae el los resultados del indicador 1)

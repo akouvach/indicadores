@@ -80,6 +80,16 @@ def getSources(nombre=''):
             mimetype='application/json',
             headers={'Content-Disposition':'attachment;filename=indicadores.json'})
 
+@app.route('/sources')
+def getTablas(): 
+  cursor = db1.getMisTablas()
+  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+  content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
+
+  return Response(content, 
+            mimetype='application/json',
+            headers={'Content-Disposition':'attachment;filename=indicadores.json'})
+
 @app.route('/cargardatos')
 def cargardatos():  
   cursor = db1.getResultados()

@@ -115,7 +115,7 @@ def getResultados_pivot(l_indicador=0):
 
 def getMisTablas():
     try:
-        stmt = "select * from mistablas order by name;"
+        stmt = "select * from mistablas order by tabla;"
         records = dbEjecutar(stmt)
         return records
 
@@ -130,6 +130,7 @@ def getTabla(nombre):
 
     except Exception as error:
         print("Error al recuperar el valor de la tabla " + nombre,error)
+
 def getIndicadores(indicador=0):
     try:
         stmt = "select * from indicadores"
