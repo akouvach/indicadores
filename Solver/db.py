@@ -244,7 +244,7 @@ def getGruposIndicador(l_indicadorId, l_fecha = datetime.today()):
         #voy a buscar la variables que componen a un indicador
         indicador = getIndicadores(l_indicadorId)
         formula = indicador[0][2]
-        variables = varios.getVariableList(formula)
+        variables = Solver.varios.getVariableList(formula)
         filtroIndicadores =""
         for v in variables:
             if(filtroIndicadores!=""):

@@ -76,9 +76,7 @@ def getSources(nombre=''):
   else:
     content = "Tabla no encontrada"
   
-  return Response(content, 
-            mimetype='application/json',
-            headers={'Content-Disposition':'attachment;filename=indicadores.json'})
+  return Response(content, mimetype='application/json')
 
 @app.route('/sources')
 def getTablas(): 
@@ -86,14 +84,9 @@ def getTablas():
   json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
   content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
 
-  return Response(content, 
-            mimetype='application/json',
-            headers={'Content-Disposition':'attachment;filename=indicadores.json'})
+  return Response(content, mimetype='application/json')
 
-@app.route('/cargardatos')
-def cargardatos():  
-  cursor = db1.getResultados()
-  return json.dumps(cursor)
+
 
 
 # @app.route('/widgets')
