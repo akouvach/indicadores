@@ -1,13 +1,13 @@
 // const BASE_API="http://localhost:5000/";
 
-const BASE_API="https://powermykpi.azurewebsites.net/";
+const BASE_API=(window.location.host=="localhost:5000")?"http://localhost:5000/":"https://powermykpi.azurewebsites.net/";
 
-
+console.log(window.location.host);
 function ui_mostrarTabla(lugar,datos){
     let myDiv = document.getElementById(lugar);
     
     let mensaje = "<table class='w3-table w3-bordered'>";
-    console.log(datos.data);
+    // console.log(datos.data);
 
 
     // hago un ciclo para colocar los titulos
@@ -44,6 +44,8 @@ function ui_mostrarDatos(lugar){
         //Imprimo
         //Traigo los datos de la tabla
         let rdo = obtener("sources/"+miTabla,lugar,ui_mostrarTabla)
+    } else {
+        document.getElementById(lugar).innerHTML="..."
     }
 
 
@@ -52,7 +54,7 @@ function ui_mostrarDatos(lugar){
 
 function ui_mostrarSources(lugar,data){
     let myDiv= document.getElementById(lugar);
-    console.log(data);
+    // console.log(data);
     let rdo=data.data.reduce((acum,valor)=>{
         return acum+"<option>"+valor.tabla+"</option>";
     },"<select id='misSources' onchange='ui_mostrarDatos(" + String.fromCharCode(34) + "resultados" + String.fromCharCode(34) + ");'><option selected>Seleccione una tabla para visualizar</option>")+"</select>";
