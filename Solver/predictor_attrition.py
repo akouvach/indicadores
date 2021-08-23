@@ -9,10 +9,10 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
+data = db.getAttritionData()
 
-# Lectura de datos
-cnx = sqlite3.connect("C:\\Users\\asanz\\git\\indicadores\\DataModel\\indicadores.db")
-data = pd.read_excel("C:\\Users\\asanz\\git\\random\\data_science\\DataSetInnoLab.xlsx")
+# data = pd.read_excel("C:\\Users\\asanz\\git\\random\\data_science\\DataSetInnoLab.xlsx")
+
 # data = pd.read_sql_query("SELECT * FROM ST_d2_general_data", cnx)
 
 

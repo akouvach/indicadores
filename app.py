@@ -4,7 +4,7 @@ from flask import Flask
 from flask import Response
 from flask import request
 from flask import render_template
-from Solver.predictor_futuro import run_machine_learning_model
+# from Solver.predictor_futuro import run_machine_learning_model
 
 import Solver.db as db1
 
@@ -20,10 +20,10 @@ def status():
   param = request.ars.get("params1","no contiene este parametro")
   return 'El parametro es {}'.format(param)
 
-@app.route('/predictorfuturo')
-def predictorfuturo():  
-  rdo = run_machine_learning_model()
-  return 'El rdo es {}'.format(rdo)
+# @app.route('/predictorfuturo')
+# def predictorfuturo():  
+#   rdo = run_machine_learning_model()
+#   return 'El rdo es {}'.format(rdo)
 
 @app.route('/resultados/<int:nroIndicador>/')
 @app.route('/resultados/')

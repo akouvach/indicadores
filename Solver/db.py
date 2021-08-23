@@ -1,7 +1,8 @@
 import sqlite3
 from datetime import datetime
-import Solver.varios
+import varios
 import os
+import pandas as pd
 
 DBNAME = "DataModel/indicadores.db"
 
@@ -60,6 +61,17 @@ def dbEjecutar(stmt, data_tuple=()):
     finally:
         if dbConn:
             closeDb(dbConn)
+
+
+def getAttritionData():
+
+    try:
+        cnx = openDb()
+        # rdo = pd.read_sql_query("Select * from ST_d2_general_data", cnx)
+        rdo = pd.read_sql_query("Select * from ST_d1_WA_Fn_UseC_HR_Employee_Attrition", cnx)
+        return rdo
+    except Exception as error:
+        print("Error obteniendo el valor de datos de attition...",error)
 
 
 def getDbVersion():
@@ -194,6 +206,8 @@ def indicadoresValoresInsert(l_indicadorId,l_grupo="", l_fecha=datetime.today(),
         if dbConn:
             closeDb(dbConn)
             #print("The SQLite connection is closed")
+
+
 
 
 
