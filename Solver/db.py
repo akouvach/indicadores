@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import datetime
-import varios
+import Solver.varios
 import os
 import pandas as pd
 
