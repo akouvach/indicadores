@@ -1,10 +1,8 @@
+from datetime import date, datetime, timedelta
 import random
-from sqlite3.dbapi2 import Error
+
+from Solver.varios import getVariableList
 import db
-from datetime import date
-from datetime import datetime
-from datetime import timedelta
-import varios
 
 
 def calcularVariables(miFecha = datetime.today()):
@@ -48,7 +46,7 @@ def calcularIndicador(indicador,formula,agruparpor, miFecha, aleatorio=0):
         #obtengo la lista de variables que participan de la
         #formula de un indicador para después, ir a buscar
         #sus valores.
-        vars = varios.getVariableList(formula)
+        vars = getVariableList(formula)
         
         if(agruparpor==""):
             #si no se agrupa, el valor de la variable

@@ -1,12 +1,12 @@
-# import mysql.connector
 import json
-from flask import Flask
-from flask import Response
-from flask import request
-from flask import render_template
-# from Solver.predictor_futuro import run_machine_learning_model
+
+from flask import Flask, Response, request, render_template
 
 import Solver.db as db1
+
+# import mysql.connector
+# from Solver.predictor_futuro import run_machine_learning_model
+
 
 app = Flask(__name__, template_folder="templates")
 

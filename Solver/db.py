@@ -1,8 +1,10 @@
 import sqlite3
-from datetime import datetime
-import Solver.varios
 import os
+
 import pandas as pd
+from datetime import datetime
+
+from Solver.varios import getVariableList
 
 DBNAME = "DataModel/indicadores.db"
 
@@ -258,7 +260,7 @@ def getGruposIndicador(l_indicadorId, l_fecha = datetime.today()):
         #voy a buscar la variables que componen a un indicador
         indicador = getIndicadores(l_indicadorId)
         formula = indicador[0][2]
-        variables = Solver.varios.getVariableList(formula)
+        variables = getVariableList(formula)
         filtroIndicadores =""
         for v in variables:
             if(filtroIndicadores!=""):

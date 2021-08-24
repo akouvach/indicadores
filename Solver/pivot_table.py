@@ -1,16 +1,11 @@
 import sqlite3
+import os
 
 import pandas as pd
-import db
+#from Solver.db import ...
 
 
-cnx = sqlite3.connect("C:\\Users\\asanz\\git\\indicadores\\DataModel\\indicadores.db")
-data = pd.read_sql_query("SELECT * FROM indicadoresValores", cnx)
-data = data[data["esSimulacion"] == 0]
-data.dropna(axis=0, inplace=True)
-
-
-def create_pivot_table(data=data):
+def create_pivot_table(data):
     group_column = data["grupo"].str.split(";", expand=True)
     if group_column.shape[1] < 10:
         _rows = group_column.shape[0]
@@ -22,5 +17,12 @@ def create_pivot_table(data=data):
 
 
 if __name__ == "__main__":
-    pivot_table_test = create_pivot_table()
+    indicadores_file = "indicadores.db"
+    cnx = sqlite3.connect(os.path.abspath(indicadores_file))
+
+    data = pd.read_sql_query("SELECT * FROM indicadoresValores", cnx)
+    data = data[data["esSimulacion"] == 0]
+    data.dropna(axis=0, inplace=True)
+
+    pivot_table_test = create_pivot_table(data)
     breakpoint()

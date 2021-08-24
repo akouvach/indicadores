@@ -1,33 +1,18 @@
 import sqlite3
+import os
 
 import numpy as np
 import pandas as pd
-import db
 
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
-data = db.getAttritionData()
-
-# data = pd.read_excel("C:\\Users\\asanz\\git\\random\\data_science\\DataSetInnoLab.xlsx")
-
-# data = pd.read_sql_query("SELECT * FROM ST_d2_general_data", cnx)
+from Solver.db import getAttritionData
 
 
-# Caso Base de datos:
-# data = data[data["NumCompaniesWorked"] != "NA"]
-# data = data[data["TotalWorkingYears"] != "NA"]
-# list_borrar = [
-#     "EmployeeID", "Age", "DistanceFromHome", "Education", "JobLevel", "MonthlyIncome", "NumCompaniesWorked", "PercentSalaryHike",
-#     "StockOptionLevel", "TotalWorkingYears", "TrainingTimesLastYear", "YearsAtCompany", "YearsSinceLastPromotion", "YearsWithCurrManager"
-# ]
-# for i in list_borrar:
-#     data[i] = pd.to_numeric(data[i])
-
-
-def process_data(data=data):
+def process_data(data):
     # Eliminación de datos nulos
     data_n = data.dropna(axis=0)
 
@@ -69,7 +54,7 @@ def process_data(data=data):
     return X, y
 
 
-def split_data(data=process_data()):
+def split_data(data): # data=process_data()
     X, y = data
 
     # Se separa el conjunto de entrenamiento y de prueba
@@ -90,7 +75,7 @@ def split_data(data=process_data()):
     return X_train, X_test, y_train, y_test, employee_ids
 
 
-def run_machine_learning_model(data=split_data()):
+def run_machine_learning_model(data): # data=split_data()
     X_train, X_test, y_train, y_test, employee_ids = data
 
     # Se crea el modelo a utilizar para predecir
@@ -152,7 +137,29 @@ def run_machine_learning_model(data=split_data()):
 
 
 if __name__ == "__main__":
-    probability = run_machine_learning_model()
+    # Lectura Excel
+    employees_file = "DataSetInnoLab.xlsx"
+    data = pd.read_excel(os.path.abspath(employees_file))
+
+    # Lectura Base de Datos
+    # employees_file = "indicadores.db"
+    # cnx = sqlite3.connect(os.path.abspath(employees_file))
+
+    # data = pd.read_sql_query("SELECT * FROM ...", cnx) # Definir nombre de tabla después de que sea cargada
+    # data_numeric_cols = [
+    #     "EmployeeID", "Age", "DistanceFromHome", "Education", "JobLevel", "MonthlyIncome", "NumCompaniesWorked", "PercentSalaryHike",
+    #     "StockOptionLevel", "TotalWorkingYears", "TrainingTimesLastYear", "YearsAtCompany", "YearsSinceLastPromotion", "YearsWithCurrManager"
+    # ]
+    # for col in data_numeric_cols:
+    #     data[col] = pd.to_numeric(data[col])
+
+    # data = data[data["NumCompaniesWorked"] != "NA"]
+    # data = data[data["TotalWorkingYears"] != "NA"]
+
+    pre_process_data = process_data(data)
+    splitted_data = split_data(pre_process_data)
+
+    probability = run_machine_learning_model(splitted_data)
     result_df = pd.concat([data, probability], axis=1)
     breakpoint()
 

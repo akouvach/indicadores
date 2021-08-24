@@ -1,6 +1,6 @@
 import re
 
-def getVariableList(text,start="{",end="}"):
+def getVariableList(text, start="{",end="}"):
     try:
         elem = []
         pattern = start + "(.*?)" + end

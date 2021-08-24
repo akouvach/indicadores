@@ -1,23 +1,17 @@
 import datetime
 import sqlite3
+import os
 
 import numpy as np
 import pandas as pd
-import db
 
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 
-
-# Lectura de datos
-cnx = sqlite3.connect("C:\\Users\\asanz\\git\\indicadores\\DataModel\\indicadores.db")
-data = pd.read_sql_query("SELECT * FROM indicadoresValores", cnx)
-data = data[data["esSimulacion"] == 0]
-data.dropna(axis=0, inplace=True)
+from Solver.db import indicadoresValoresInsert, getPonderacionIndicador
 
 
-# Creación de dataframes
-def create_indicadores_dict(data=data):
+def create_indicadores_dict(data):
     data_indicadores = data[["indicadorId", "grupo"]]
     any_empty_string_mask = (data_indicadores == "").any(axis=1)
     data_indicadores = data_indicadores.loc[~any_empty_string_mask]
@@ -30,7 +24,7 @@ def create_indicadores_dict(data=data):
     return indicadores_dict
 
 
-def create_indicador_dataframe(data=data, indicadores_dict=create_indicadores_dict()):
+def create_indicador_dataframe(data, indicadores_dict): # indicadores_dict=create_indicadores_dict()
     dataframes = {}
     for key, values in indicadores_dict.items():
         for value in values:
@@ -96,7 +90,7 @@ def train_test_split(dataframe, threshold=180, split=3):
     return X_train, X_test, y_train, y_test
 
 
-def run_machine_learning_model(data=create_indicador_dataframe().items()):
+def run_machine_learning_model(data): # data=create_indicador_dataframe().items()
     for indicador, df in data:
         # Se realiza la separación de los datos en entrenamiento y testeo
         X_train, X_test, y_train, y_test = train_test_split(df)
@@ -151,12 +145,12 @@ def run_machine_learning_model(data=create_indicador_dataframe().items()):
         breakpoint() # QUITAR ESTO -----------------------------------------------------------------------------------------------------
 
         for i in range(len(y_ms_futuro_pred)):
-            valor_ponderado_futuro = db.getPonderacionIndicador( ## NO FUNCIONA ---------------------------------------------------------
+            valor_ponderado_futuro = getPonderacionIndicador( ## NO FUNCIONA ---------------------------------------------------------
                 l_indicadorId=indicador[0],
                 l_valorHasta=y_ms_futuro_pred[i]
             )
 
-            db.indicadoresValoresInsert(                         ## NO FUNCIONA ---------------------------------------------------------
+            indicadoresValoresInsert(                         ## NO FUNCIONA ---------------------------------------------------------
                 indicador[0],
                 indicador[1],
                 fecha_futuro[i],
@@ -168,5 +162,16 @@ def run_machine_learning_model(data=create_indicador_dataframe().items()):
 
 
 if __name__ == "__main__":
-    machine_learning = run_machine_learning_model()
+    # Lectura de datos
+    indicadores_file = "indicadores.db"
+    cnx = sqlite3.connect(os.path.abspath(indicadores_file))
+
+    data = pd.read_sql_query("SELECT * FROM indicadoresValores", cnx)
+    data = data[data["esSimulacion"] == 0]
+    data.dropna(axis=0, inplace=True)
+
+    ind_dict = create_indicadores_dict(data)
+    ind_df = create_indicador_dataframe(data, ind_dict)
+
+    machine_learning = run_machine_learning_model(ind_df.items())
     breakpoint()
