@@ -1,15 +1,16 @@
 from datetime import date, datetime, timedelta
 import random
 
+# from varios import getVariableList
+# import db
+
 from Solver.varios import getVariableList
-import db
+import Solver.db as db
 
 
 def calcularVariables(miFecha = datetime.today()):
     try:
-        print("----Calculando variables....")
         records = db.getVariables()
-        print("Total rows are:  ", len(records))
         for row in records:
             variableId = row[0]
             variableDescripcion = row[1]
@@ -21,6 +22,8 @@ def calcularVariables(miFecha = datetime.today()):
             stmt = formula
             rdo = db.dbEjecutar(stmt)
             
+            # //elimino el registro por si existía
+            db.variablesValoresDelete(variableId,miFecha, "")
             if agrupadopor=="":
                 #no tiene agrupamiento, se espera una sola fila y columna
                 db.variablesValoresInsert(variableId,miFecha, "", rdo[0][0], 0)
@@ -69,6 +72,7 @@ def calcularIndicador(indicador,formula,agruparpor, miFecha, aleatorio=0):
 
             rdoPonderado = db.getPonderacionIndicador(indicador,miFecha,rdoIndicador)[0][0]
             
+            db.indicadoresValoresDelete(indicador,"",miFecha)
             db.indicadoresValoresInsert(indicador,"",miFecha, rdoIndicador,0, rdoPonderado)
 
         else:
@@ -110,6 +114,7 @@ def calcularIndicador(indicador,formula,agruparpor, miFecha, aleatorio=0):
 
                 rdoPonderado = db.getPonderacionIndicador(indicador,miFecha,rdoIndicador)[0][0]
             
+                db.indicadoresValoresDelete(indicador,g[0],miFecha)
                 db.indicadoresValoresInsert(indicador,g[0],miFecha, rdoIndicador,0, rdoPonderado)
 
 
@@ -146,7 +151,7 @@ def eliminarResultados():
 def cargarDatos():
     #calcular de enero hasta hoy. dia a día
     inicio = date(2021,1,1)
-    fin    = date(2021,7,1)
+    fin    = date(2021,8,26)
 
     lista_fechas = [inicio + timedelta(days=d) for d in range((fin - inicio).days + 1)] 
 
@@ -159,8 +164,15 @@ def cargarDatos():
     # calcularValores()
 
 def calcularValores(miFecha = date.today()):
-    calcularVariables()
-    calcularIndicadores(miFecha)
+    try:
+        calcularVariables()
+        calcularIndicadores(miFecha)
+        return "OK"
+    except Exception as error:
+        print("Error calculando valores",error )
+        return "False"
 
     
+
+
 #db.dbEjecutar("select count(1) as cant from variables;")

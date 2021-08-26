@@ -1,4 +1,7 @@
+from datetime import date
+import os
 import json
+<<<<<<< HEAD
 
 import pandas as pd
 from datetime import datetime
@@ -7,9 +10,26 @@ import Solver.db as db1
 from flask import Flask, Response, request, render_template
 from Solver.predictor_futuro import create_indicador_dataframe, create_indicadores_dict
 from Solver.predictor_attrition import process_data, split_data, run_machine_learning_model
+=======
+from flask import Flask, Response, request, render_template, send_from_directory, abort, jsonify
+import Solver.db as db1
+import Solver.solver as sol
 
+# import mysql.connector
+# from Solver.predictor_futuro import run_machine_learning_model
+>>>>>>> 9cccf6f (Ejecutar solver desde la pagina)
 
 app = Flask(__name__, template_folder="templates")
+
+@app.errorhandler(404)
+def resource_not_found(e):
+    return jsonify(error=str(e)), 404
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'),
+                          'favicon.ico',mimetype='image/vnd.microsoft.icon')
+
 
 @app.route('/')
 def inicio():  
@@ -21,6 +41,7 @@ def status():
   param = request.ars.get("params1","no contiene este parametro")
   return 'El parametro es {}'.format(param)
 
+<<<<<<< HEAD
 
 @app.route('/resultados/<int:nroIndicador>/')
 @app.route('/resultados/')
@@ -35,6 +56,37 @@ def resultados(nroIndicador=0):
     mimetype='application/json',
     headers={'Content-Disposition':'attachment;filename=indicadores.json'}
   )
+=======
+@app.route('/inicializarbase')
+def inicializarbase():  
+  sol.cargarDatos()
+  return jsonify('OK')
+
+@app.route('/calcularvalores/<fecha>/',methods = ['POST'])
+@app.route('/calcularvalores/',methods = ['POST'])
+def calcularvalores(fecha=date.today()): 
+  sol.calcularValores(fecha)
+  return jsonify('OK')
+
+# @app.route('/predictorfuturo')
+# def predictorfuturo():  
+#   rdo = run_machine_learning_model()
+#   return 'El rdo es {}'.format(rdo)
+
+@app.route('/resultados/<int:nroIndicador>/')
+@app.route('/resultados/')
+def resultados(nroIndicador=0):  
+  content=""
+  cursor = db1.getResultados(nroIndicador)
+  if (cursor is None):
+    abort(404, description="Resource not found")
+  else:
+    json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+    content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
+  return Response(content, 
+            mimetype='application/json',
+            headers={'Content-Disposition':'attachment;filename=indicadores.json'})
+>>>>>>> 9cccf6f (Ejecutar solver desde la pagina)
 
 
 @app.route('/resultados_pivot/<int:nroIndicador>/')
@@ -63,8 +115,11 @@ def getTablas():
 
 @app.route('/sources/<nombre>/')
 def getSources(nombre=''): 
-  misTablas = db1.getMisTablas()
+  print("encontrando a ",nombre)
+  misTablas = db1.getMisTablas(nombre)
+  print("misTablas:",misTablas,len(misTablas))
   encontrado=False
+<<<<<<< HEAD
   for n in misTablas:
     if nombre == n[0]:
       encontrado=True
@@ -74,8 +129,23 @@ def getSources(nombre=''):
     cursor = db1.getTabla(nombre)
     json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
     content = "{\"data\":" + json_object + "}"
+=======
+  content = ""
+  if(len(misTablas)>0):
+    encontrado = True
+    
+  print("encontrado",encontrado)
+
+  if encontrado:
+    cursor = db1.getTabla(nombre)
+    print("cantidad de registros recuperados:",len(cursor))
+    # content = "{" + '"' + "data" + '"' + ":" + json.dumps(cursor) + "}"
+    json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+    content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
+    print(content)
+>>>>>>> 9cccf6f (Ejecutar solver desde la pagina)
   else:
-    content = "Tabla no encontrada"
+    content = "{" + '"' + "data" + '"' + ":'" + "Tabla no encontrada" + "'}"
   
   return Response(content, mimetype='application/json')
 

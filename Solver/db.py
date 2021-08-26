@@ -5,6 +5,7 @@ import pandas as pd
 from datetime import datetime
 
 from Solver.varios import getVariableList
+# from varios import getVariableList
 
 DBNAME = "DataModel/indicadores.db"
 
@@ -136,18 +137,35 @@ def getResultados_pivot(l_indicador=0):
     except Exception as error:
         print("Error al recuperar los resultados de los indicadores_pivot..",error)
 
-def getMisTablas():
+def getMisTablas(tabla=""):
     try:
-        stmt = "select * from mistablas order by tabla;"
-        records = dbEjecutar(stmt)
-        return records
+        stmt =""
+        if (tabla==""):
+            stmt = """select name as tabla from sqlite_master 
+                    where type in ('table','view') 
+                    and name not in ('indicadores','variables','misTablas')
+                    order by 1;"""
+            records = dbEjecutar(stmt)
+            return records
+        else:
+            stmt = """select name as tabla from sqlite_master 
+                    where type in ('table','view') 
+                    and tbl_name = ?"""
+            data_tuples=(tabla,)
+            records = dbEjecutar(stmt,data_tuples)
+            # breakpoint()
+            return records
 
     except Exception as error:
         print("Error al recuperar las tablas existentes",error)
 
 def getTabla(nombre):
     try:
+<<<<<<< HEAD
         stmt = "select * from " + nombre + ";"# + " limit 100;"
+=======
+        stmt = "select * from " + nombre + " ;"
+>>>>>>> 9cccf6f (Ejecutar solver desde la pagina)
         records = dbEjecutar(stmt)
         return records
 
@@ -192,6 +210,30 @@ def variablesValoresInsert(l_variableId,l_fecha=datetime.today(), l_grupo = '', 
         if dbConn:
             closeDb(dbConn)
             #print("The SQLite connection is closed")
+
+def variablesValoresDelete(l_variableId,l_fecha, l_grupo ):
+    try:
+        # print("inserting in valoresVariables...")
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+
+        sqlite_delete_query = """delete from variablesValores
+                            where variableId = ? and fecha = ? and grupo =?;"""
+        data_tuple = (l_variableId, l_fecha, l_grupo)
+        count = cursor.execute(sqlite_delete_query,data_tuple )
+        dbConn.commit()
+
+        # print("Insert Total rows are:  ", count)
+        cursor.close()
+        
+    except sqlite3.Error as error:
+        print("Error while deleting  variablesValores", error)
+        
+    finally:
+        if dbConn:
+            closeDb(dbConn)
+            #print("The SQLite connection is closed")
+
 
 
 def attritionDataInsert(data, fecha=datetime.today().strftime('%Y-%m-%d')):
@@ -240,7 +282,27 @@ def indicadoresValoresInsert(l_indicadorId,l_grupo="", l_fecha=datetime.today(),
             #print("The SQLite connection is closed")
 
 
+def indicadoresValoresDelete(l_indicadorId,l_grupo, l_fecha):
+    try:
+        #print("eliminando calculo d e indicador IndicadoresVariables...\n")
+        dbConn = openDb()
+        cursor = dbConn.cursor()
 
+        sqlite_delete_query = """delete from indicadoresValores where
+                            indicadorId = ? and grupo = ? and fecha = ?;"""
+        data_tuple = (l_indicadorId, l_grupo,l_fecha)
+        count = cursor.execute(sqlite_delete_query,data_tuple )
+        dbConn.commit()
+
+        cursor.close()
+        
+    except sqlite3.Error as error:
+        print("Error while deleting from  indicadoresValores", error)
+        raise Exception("error al eliminar IndicadoresValores")
+    finally:
+        if dbConn:
+            closeDb(dbConn)
+            #print("The SQLite connection is closed")
 
 
 def getValorIndicador(l_indicadorId, l_fecha = datetime.today(),l_essimulacion=0):
@@ -254,7 +316,6 @@ def getValorIndicador(l_indicadorId, l_fecha = datetime.today(),l_essimulacion=0
             on (vv.fecha = ult.maxFecha)"""
         data_tuple = (l_indicadorId, l_indicadorId, l_fecha.strftime("%Y-%m-%d %H:%M:%S.%f"))
         rdo = dbEjecutar(stmt, data_tuple)
-        #print("resultado:",rdo)
         if not rdo:
             return -1
         else:
@@ -275,7 +336,8 @@ def getPonderacionIndicador(l_indicadorId, l_fecha = datetime.today(), l_valorHa
             where valorHasta > ?
             order by valorHasta asc
             limit 1"""
-        data_tuple = (l_indicadorId, l_indicadorId, l_fecha.strftime("%Y-%m-%d %H:%M:%S.%f"), l_valorHasta)
+        # data_tuple = (l_indicadorId, l_indicadorId, l_fecha.strftime("%Y-%m-%d"), l_valorHasta)
+        data_tuple = (l_indicadorId, l_indicadorId, l_fecha, l_valorHasta)
         rdo = dbEjecutar(stmt, data_tuple)
         #print("resultado ponderaciones:",rdo)
         if not rdo:
