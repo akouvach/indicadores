@@ -66,14 +66,23 @@ def dbEjecutar(stmt, data_tuple=()):
 
 
 def getAttritionData():
+    try:
+        cnx = openDb()
+        rdo = pd.read_sql_query("Select * from ST_d3_data_set", cnx)
+        return rdo
+    except Exception as error:
+        print("Error obteniendo el valor de datos de attition...",error)
+
+
+def getIndicadoresValoresData():
 
     try:
         cnx = openDb()
         # rdo = pd.read_sql_query("Select * from ST_d2_general_data", cnx)
-        rdo = pd.read_sql_query("Select * from ST_d1_WA_Fn_UseC_HR_Employee_Attrition", cnx)
+        rdo = pd.read_sql_query("Select * from indicadoresValores", cnx)
         return rdo
     except Exception as error:
-        print("Error obteniendo el valor de datos de attition...",error)
+        print("Error obteniendo el valor de datos de indicadoresValores...",error)
 
 
 def getDbVersion():
@@ -118,9 +127,9 @@ def getResultados_pivot(l_indicador=0):
     try:
         stmt = ""
         if(l_indicador==0):
-            stmt = "select * from IndicadoresValores_pivot;"
+            stmt = "select * from indicadoresValoresPivot;"
         else:
-            stmt = "select * from IndicadoresValores_pivot where indicadorId = " + str(l_indicador) + ";"
+            stmt = "select * from indicadoresValoresPivot where indicadorId = " + str(l_indicador) + ";"
         records = dbEjecutar(stmt)
         return records
 
@@ -138,7 +147,7 @@ def getMisTablas():
 
 def getTabla(nombre):
     try:
-        stmt = "select * from " + nombre + " limit 100;"
+        stmt = "select * from " + nombre + ";"# + " limit 100;"
         records = dbEjecutar(stmt)
         return records
 
@@ -183,6 +192,27 @@ def variablesValoresInsert(l_variableId,l_fecha=datetime.today(), l_grupo = '', 
         if dbConn:
             closeDb(dbConn)
             #print("The SQLite connection is closed")
+
+
+def attritionDataInsert(data, fecha=datetime.today().strftime('%Y-%m-%d')):
+    try:
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+
+        for row in data.iterrows():
+            sqlite_insert_query = """INSERT INTO employeeAttrition
+                (employee_id, date, attrition_value)
+                VALUES (?,?,?);"""
+            data_tuple = (row[1]["EmployeeNumber"], fecha, row[1]["probability"])
+            count = cursor.execute(sqlite_insert_query, data_tuple)
+
+        dbConn.commit()
+        cursor.close()
+    except sqlite3.Error as error:
+        print("Error while inserting to employeeAttrition table", error)        
+    finally:
+        if dbConn:
+            closeDb(dbConn)
 
 
 def indicadoresValoresInsert(l_indicadorId,l_grupo="", l_fecha=datetime.today(), l_valor=-1, l_essimulacion=0, l_valorPonderado = -1):

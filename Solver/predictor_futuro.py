@@ -162,7 +162,6 @@ def run_machine_learning_model(data): # data=create_indicador_dataframe().items(
 
 
 if __name__ == "__main__":
-    # Lectura de datos
     indicadores_file = "indicadores.db"
     cnx = sqlite3.connect(os.path.abspath(indicadores_file))
 

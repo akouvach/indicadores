@@ -9,8 +9,6 @@ from sklearn.metrics import roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 
-from Solver.db import getAttritionData
-
 
 def process_data(data):
     # Eliminación de datos nulos
@@ -31,7 +29,7 @@ def process_data(data):
     y = data_n["Attrition"]
 
     # Se vectorizan las variables categóricas
-    categorical_cols = [x for x in data_n.columns if data_n[x].dtypes == "O"]           # DEFINIR EL TIPO DE OBJETO DE LAS TABLAS -------------------------------
+    categorical_cols = [x for x in data_n.columns if data_n[x].dtypes == "O"]
     oh_encoder = OneHotEncoder(handle_unknown='ignore', sparse=False)
 
     oh_cols = pd.DataFrame(oh_encoder.fit_transform(X[categorical_cols]))
@@ -98,7 +96,7 @@ def run_machine_learning_model(data): # data=split_data()
 
     roc_test = roc_auc_score(y_test, y_test_pred)
     roc_train = roc_auc_score(y_train, y_train_pred)
-    # Agún tipo de evaluación que ayude a evaluar la capacidad del modelo
+    # Algún tipo de evaluación que ayude a evaluar la capacidad del modelo
     # if ... bla bla bla
 
     # Importancia de cada característica para el modelo
@@ -137,33 +135,11 @@ def run_machine_learning_model(data): # data=split_data()
 
 
 if __name__ == "__main__":
-    # Lectura Excel
     employees_file = "DataSetInnoLab.xlsx"
     data = pd.read_excel(os.path.abspath(employees_file))
-
-    # Lectura Base de Datos
-    # employees_file = "indicadores.db"
-    # cnx = sqlite3.connect(os.path.abspath(employees_file))
-
-    # data = pd.read_sql_query("SELECT * FROM ...", cnx) # Definir nombre de tabla después de que sea cargada
-    # data_numeric_cols = [
-    #     "EmployeeID", "Age", "DistanceFromHome", "Education", "JobLevel", "MonthlyIncome", "NumCompaniesWorked", "PercentSalaryHike",
-    #     "StockOptionLevel", "TotalWorkingYears", "TrainingTimesLastYear", "YearsAtCompany", "YearsSinceLastPromotion", "YearsWithCurrManager"
-    # ]
-    # for col in data_numeric_cols:
-    #     data[col] = pd.to_numeric(data[col])
-
-    # data = data[data["NumCompaniesWorked"] != "NA"]
-    # data = data[data["TotalWorkingYears"] != "NA"]
 
     pre_process_data = process_data(data)
     splitted_data = split_data(pre_process_data)
 
     probability = run_machine_learning_model(splitted_data)
-    result_df = pd.concat([data, probability], axis=1)
     breakpoint()
-
-    # result_df.to_excel("output.xlsx")
-    # test = result_df[["Attrition", "probability"]]
-    # ((test["probability"] >= 50) == (test["Attrition"] == "Yes")).sum()
-    # len((test["probability"] >= 50) == (test["Attrition"] == "Yes"))

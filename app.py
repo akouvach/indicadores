@@ -1,11 +1,12 @@
 import json
 
-from flask import Flask, Response, request, render_template
+import pandas as pd
+from datetime import datetime
 
 import Solver.db as db1
-
-# import mysql.connector
-# from Solver.predictor_futuro import run_machine_learning_model
+from flask import Flask, Response, request, render_template
+from Solver.predictor_futuro import create_indicador_dataframe, create_indicadores_dict
+from Solver.predictor_attrition import process_data, split_data, run_machine_learning_model
 
 
 app = Flask(__name__, template_folder="templates")
@@ -20,47 +21,44 @@ def status():
   param = request.ars.get("params1","no contiene este parametro")
   return 'El parametro es {}'.format(param)
 
-# @app.route('/predictorfuturo')
-# def predictorfuturo():  
-#   rdo = run_machine_learning_model()
-#   return 'El rdo es {}'.format(rdo)
 
 @app.route('/resultados/<int:nroIndicador>/')
 @app.route('/resultados/')
-def resultados(nroIndicador=0):  
-  print("el indicador es:", nroIndicador)
+def resultados(nroIndicador=0):
   cursor = db1.getResultados(nroIndicador)
-  # content = "{" + '"' + "data" + '"' + ":" + json.dumps(cursor) + "}"
   json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
-  content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
-  # content =  json_object 
-  # print(json_object)
-  # json_object = "{" + '"' + "data" + '"' + ":" + json.loads([dict(ix) for ix in cursor])+ "}"
+  content = "{\"data\":" + json_object + "}"
 
-  # return content
-
-  return Response(content, 
-            mimetype='application/json',
-            headers={'Content-Disposition':'attachment;filename=indicadores.json'})
+  print("El indicador es:", nroIndicador)
+  return Response(
+    content, 
+    mimetype='application/json',
+    headers={'Content-Disposition':'attachment;filename=indicadores.json'}
+  )
 
 
 @app.route('/resultados_pivot/<int:nroIndicador>/')
 @app.route('/resultados_pivot/')
-def resultados_pivot(nroIndicador=0):  
-  print("el indicador es:", nroIndicador)
+def resultados_pivot(nroIndicador=0):
   cursor = db1.getResultados_pivot(nroIndicador)
-  # content = "{" + '"' + "data" + '"' + ":" + json.dumps(cursor) + "}"
   json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
-  content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
-  # content =  json_object 
-  # print(json_object)
-  # json_object = "{" + '"' + "data" + '"' + ":" + json.loads([dict(ix) for ix in cursor])+ "}"
+  content = "{\"data\":" + json_object + "}"
 
-  # return content
+  print("El indicador es:", nroIndicador)
+  return Response(
+    content, 
+    mimetype='application/json',
+    headers={'Content-Disposition':'attachment;filename=indicadores.json'}
+  )
 
-  return Response(content, 
-            mimetype='application/json',
-            headers={'Content-Disposition':'attachment;filename=indicadores.json'})
+
+@app.route('/sources')
+def getTablas(): 
+  cursor = db1.getMisTablas()
+  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+  content = "{\"data\":" + json_object + "}"
+
+  return Response(content, mimetype='application/json')
 
 
 @app.route('/sources/<nombre>/')
@@ -71,27 +69,51 @@ def getSources(nombre=''):
     if nombre == n[0]:
       encontrado=True
       break
-  print("encontrado",encontrado)
 
   if encontrado:
     cursor = db1.getTabla(nombre)
-    # content = "{" + '"' + "data" + '"' + ":" + json.dumps(cursor) + "}"
     json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
-    content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
+    content = "{\"data\":" + json_object + "}"
   else:
     content = "Tabla no encontrada"
   
   return Response(content, mimetype='application/json')
 
-@app.route('/sources')
-def getTablas(): 
-  cursor = db1.getMisTablas()
+
+@app.route('/attrition')
+def getPrediccionAttrition():
+  cursor = db1.getAttritionData()
+  pre_process_data = process_data(cursor)
+  splitted_data = split_data(pre_process_data)
+  probability = run_machine_learning_model(splitted_data)
+  result_df = pd.concat([cursor, probability], axis=1)
+
+  db1.attritionDataInsert(result_df)
+  json_df = result_df[["EmployeeNumber", "probability"]].copy()
+  json_df.rename(columns={"EmployeeNumber": "employee_id", "probability": "attrition_value"}, inplace=True)
+  json_df["date"] = [datetime.today().strftime('%Y-%m-%d')]*json_df.shape[0]
+  json_object = json_df.to_json(orient="records", indent=2)
+  content = "{\"data\":" + json_object + "}"
+
+  return Response(
+    content, 
+    mimetype='application/json',
+    headers={'Content-Disposition':'attachment;filename=employee_attrition_values.json'}
+  )
+
+
+@app.route('/kpi-prediction')
+def getPrediccionFutura():
+  cursor = db1.getIndicadoresValoresData()
+  ind_dict = create_indicadores_dict(cursor)
+  ind_df = create_indicador_dataframe(ind_dict)
+
+  machine_learning = run_machine_learning_model(ind_df.items())
+  print(machine_learning)
   json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
-  content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
+  content = "{\"data\":" + json_object + "}"
 
   return Response(content, mimetype='application/json')
-
-
 
 
 # @app.route('/widgets')
@@ -147,16 +169,3 @@ def getTablas():
 
 if __name__ == "__main__":
   app.run(host ='0.0.0.0')
-
-
-
-# app = Flask(__name__)
-
-# @app.route('/')
-# def index():
-#     return '<h1>Hello man</h1>'
-
-
-# @app.route('/<name>')
-# def name(name):
-#     return '<h1>Hello {}</h1>'.format(name)
