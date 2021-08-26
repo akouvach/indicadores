@@ -161,11 +161,7 @@ def getMisTablas(tabla=""):
 
 def getTabla(nombre):
     try:
-<<<<<<< HEAD
-        stmt = "select * from " + nombre + ";"# + " limit 100;"
-=======
         stmt = "select * from " + nombre + " ;"
->>>>>>> 9cccf6f (Ejecutar solver desde la pagina)
         records = dbEjecutar(stmt)
         return records
 

@@ -1,23 +1,20 @@
 from datetime import date
 import os
 import json
-<<<<<<< HEAD
 
 import pandas as pd
 from datetime import datetime
 
-import Solver.db as db1
-from flask import Flask, Response, request, render_template
+from flask import Flask, Response, request, render_template, send_from_directory, abort, jsonify
+
 from Solver.predictor_futuro import create_indicador_dataframe, create_indicadores_dict
 from Solver.predictor_attrition import process_data, split_data, run_machine_learning_model
-=======
-from flask import Flask, Response, request, render_template, send_from_directory, abort, jsonify
+
 import Solver.db as db1
 import Solver.solver as sol
 
 # import mysql.connector
 # from Solver.predictor_futuro import run_machine_learning_model
->>>>>>> 9cccf6f (Ejecutar solver desde la pagina)
 
 app = Flask(__name__, template_folder="templates")
 
@@ -41,22 +38,7 @@ def status():
   param = request.ars.get("params1","no contiene este parametro")
   return 'El parametro es {}'.format(param)
 
-<<<<<<< HEAD
 
-@app.route('/resultados/<int:nroIndicador>/')
-@app.route('/resultados/')
-def resultados(nroIndicador=0):
-  cursor = db1.getResultados(nroIndicador)
-  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
-  content = "{\"data\":" + json_object + "}"
-
-  print("El indicador es:", nroIndicador)
-  return Response(
-    content, 
-    mimetype='application/json',
-    headers={'Content-Disposition':'attachment;filename=indicadores.json'}
-  )
-=======
 @app.route('/inicializarbase')
 def inicializarbase():  
   sol.cargarDatos()
@@ -86,7 +68,6 @@ def resultados(nroIndicador=0):
   return Response(content, 
             mimetype='application/json',
             headers={'Content-Disposition':'attachment;filename=indicadores.json'})
->>>>>>> 9cccf6f (Ejecutar solver desde la pagina)
 
 
 @app.route('/resultados_pivot/<int:nroIndicador>/')
@@ -119,17 +100,6 @@ def getSources(nombre=''):
   misTablas = db1.getMisTablas(nombre)
   print("misTablas:",misTablas,len(misTablas))
   encontrado=False
-<<<<<<< HEAD
-  for n in misTablas:
-    if nombre == n[0]:
-      encontrado=True
-      break
-
-  if encontrado:
-    cursor = db1.getTabla(nombre)
-    json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
-    content = "{\"data\":" + json_object + "}"
-=======
   content = ""
   if(len(misTablas)>0):
     encontrado = True
@@ -142,8 +112,6 @@ def getSources(nombre=''):
     # content = "{" + '"' + "data" + '"' + ":" + json.dumps(cursor) + "}"
     json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
     content = "{" + '"' + "data" + '"' + ":" + json_object + "}"
-    print(content)
->>>>>>> 9cccf6f (Ejecutar solver desde la pagina)
   else:
     content = "{" + '"' + "data" + '"' + ":'" + "Tabla no encontrada" + "'}"
   
