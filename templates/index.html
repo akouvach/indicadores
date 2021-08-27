@@ -1,44 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power my KPI</title>    
-    <link rel="stylesheet" href="{{ url_for('static',filename='css/w3.css') }}">
-</head>
-<body onload="inicializar();">
-    
-    <div class="w3-container">
-        <h1>Power my KPI</h1>
-            <table class='w3-table'>
-                <tr>
-                    <td><label for="misSources">Sources</label></td>
-                </tr>
-                <tr>
-                    <td><div id="sources"></div></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><hr size=1 color=grey></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><div id="resultados"></div></td>
-                </tr>
-                
-            </table>
-            
+{% extends 'base/base.html' %}
 
-            <hr size=5 color=darkblue>
-            <p>
-                /resultados (trae todo)
-                <br>/resultados/1 (trae el los resultados del indicador 1)
-                <br>/resultados_pivot (trae los datos de pivot)
-                <br>/resultados_pivot/1 (trae los datos de pivot del indicador 1)
-            </p>
+{% block content %}
+<table class='w3-table'>
+    <tr>
+        <td>
+            <input type='date' id='fecha' name='fecha'>
+            <button onclick="calcularIndicadores();">Calcular indicadores</button>
+        </td>
+        <td><button>Calcular attrition</button></td>
+        <td><button>Estimar indicadores futuros</button></td>
+    </tr>    
+    <tr>
+        <td><label for="sources">Sources</label></td>
+        <td><label for="indicadores">Indicadores</label></td>
+        <td><label for="variables">Variables</label></td>
+    </tr>
+    <tr>
+        <td><div id="sources"></div></td>
+        <td><div id="indicadores"></div></td>
+        <td><div id="variables"></div></td>
+    </tr>
+    <tr>
+        <td colspan="3"><hr size=1 color=grey></td>
+    </tr>
+    <tr>
+        <td colspan="3"><div id="resultados"></div></td>
+    </tr>
 
+</table>
 
-      </div>
+<script src="{{ url_for('static',filename='js/mijs.js') }}"></script>
+<script type="text/javascript">
+inicializar();
+</script>
+{% endblock %}            
 
-      <script src="{{ url_for('static',filename='js/mijs.js') }}"></script>
-</body>
-</html>

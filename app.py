@@ -1,15 +1,19 @@
+import os
 import json
 
 import pandas as pd
-from datetime import datetime
+from datetime import date, datetime
 
-import Solver.db as db1
-from flask import Flask, Response, request, render_template
+from flask import Flask, Response, request, render_template, send_from_directory, abort, jsonify
+
+import Solver.db as db
+import Solver.solver as solver
 from Solver.predictor_futuro import create_indicador_dataframe, create_indicadores_dict
 from Solver.predictor_attrition import process_data, split_data, run_machine_learning_model
 
 
 app = Flask(__name__, template_folder="templates")
+
 
 @app.route('/')
 def inicio():  
@@ -18,18 +22,46 @@ def inicio():
 
 @app.route('/status')
 def status():  
-  param = request.ars.get("params1","no contiene este parametro")
+  param = request.ars.get("params1", "No contiene este parámetro")
   return 'El parametro es {}'.format(param)
+
+
+@app.errorhandler(404)
+def resource_not_found(e):
+    return jsonify(error=str(e)), 404
+
+
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(
+      os.path.join(app.root_path, 'static'), 'favicon.ico', mimetype='image/vnd.microsoft.icon'
+    )
+
+
+@app.route('/inicializarbase')
+def inicializarbase():  
+  solver.cargarDatos()
+  return jsonify('OK')
+
+
+@app.route('/calcularvalores/<fecha>/', methods=['POST'])
+@app.route('/calcularvalores/', methods=['POST'])
+def calcularvalores(fecha=date.today()): 
+  solver.calcularValores(fecha)
+  return jsonify('OK')
 
 
 @app.route('/resultados/<int:nroIndicador>/')
 @app.route('/resultados/')
-def resultados(nroIndicador=0):
-  cursor = db1.getResultados(nroIndicador)
-  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
-  content = "{\"data\":" + json_object + "}"
+def resultados(nroIndicador=0):  
+  content = ""
+  cursor = db.getResultados(nroIndicador)
+  if (cursor is None):
+    abort(404, description="Resource not found")
+  else:
+    json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+    content = "{\"data\":" + json_object + "}"
 
-  print("El indicador es:", nroIndicador)
   return Response(
     content, 
     mimetype='application/json',
@@ -40,11 +72,11 @@ def resultados(nroIndicador=0):
 @app.route('/resultados_pivot/<int:nroIndicador>/')
 @app.route('/resultados_pivot/')
 def resultados_pivot(nroIndicador=0):
-  cursor = db1.getIndicadoresValoresPivotData(nroIndicador)
+  cursor = db.getIndicadoresValoresPivotData(nroIndicador)
   json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
   content = "{\"data\":" + json_object + "}"
+  print("--El indicador es: ", nroIndicador)
 
-  print("El indicador es:", nroIndicador)
   return Response(
     content, 
     mimetype='application/json',
@@ -54,7 +86,7 @@ def resultados_pivot(nroIndicador=0):
 
 @app.route('/sources')
 def getTablas():
-  cursor = db1.getTablas()
+  cursor = db.getMisTablas()
   json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
   content = "{\"data\":" + json_object + "}"
 
@@ -62,33 +94,32 @@ def getTablas():
 
 
 @app.route('/sources/<nombre>/')
-def getSources(nombre=''): 
-  misTablas = db1.getTablas()
-  encontrado=False
-  for n in misTablas:
-    if nombre == n[0]:
-      encontrado=True
-      break
+def getSources(nombre=""):
+  content = ""
+  print("--Buscando a: ", nombre)
+  misTablas = db.getMisTablas(nombre)
+  print("--misTablas: ", misTablas, len(misTablas))
 
-  if encontrado:
-    cursor = db1.getTabla(nombre)
+  if len(misTablas) > 0:
+    cursor = db.getTabla(nombre)
+    print("--Cantidad de registros recuperados: ", len(cursor))
     json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
     content = "{\"data\":" + json_object + "}"
   else:
-    content = "Tabla no encontrada"
+    content = "{\"data\": 'Tabla no encontrada'}"
   
   return Response(content, mimetype='application/json')
 
 
 @app.route('/attrition')
 def getPrediccionAttrition():
-  cursor = db1.getAttritionData()
+  cursor = db.getAttritionData()
   pre_process_data = process_data(cursor)
   splitted_data = split_data(pre_process_data)
   probability = run_machine_learning_model(splitted_data)
   result_df = pd.concat([cursor, probability], axis=1)
 
-  db1.insertAttritionData(result_df)
+  db.insertAttritionData(result_df)
   json_df = result_df[["EmployeeNumber", "probability"]].copy()
   json_df.rename(columns={"EmployeeNumber": "employee_id", "probability": "attrition_value"}, inplace=True)
   json_df["date"] = [datetime.today().strftime('%Y-%m-%d')]*json_df.shape[0]
@@ -104,7 +135,7 @@ def getPrediccionAttrition():
 
 @app.route('/kpi-prediction')
 def getPrediccionFutura():
-  cursor = db1.getIndicadoresValoresData()
+  cursor = db.getIndicadoresValoresData()
   ind_dict = create_indicadores_dict(cursor)
   ind_df = create_indicador_dataframe(ind_dict)
 

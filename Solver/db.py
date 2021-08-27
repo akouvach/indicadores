@@ -92,14 +92,25 @@ def getTabla(nombre):
         print("--Error while getTabla {}".format(nombre), error)
 
 
-def getTablas():
+def getMisTablas(tabla=None):
     try:
-        stmt = "Select * from mistablas order by tabla;"
-        records = dbEjecutar(stmt)
-        return records
+        if not tabla:
+            stmt = """Select name as tabla from sqlite_master 
+                where type in ('table','view') 
+                and name not in ('indicadores','variables','misTablas')
+                order by 1;"""
+            records = dbEjecutar(stmt)
+            return records
+        else:
+            stmt = """select name as tabla from sqlite_master 
+                where type in ('table','view') 
+                and tbl_name = ?"""
+            data_tuples = (tabla,)
+            records = dbEjecutar(stmt,data_tuples)
+            return records
 
     except Exception as error:
-        print("--Error while getTablas", error)
+        print("--Error while getMisTablas", error)
 
 
 def getVariablesData():
@@ -147,6 +158,20 @@ def getIndicadoresValoresData(indicador=0):
 
     except Exception as error:
         print("--Error while getIndicadoresValoresData", error)
+### Juntarla con getIndicadoresValoresData
+def getResultados(l_indicador=0):
+    try:
+        stmt = ""
+        if(l_indicador==0):
+            stmt = "select * from IndicadoresValores;"
+        else:
+            stmt = "select * from IndicadoresValores where indicadorId = " + str(l_indicador) + ";"
+        records = dbEjecutar(stmt)
+        return records
+
+    except Exception as error:
+        print("Error al recuperar los resultados de los indicadores..",error)
+###
 
 
 def getIndicadoresValoresPivotData(indicador=0):
@@ -163,34 +188,58 @@ def getIndicadoresValoresPivotData(indicador=0):
         print("--Error while getIndicadoresValoresPivotData", error)
 
 
-def deleteIndicadoresValoresData():
+def deleteResultadosData():
     try:
         records = dbEjecutar("Delete from variablesValores;")
         records = dbEjecutar("Delete from indicadoresValores;")
         return records
 
     except Exception as error:
-        print("--Error while deleteIndicadoresValoresData", error)
+        print("--Error while deleteResultadosData", error)
 
 
-### Juntarla con getIndicadoresValoresData
-
-
-def getResultados(l_indicador=0):
+def deleteVariablesValoresData(l_variableId, l_fecha, l_grupo):
     try:
-        stmt = ""
-        if(l_indicador==0):
-            stmt = "select * from IndicadoresValores;"
-        else:
-            stmt = "select * from IndicadoresValores where indicadorId = " + str(l_indicador) + ";"
-        records = dbEjecutar(stmt)
-        return records
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+
+        sqlite_delete_query = """Delete from variablesValores
+            where variableId = ? and fecha = ? and grupo =?;"""
+
+        data_tuple = (l_variableId, l_fecha, l_grupo)
+        count = cursor.execute(sqlite_delete_query, data_tuple)
+        dbConn.commit()
+        cursor.close()
 
     except Exception as error:
-        print("Error al recuperar los resultados de los indicadores..",error)
+        print("--Error while deleteVariablesValoresData", error)
+        raise Exception("Error al eliminar VariablesValores")
+
+    finally:
+        if dbConn:
+            closeDb(dbConn)
 
 
-###
+def deleteIndicadoresValoresData(l_indicadorId, l_grupo, l_fecha):
+    try:
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+
+        sqlite_delete_query = """Delete from indicadoresValores where
+            indicadorId = ? and grupo = ? and fecha = ?;"""
+
+        data_tuple = (l_indicadorId, l_grupo, l_fecha)
+        count = cursor.execute(sqlite_delete_query, data_tuple)
+        dbConn.commit()
+        cursor.close()
+
+    except Exception as error:
+        print("--Error while deleteIndicadoresValoresData", error)
+        raise Exception("Error al eliminar IndicadoresValores")
+
+    finally:
+        if dbConn:
+            closeDb(dbConn)
 
 
 def insertVariablesValoresData(l_variableId, l_grupo="", l_fecha=datetime.today(), l_valor=-1, l_essimulacion=0):
@@ -277,7 +326,6 @@ def getValorIndicador(l_indicadorId, l_fecha = datetime.today(),l_essimulacion=0
             on (vv.fecha = ult.maxFecha)"""
         data_tuple = (l_indicadorId, l_indicadorId, l_fecha.strftime("%Y-%m-%d %H:%M:%S.%f"))
         rdo = dbEjecutar(stmt, data_tuple)
-        #print("resultado:",rdo)
         if not rdo:
             return -1
         else:
@@ -298,7 +346,8 @@ def getPonderacionIndicador(l_indicadorId, l_fecha = datetime.today(), l_valorHa
             where valorHasta > ?
             order by valorHasta asc
             limit 1"""
-        data_tuple = (l_indicadorId, l_indicadorId, l_fecha.strftime("%Y-%m-%d %H:%M:%S.%f"), l_valorHasta)
+        # data_tuple = (l_indicadorId, l_indicadorId, l_fecha.strftime("%Y-%m-%d"), l_valorHasta)
+        data_tuple = (l_indicadorId, l_indicadorId, l_fecha, l_valorHasta)
         rdo = dbEjecutar(stmt, data_tuple)
         #print("resultado ponderaciones:",rdo)
         if not rdo:
