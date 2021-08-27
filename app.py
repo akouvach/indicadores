@@ -40,7 +40,7 @@ def resultados(nroIndicador=0):
 @app.route('/resultados_pivot/<int:nroIndicador>/')
 @app.route('/resultados_pivot/')
 def resultados_pivot(nroIndicador=0):
-  cursor = db1.getResultados_pivot(nroIndicador)
+  cursor = db1.getIndicadoresValoresPivotData(nroIndicador)
   json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
   content = "{\"data\":" + json_object + "}"
 
@@ -53,8 +53,8 @@ def resultados_pivot(nroIndicador=0):
 
 
 @app.route('/sources')
-def getTablas(): 
-  cursor = db1.getMisTablas()
+def getTablas():
+  cursor = db1.getTablas()
   json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
   content = "{\"data\":" + json_object + "}"
 
@@ -63,7 +63,7 @@ def getTablas():
 
 @app.route('/sources/<nombre>/')
 def getSources(nombre=''): 
-  misTablas = db1.getMisTablas()
+  misTablas = db1.getTablas()
   encontrado=False
   for n in misTablas:
     if nombre == n[0]:
@@ -88,7 +88,7 @@ def getPrediccionAttrition():
   probability = run_machine_learning_model(splitted_data)
   result_df = pd.concat([cursor, probability], axis=1)
 
-  db1.attritionDataInsert(result_df)
+  db1.insertAttritionData(result_df)
   json_df = result_df[["EmployeeNumber", "probability"]].copy()
   json_df.rename(columns={"EmployeeNumber": "employee_id", "probability": "attrition_value"}, inplace=True)
   json_df["date"] = [datetime.today().strftime('%Y-%m-%d')]*json_df.shape[0]

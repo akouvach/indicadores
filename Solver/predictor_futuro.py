@@ -8,7 +8,7 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 
-from Solver.db import indicadoresValoresInsert, getPonderacionIndicador
+from Solver.db import insertIndicadoresValoresData, getPonderacionIndicador
 
 
 def create_indicadores_dict(data):
@@ -150,7 +150,7 @@ def run_machine_learning_model(data): # data=create_indicador_dataframe().items(
                 l_valorHasta=y_ms_futuro_pred[i]
             )
 
-            indicadoresValoresInsert(                         ## NO FUNCIONA ---------------------------------------------------------
+            insertIndicadoresValoresData(                         ## NO FUNCIONA ---------------------------------------------------------
                 indicador[0],
                 indicador[1],
                 fecha_futuro[i],

@@ -6,7 +6,9 @@ from datetime import datetime
 
 from Solver.varios import getVariableList
 
+
 DBNAME = "DataModel/indicadores.db"
+
 
 def openDb():
     try:
@@ -14,35 +16,49 @@ def openDb():
         sqliteConnection.row_factory = sqlite3.Row
         return sqliteConnection
 
-    except sqlite3.Error as error:
-        print("Error while connecting to sqlite", error)
-        raise Exception("error en la conexión de la base de datos")
+    except Exception as error:
+        print("--Error while openDb", error)
+        raise Exception("Error en la conexión de la base de datos")
+
 
 def closeDb(conn):
     try:
         conn.close()
         return True
-        
-    except sqlite3.Error as error:
-        print("Error while closing", error)
-        raise Exception("error en el cierre de la base de datos")
+
+    except Exception as error:
+        print("--Error while closeDb", error)
+        raise Exception("Error en el cierre de la base de datos")
 
 
-def crearYcargarDb():
+def createDb():
     try:
-        print("----------creando y cargando datos en bd...----------")
+        print("--Creando y cargando la base de datos")
         dbConn = openDb()
         cursor = dbConn.cursor()
         sql_file = open("populate.sql")
         sql_as_string = sql_file.read()
         cursor.executescript(sql_as_string)
-        print("se terminó de cargar los datos..")
-    except sqlite3.Error as error:
-        print("Error while crearYCargarDB", error)
+        print("--Finaliza carga de datos en base de datos")
+
+    except Exception as error:
+        print("--Error while createDb", error)
         raise Exception("Error en la carga de base de datos")
+
     finally:
         if dbConn:
             closeDb(dbConn)
+
+
+def dbVersion():
+    try:
+        record = dbEjecutar("Select sqlite_version()")
+        print("--SQLite Database Version: ", record)
+        return record
+
+    except Exception as error:
+        print("--Error while dbVersion")
+
 
 def dbEjecutar(stmt, data_tuple=()):
     try:
@@ -51,18 +67,62 @@ def dbEjecutar(stmt, data_tuple=()):
         if len(data_tuple) == 0:
             cursor.execute(stmt)
         else:
-            cursor.execute(stmt,data_tuple)
+            cursor.execute(stmt, data_tuple)
         record = cursor.fetchall()
         cursor.close()
         dbConn.commit()
         return record
 
-    except sqlite3.Error as error:
-        print("Error while dbEjecutar", error)
-        raise Exception("error en la ejecucion en la base de datos")
+    except Exception as error:
+        print("--Error while dbEjecutar", error)
+        raise Exception("Error en la ejecucion en la base de datos")
+
     finally:
         if dbConn:
             closeDb(dbConn)
+
+
+def getTabla(nombre):
+    try:
+        stmt = "Select * from " + nombre + " limit 100;"
+        records = dbEjecutar(stmt)
+        return records
+
+    except Exception as error:
+        print("--Error while getTabla {}".format(nombre), error)
+
+
+def getTablas():
+    try:
+        stmt = "Select * from mistablas order by tabla;"
+        records = dbEjecutar(stmt)
+        return records
+
+    except Exception as error:
+        print("--Error while getTablas", error)
+
+
+def getVariablesData():
+    try:
+        records = dbEjecutar("Select * from variables")
+        return records
+
+    except Exception as error:
+        print("--Error while getVariablesData", error)
+
+
+def getIndicadoresData(indicador=0):
+    try:
+        cnx = openDb()
+        if not indicador:
+            stmt = "Select * from indicadores"
+        else:
+            stmt = "Select * from indicadoresValoresPivot where id = " + str(indicador)
+        rdo = pd.read_sql_query(stmt, cnx)
+        return rdo
+
+    except Exception as error:
+        print("--Error while getIndicadoresData", error)
 
 
 def getAttritionData():
@@ -70,45 +130,51 @@ def getAttritionData():
         cnx = openDb()
         rdo = pd.read_sql_query("Select * from ST_d3_data_set", cnx)
         return rdo
+
     except Exception as error:
-        print("Error obteniendo el valor de datos de attition...",error)
+        print("--Error while getAttritionData", error)
 
 
-def getIndicadoresValoresData():
-
+def getIndicadoresValoresData(indicador=0):
     try:
         cnx = openDb()
-        # rdo = pd.read_sql_query("Select * from ST_d2_general_data", cnx)
-        rdo = pd.read_sql_query("Select * from indicadoresValores", cnx)
+        if not indicador:
+            stmt = "Select * from indicadoresValores"
+        else:
+            stmt = "Select * from indicadoresValores where indicadorId = " + str(indicador)
+        rdo = pd.read_sql_query(stmt, cnx)
         return rdo
+
     except Exception as error:
-        print("Error obteniendo el valor de datos de indicadoresValores...",error)
+        print("--Error while getIndicadoresValoresData", error)
 
 
-def getDbVersion():
+def getIndicadoresValoresPivotData(indicador=0):
     try:
-        record = dbEjecutar("select sqlite_version();")
-        print("SQLite Database Version is: ", record)
-        return record
-    except sqlite3.Error as error:
-        print("error obtaining de version")
+        cnx = openDb()
+        if not indicador:
+            stmt = "Select * from indicadoresValoresPivot"
+        else:
+            stmt = "Select * from indicadoresValoresPivot where indicadorId = " + str(indicador)
+        rdo = pd.read_sql_query(stmt, cnx)
+        return rdo
 
-def eliminarResultados():
+    except Exception as error:
+        print("--Error while getIndicadoresValoresPivotData", error)
+
+
+def deleteIndicadoresValoresData():
     try:
-        records = dbEjecutar("delete from variablesValores;")
-        records = dbEjecutar("delete from indicadoresValores;")
+        records = dbEjecutar("Delete from variablesValores;")
+        records = dbEjecutar("Delete from indicadoresValores;")
         return records
 
     except Exception as error:
-        print("Error al eliminar indicadores valores..",error)
+        print("--Error while deleteIndicadoresValoresData", error)
 
-def getVariables():
-    try:
-        records = dbEjecutar("select * from variables;")
-        return records
 
-    except Exception as error:
-        print("Error al recuperar las variables..",error)
+### Juntarla con getIndicadoresValoresData
+
 
 def getResultados(l_indicador=0):
     try:
@@ -123,78 +189,57 @@ def getResultados(l_indicador=0):
     except Exception as error:
         print("Error al recuperar los resultados de los indicadores..",error)
 
-def getResultados_pivot(l_indicador=0):
+
+###
+
+
+def insertVariablesValoresData(l_variableId, l_grupo="", l_fecha=datetime.today(), l_valor=-1, l_essimulacion=0):
     try:
-        stmt = ""
-        if(l_indicador==0):
-            stmt = "select * from indicadoresValoresPivot;"
-        else:
-            stmt = "select * from indicadoresValoresPivot where indicadorId = " + str(l_indicador) + ";"
-        records = dbEjecutar(stmt)
-        return records
-
-    except Exception as error:
-        print("Error al recuperar los resultados de los indicadores_pivot..",error)
-
-def getMisTablas():
-    try:
-        stmt = "select * from mistablas order by tabla;"
-        records = dbEjecutar(stmt)
-        return records
-
-    except Exception as error:
-        print("Error al recuperar las tablas existentes",error)
-
-def getTabla(nombre):
-    try:
-        stmt = "select * from " + nombre + ";"# + " limit 100;"
-        records = dbEjecutar(stmt)
-        return records
-
-    except Exception as error:
-        print("Error al recuperar el valor de la tabla " + nombre,error)
-
-def getIndicadores(indicador=0):
-    try:
-        stmt = "select * from indicadores"
-        if(indicador!=0):
-            stmt += " where id = ?" 
-            data_tuple = (indicador,)
-            records = dbEjecutar(stmt,data_tuple)
-        else:
-            records = dbEjecutar(stmt)
-        return records
-
-    except Exception as error:
-        print("Error al recuperar los indicadores..",error)
-
-
-def variablesValoresInsert(l_variableId,l_fecha=datetime.today(), l_grupo = '', l_valor=-1, l_essimulacion=0):
-    try:
-        # print("inserting in valoresVariables...")
         dbConn = openDb()
         cursor = dbConn.cursor()
 
         sqlite_insert_query = """INSERT INTO variablesValores
-                            (variableId, fecha, grupo, valor, essimulacion) 
-                            VALUES (?,?,?,?,?);"""
-        data_tuple = (l_variableId, l_fecha, l_grupo, l_valor, l_essimulacion)
-        count = cursor.execute(sqlite_insert_query,data_tuple )
-        dbConn.commit()
+            (variableId, fecha, grupo, valor, essimulacion) 
+            VALUES (?,?,?,?,?);"""
 
-        # print("Insert Total rows are:  ", count)
+        data_tuple = (l_variableId, l_fecha, l_grupo, l_valor, l_essimulacion)
+        count = cursor.execute(sqlite_insert_query, data_tuple)
+        dbConn.commit()
         cursor.close()
-        
-    except sqlite3.Error as error:
-        print("Error while inserting to  variablesValores", error)
+
+    except Exception as error:
+        print("--Error while insertVariablesValoresData", error)
+        raise Exception("Error al insertar VariablesValores")
         
     finally:
         if dbConn:
             closeDb(dbConn)
-            #print("The SQLite connection is closed")
 
 
-def attritionDataInsert(data, fecha=datetime.today().strftime('%Y-%m-%d')):
+def insertIndicadoresValoresData(l_indicadorId, l_grupo="", l_fecha=datetime.today(), l_valor=-1, l_essimulacion=0, l_valorPonderado=-1):
+    try:
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+
+        sqlite_insert_query = """INSERT INTO indicadoresValores
+            (indicadorId, grupo, fecha, valor, essimulacion, valorPonderado) 
+            VALUES (?,?,?,?,?,?);"""
+
+        data_tuple = (l_indicadorId, l_grupo, l_fecha, l_valor, l_essimulacion, l_valorPonderado)
+        count = cursor.execute(sqlite_insert_query, data_tuple)
+        dbConn.commit()
+        cursor.close()
+
+    except Exception as error:
+        print("--Error while insertIndicadoresValoresData", error)
+        raise Exception("Error al insertar IndicadoresValores")
+
+    finally:
+        if dbConn:
+            closeDb(dbConn)
+
+
+def insertAttritionData(data, fecha=datetime.today().strftime('%Y-%m-%d')):
     try:
         dbConn = openDb()
         cursor = dbConn.cursor()
@@ -203,44 +248,22 @@ def attritionDataInsert(data, fecha=datetime.today().strftime('%Y-%m-%d')):
             sqlite_insert_query = """INSERT INTO employeeAttrition
                 (employee_id, date, attrition_value)
                 VALUES (?,?,?);"""
+
             data_tuple = (row[1]["EmployeeNumber"], fecha, row[1]["probability"])
             count = cursor.execute(sqlite_insert_query, data_tuple)
-
         dbConn.commit()
         cursor.close()
-    except sqlite3.Error as error:
-        print("Error while inserting to employeeAttrition table", error)        
+
+    except Exception as error:
+        print("--Error while insertAttritionData", error)
+        raise Exception("Error al insertar Attrition")
+
     finally:
         if dbConn:
             closeDb(dbConn)
 
 
-def indicadoresValoresInsert(l_indicadorId,l_grupo="", l_fecha=datetime.today(), l_valor=-1, l_essimulacion=0, l_valorPonderado = -1):
-    try:
-        #print("inserting in IndicadoresVariables...\n")
-        dbConn = openDb()
-        cursor = dbConn.cursor()
-
-        sqlite_insert_query = """INSERT INTO indicadoresValores
-                            (indicadorId, grupo,fecha, valor, essimulacion, valorPonderado) 
-                            VALUES (?,?,?,?,?,?);"""
-        data_tuple = (l_indicadorId, l_grupo,l_fecha, l_valor, l_essimulacion, l_valorPonderado)
-        count = cursor.execute(sqlite_insert_query,data_tuple )
-        dbConn.commit()
-
-        #print("Insert indicadores are:  ", count)
-        cursor.close()
-        
-    except sqlite3.Error as error:
-        print("Error while inserting to  indicadoresValores", error)
-        raise Exception("error al insertar IndicadoresValores")
-    finally:
-        if dbConn:
-            closeDb(dbConn)
-            #print("The SQLite connection is closed")
-
-
-
+###
 
 
 def getValorIndicador(l_indicadorId, l_fecha = datetime.today(),l_essimulacion=0):
@@ -288,7 +311,7 @@ def getPonderacionIndicador(l_indicadorId, l_fecha = datetime.today(), l_valorHa
 def getGruposIndicador(l_indicadorId, l_fecha = datetime.today()):
     try:
         #voy a buscar la variables que componen a un indicador
-        indicador = getIndicadores(l_indicadorId)
+        indicador = getIndicadoresData(l_indicadorId)
         formula = indicador[0][2]
         variables = getVariableList(formula)
         filtroIndicadores =""
@@ -316,6 +339,3 @@ def getGruposIndicador(l_indicadorId, l_fecha = datetime.today()):
             return rdo
     except Exception as error:
         print("Error al obtener los grupos por indicador...",error)
-
-        
-    

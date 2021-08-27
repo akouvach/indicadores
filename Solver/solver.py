@@ -8,7 +8,7 @@ import db
 def calcularVariables(miFecha = datetime.today()):
     try:
         print("----Calculando variables....")
-        records = db.getVariables()
+        records = db.getVariablesData()
         print("Total rows are:  ", len(records))
         for row in records:
             variableId = row[0]
@@ -23,14 +23,14 @@ def calcularVariables(miFecha = datetime.today()):
             
             if agrupadopor=="":
                 #no tiene agrupamiento, se espera una sola fila y columna
-                db.variablesValoresInsert(variableId,miFecha, "", rdo[0][0], 0)
+                db.insertVariablesValoresData(variableId,miFecha, "", rdo[0][0], 0)
             else:
                 #hay que recorrer los resultados e insertar una fila por cada grupo
                 for fila in rdo:
                     cols = len(fila)
                     valor = fila[cols-1]
                     grupo=';'.join(map(str, fila[:cols-1]))
-                    db.variablesValoresInsert(row[0],miFecha,grupo,valor, 0)
+                    db.insertVariablesValoresData(row[0],miFecha,grupo,valor, 0)
 
         print("Fin calculo de variables....")
 
@@ -69,7 +69,7 @@ def calcularIndicador(indicador,formula,agruparpor, miFecha, aleatorio=0):
 
             rdoPonderado = db.getPonderacionIndicador(indicador,miFecha,rdoIndicador)[0][0]
             
-            db.indicadoresValoresInsert(indicador,"",miFecha, rdoIndicador,0, rdoPonderado)
+            db.insertIndicadoresValoresData(indicador,"",miFecha, rdoIndicador,0, rdoPonderado)
 
         else:
             #corresponde a un indicador que debería tener
@@ -110,7 +110,7 @@ def calcularIndicador(indicador,formula,agruparpor, miFecha, aleatorio=0):
 
                 rdoPonderado = db.getPonderacionIndicador(indicador,miFecha,rdoIndicador)[0][0]
             
-                db.indicadoresValoresInsert(indicador,g[0],miFecha, rdoIndicador,0, rdoPonderado)
+                db.insertIndicadoresValoresData(indicador,g[0],miFecha, rdoIndicador,0, rdoPonderado)
 
 
     except Exception as error:
@@ -119,7 +119,7 @@ def calcularIndicador(indicador,formula,agruparpor, miFecha, aleatorio=0):
 def calcularIndicadores(miFecha = datetime.today()):
     try:
         print("------Calculando indicadores ----------------")
-        records = db.getIndicadores()
+        records = db.getIndicadoresData()
         print("Total rows are:  ", len(records))
     
         for row in records:
@@ -139,10 +139,10 @@ def calcularIndicadores(miFecha = datetime.today()):
     except Exception as error:
         print("Error calculating variables",error )
 
-def eliminarResultados():
-    db.eliminarResultados()
+def deleteIndicadoresValoresData():
+    db.deleteIndicadoresValoresData()
 
-#db.crearYcargarDb()
+#db.createDb()
 def cargarDatos():
     #calcular de enero hasta hoy. dia a día
     inicio = date(2021,1,1)
@@ -150,7 +150,7 @@ def cargarDatos():
 
     lista_fechas = [inicio + timedelta(days=d) for d in range((fin - inicio).days + 1)] 
 
-    eliminarResultados()
+    deleteIndicadoresValoresData()
     calcularVariables()
     
     for fecha in lista_fechas:
