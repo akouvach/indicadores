@@ -1,5 +1,6 @@
 import re
 
+
 def getVariableList(text, start="{",end="}"):
     try:
         elem = []
@@ -11,7 +12,6 @@ def getVariableList(text, start="{",end="}"):
             elem.append(sGroup)
         #print('Match "{}" found at: [{},{}]'.format(sGroup, sStart,sEnd))
         return elem
+
     except Exception as error:
-        print("Error al obtener la lista de variables de la formula..",error)
-
-
+        print("--Error while getVariableList", error)

@@ -8,6 +8,7 @@ from flask import Flask, Response, request, render_template, send_from_directory
 
 import Solver.db as db
 import Solver.solver as solver
+from Solver.pivot_table import create_pivot_table
 from Solver.predictor_futuro import create_indicador_dataframe, create_indicadores_dict
 from Solver.predictor_attrition import process_data, split_data, run_machine_learning_model
 
@@ -145,6 +146,28 @@ def getPrediccionFutura():
   content = "{\"data\":" + json_object + "}"
 
   return Response(content, mimetype='application/json')
+
+
+@app.route('/test')
+def getTest():
+  cursor = db.getIndicadoresValoresData()
+  data = cursor[cursor["esSimulacion"] == 0]
+  data.dropna(axis=0, inplace=True)
+  pivot_table_data = create_pivot_table(data)
+
+  db.insertIndicadoresValoresPivotData(pivot_table_data)
+
+  # json_df = result_df[["EmployeeNumber", "probability"]].copy()
+  # json_df.rename(columns={"EmployeeNumber": "employee_id", "probability": "attrition_value"}, inplace=True)
+  # json_df["date"] = [datetime.today().strftime('%Y-%m-%d')]*json_df.shape[0]
+  # json_object = json_df.to_json(orient="records", indent=2)
+  # content = "{\"data\":" + json_object + "}"
+
+  # return Response(
+  #   content, 
+  #   mimetype='application/json',
+  #   headers={'Content-Disposition':'attachment;filename=employee_attrition_values.json'}
+  # )
 
 
 # @app.route('/widgets')

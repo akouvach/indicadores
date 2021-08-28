@@ -128,7 +128,7 @@ def getIndicadoresData(indicador=0):
         if not indicador:
             stmt = "Select * from indicadores"
         else:
-            stmt = "Select * from indicadoresValoresPivot where id = " + str(indicador)
+            stmt = "Select * from indicadores where id = " + str(indicador)
         rdo = pd.read_sql_query(stmt, cnx)
         return rdo
 
@@ -282,6 +282,32 @@ def insertIndicadoresValoresData(l_indicadorId, l_grupo="", l_fecha=datetime.tod
     except Exception as error:
         print("--Error while insertIndicadoresValoresData", error)
         raise Exception("Error al insertar IndicadoresValores")
+
+    finally:
+        if dbConn:
+            closeDb(dbConn)
+
+
+def insertIndicadoresValoresPivotData(data_frame):
+    #l_indicadorId, l_grupo="", l_fecha=datetime.today(), l_valor=-1, l_essimulacion=0, l_valorPonderado=-1):
+    try:
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+        breakpoint()
+        data_frame.to_sql("indicadoresValoresPivot", cursor, if_exists="append", index=False)
+
+        sqlite_insert_query = """INSERT INTO indicadoresValores
+            (indicadorId, grupo, fecha, valor, essimulacion, valorPonderado) 
+            VALUES (?,?,?,?,?,?);"""
+
+        #data_tuple = (l_indicadorId, l_grupo, l_fecha, l_valor, l_essimulacion, l_valorPonderado)
+        count = cursor.execute(sqlite_insert_query, data_tuple)
+        dbConn.commit()
+        cursor.close()
+
+    except Exception as error:
+        print("--Error while insertIndicadoresValoresPivotData", error)
+        raise Exception("Error al insertar IndicadoresValoresPivot")
 
     finally:
         if dbConn:
