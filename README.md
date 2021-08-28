@@ -19,8 +19,8 @@ pip install -r requirements.txt
 para conteinizar:
 Sacar pywin32==301 del requirements.txt
 
-docker build --tag akouvach/powermykpi .
-docker run -d -p 5000:5000 --name kpi akouvach/powermykpi
+docker build --tag akouvach/powermykpidocker:latest .
+docker run -d -p 5000:5000 --name kpi akouvach/powermykpidocker:latest
 
 
 Create volume for mysql
