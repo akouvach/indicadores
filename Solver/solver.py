@@ -164,6 +164,7 @@ def calcularValores(miFecha = date.today()):
     try:
         calcularVariables()
         calcularIndicadores(miFecha)
+        # Tendría que llamar para hacer el pivot_table
         return "OK"
     except Exception as error:
         print("Error calculando valores",error )

@@ -1,0 +1,4 @@
+{
+    "appService.defaultWebAppToDeploy": "/subscriptions/92aa29a2-2c1c-4c1f-846a-27ba11548ded/resourceGroups/DefaultResourceGroup-EAU/providers/Microsoft.Web/sites/powermykpi",
+    "appService.deploySubpath": "."
+}
