@@ -2,7 +2,7 @@ import sqlite3
 import os
 
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, date
 
 from Solver.varios import getVariableList
 
@@ -184,6 +184,22 @@ def getResultados(l_indicador=0):
 ###
 
 
+def getValoresPonderados(indicador, valor):
+    try:
+        # TODO: El predictor futuro actualmente funciona para predecir de la actualidad en adelante.
+        # Cuando se cambie eso, se deberá modificar este query para buscar la fecha de interés
+        cnx = openDb()
+        stmt = "Select * from ponderaciones"
+        stmt += f" where indicadorid = {indicador} and valorHasta >= {valor[0]}"
+        stmt += " order by valorHasta asc, fechaDesde desc limit 1"
+
+        rdo = pd.read_sql_query(stmt, cnx)
+        return rdo
+
+    except Exception as error:
+        print("--Error while getValorPonderado", error)
+
+
 def getIndicadoresValoresPivotData(indicador=0):
     try:
         cnx = openDb()
@@ -306,22 +322,26 @@ def insertIndicadoresValoresData(l_indicadorId, l_grupo="", l_fecha=datetime.tod
             closeDb(dbConn)
 
 
-def insertIndicadoresValoresPivotData(data_frame):
-    #l_indicadorId, l_grupo="", l_fecha=datetime.today(), l_valor=-1, l_essimulacion=0, l_valorPonderado=-1):
+def insertIndicadoresValoresDataFrameData(data_frame):
     try:
         dbConn = openDb()
-        cursor = dbConn.cursor()
-        breakpoint()
-        data_frame.to_sql("indicadoresValoresPivot", cursor, if_exists="append", index=False)
-
-        sqlite_insert_query = """INSERT INTO indicadoresValores
-            (indicadorId, grupo, fecha, valor, essimulacion, valorPonderado) 
-            VALUES (?,?,?,?,?,?);"""
-
-        #data_tuple = (l_indicadorId, l_grupo, l_fecha, l_valor, l_essimulacion, l_valorPonderado)
-        count = cursor.execute(sqlite_insert_query, data_tuple)
+        data_frame.to_sql("indicadoresValores", dbConn, if_exists="append", index=False)
         dbConn.commit()
-        cursor.close()
+
+    except Exception as error:
+        print("--Error while insertIndicadoresValoresDataFrameData", error)
+        raise Exception("Error al insertar IndicadoresValores")
+
+    finally:
+        if dbConn:
+            closeDb(dbConn)
+
+
+def insertIndicadoresValoresPivotData(data_frame):
+    try:
+        dbConn = openDb()
+        data_frame.to_sql("indicadoresValoresPivot", dbConn, if_exists="append", index=False)
+        dbConn.commit()
 
     except Exception as error:
         print("--Error while insertIndicadoresValoresPivotData", error)
@@ -377,7 +397,7 @@ def getValorIndicador(l_indicadorId, l_fecha = datetime.today(),l_essimulacion=0
     except Exception as error:
         print("Error obteniendo el valor de un indicador...",error)
             
-def getPonderacionIndicador(l_indicadorId, l_fecha = datetime.today(), l_valorHasta=-1):
+def getPonderacionIndicador(l_indicadorId, l_fecha=datetime.today(), l_valorHasta=-1):
     try:
         stmt = """
             Select i.ponderacion

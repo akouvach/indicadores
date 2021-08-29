@@ -4,6 +4,7 @@ from datetime import date, datetime, timedelta
 import Solver.db as db
 from Solver.varios import getVariableList
 
+
 def calcularVariables(miFecha = date.today()):
     try:
         records = db.getVariablesData()

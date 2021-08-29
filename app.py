@@ -9,8 +9,16 @@ from flask import Flask, Response, request, render_template, send_from_directory
 import Solver.db as db
 import Solver.solver as solver
 from Solver.pivot_table import create_pivot_table
-from Solver.predictor_futuro import create_indicador_dataframe, create_indicadores_dict
-from Solver.predictor_attrition import process_data, split_data, run_machine_learning_model
+from Solver.predictor_futuro import (
+  create_indicador_dataframe,
+  create_indicadores_dict,
+  run_future_machine_learning_model
+)
+from Solver.predictor_attrition import (
+  process_data,
+  split_data,
+  run_attrition_machine_learning_model,
+)
 
 
 app = Flask(__name__, template_folder="templates")
@@ -24,7 +32,7 @@ def inicio():
 @app.route('/status')
 def status():  
   param = request.ars.get("params1", "No contiene este parámetro")
-  return 'El parametro es {}'.format(param)
+  return "El parametro es {}".format(param)
 
 
 @app.errorhandler(404)
@@ -77,13 +85,21 @@ def resultados(nroIndicador=0):
   )
 
 
-@app.route('/resultados_pivot/<int:nroIndicador>/')
-@app.route('/resultados_pivot/')
+@app.route('/resultados-pivot/<int:nroIndicador>/')
+@app.route('/resultados-pivot/')
 def resultados_pivot(nroIndicador=0):
-  cursor = db.getIndicadoresValoresPivotData(nroIndicador)
-  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+  # Se actualiza primero la base de datos, la tabla indicadoresValoresPivot
+  cursor = db.getIndicadoresValoresData()
+  data = cursor[cursor["esSimulacion"] == 0]
+  data.dropna(axis=0, inplace=True)
+  pivot_table_data = create_pivot_table(data)
+  db.insertIndicadoresValoresPivotData(pivot_table_data)
+
+  # Se filtran, de requerirse, los valores solicitados
+  cursor_pivot = db.getIndicadoresValoresPivotData(nroIndicador)
+  json_object = cursor_pivot.to_json(orient="records", indent=2)
   content = "{\"data\":" + json_object + "}"
-  print("--El indicador es: ", nroIndicador)
+  print("--El indicador es: {}".format(nroIndicador if nroIndicador else "Indicador no especificado"))
 
   return Response(
     content, 
@@ -124,7 +140,7 @@ def getPrediccionAttrition():
   cursor = db.getAttritionData()
   pre_process_data = process_data(cursor)
   splitted_data = split_data(pre_process_data)
-  probability = run_machine_learning_model(splitted_data)
+  probability = run_attrition_machine_learning_model(splitted_data)
   result_df = pd.concat([cursor, probability], axis=1)
 
   db.insertAttritionData(result_df)
@@ -144,15 +160,25 @@ def getPrediccionAttrition():
 @app.route('/kpi-prediction')
 def getPrediccionFutura():
   cursor = db.getIndicadoresValoresData()
-  ind_dict = create_indicadores_dict(cursor)
-  ind_df = create_indicador_dataframe(ind_dict)
+  data = cursor[cursor["esSimulacion"] == 0]
+  data.dropna(axis=0, inplace=True)
+  ind_dict = create_indicadores_dict(data)
+  ind_df = create_indicador_dataframe(data, ind_dict)
 
-  machine_learning = run_machine_learning_model(ind_df.items())
-  print(machine_learning)
-  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
-  content = "{\"data\":" + json_object + "}"
+  prediction = run_future_machine_learning_model(ind_df.items())
+  breakpoint()
 
-  return Response(content, mimetype='application/json')
+  data_frame_content = ""
+  for indicador, data_frame in prediction.items():
+    json_object = data_frame.to_json(orient="records", indent=2)
+    data_frame_content = data_frame_content + f"\"{indicador}\": {json_object}"
+  content = "{\"data\":[" + data_frame_content + "]}"
+
+  return Response(
+    content, 
+    mimetype='application/json',
+    headers={'Content-Disposition':'attachment;filename=employee_attrition_values.json'}
+  )
 
 
 @app.route('/test')

@@ -8,7 +8,7 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 
-from Solver.db import insertIndicadoresValoresData, getPonderacionIndicador
+from Solver.db import getValoresPonderados, insertIndicadoresValoresDataFrameData
 
 
 def create_indicadores_dict(data):
@@ -90,7 +90,8 @@ def train_test_split(dataframe, threshold=180, split=3):
     return X_train, X_test, y_train, y_test
 
 
-def run_machine_learning_model(data): # data=create_indicador_dataframe().items()
+def run_future_machine_learning_model(data): # data=create_indicador_dataframe().items()
+    machine_learning_result = {}
     for indicador, df in data:
         # Se realiza la separación de los datos en entrenamiento y testeo
         X_train, X_test, y_train, y_test = train_test_split(df)
@@ -142,23 +143,20 @@ def run_machine_learning_model(data): # data=create_indicador_dataframe().items(
                 "esPrediccion": [1]*len(y_ms_futuro_pred)
             }
         )
-        breakpoint() # QUITAR ESTO -----------------------------------------------------------------------------------------------------
 
+        valores_ponderados = []
         for i in range(len(y_ms_futuro_pred)):
-            valor_ponderado_futuro = getPonderacionIndicador( ## NO FUNCIONA ---------------------------------------------------------
-                l_indicadorId=indicador[0],
-                l_valorHasta=y_ms_futuro_pred[i]
+            valor_ponderado_futuro = getValoresPonderados(
+                indicador=indicador[0],
+                valor=y_ms_futuro_pred[i],
             )
+            valores_ponderados.append(valor_ponderado_futuro.loc[0, "ponderacion"])
+        
+        df_futuro["valorPonderado"] = valores_ponderados
+        machine_learning_result[(indicador[0], indicador[1])] = df_futuro
+        insertIndicadoresValoresDataFrameData(df_futuro)
 
-            insertIndicadoresValoresData(                         ## NO FUNCIONA ---------------------------------------------------------
-                indicador[0],
-                indicador[1],
-                fecha_futuro[i],
-                y_ms_futuro_pred[i],
-                0,
-                # 1, columna esPrediccion
-                valor_ponderado_futuro
-            )
+    return machine_learning_result
 
 
 if __name__ == "__main__":
@@ -172,5 +170,5 @@ if __name__ == "__main__":
     ind_dict = create_indicadores_dict(data)
     ind_df = create_indicador_dataframe(data, ind_dict)
 
-    machine_learning = run_machine_learning_model(ind_df.items())
+    machine_learning = run_future_machine_learning_model(ind_df.items())
     breakpoint()

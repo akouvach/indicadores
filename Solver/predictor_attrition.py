@@ -1,4 +1,3 @@
-import sqlite3
 import os
 
 import numpy as np
@@ -73,7 +72,7 @@ def split_data(data): # data=process_data()
     return X_train, X_test, y_train, y_test, employee_ids
 
 
-def run_machine_learning_model(data): # data=split_data()
+def run_attrition_machine_learning_model(data): # data=split_data()
     X_train, X_test, y_train, y_test, employee_ids = data
 
     # Se crea el modelo a utilizar para predecir
@@ -141,5 +140,5 @@ if __name__ == "__main__":
     pre_process_data = process_data(data)
     splitted_data = split_data(pre_process_data)
 
-    probability = run_machine_learning_model(splitted_data)
+    probability = run_attrition_machine_learning_model(splitted_data)
     breakpoint()
