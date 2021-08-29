@@ -43,7 +43,10 @@ def favicon():
 @app.route('/inicializarbase/')
 def inicializarbase(fechahasta=date.today()):  
   try:
-    solver.cargarDatos(fechahasta)
+    if(isinstance(fechahasta, str)):
+      solver.cargarDatos(datetime.strptime(fechahasta, '%Y-%m-%d'))
+    else:  
+      solver.cargarDatos(fechahasta)
     return jsonify('OK')
   except Exception as error:
     return jsonify('Error calculating variables:'+error)
