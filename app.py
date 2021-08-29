@@ -28,7 +28,6 @@ app = Flask(__name__, template_folder="templates")
 def inicio():  
   return render_template('index.html')
 
-
 @app.route('/status')
 def status():  
   param = request.ars.get("params1", "No contiene este parámetro")
@@ -116,6 +115,21 @@ def getTablas():
 
   return Response(content, mimetype='application/json')
 
+
+        
+@app.route('/indicadores/<int:idIndicador>/')
+def getIndicador(idIndicador):
+  cursor = db.getIndicador(idIndicador)
+  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+  content = "{\"data\":" + json_object + "}"
+  return Response(content, mimetype='application/json')
+
+@app.route('/indicadores/<int:idIndicador>/variables/')
+def getIndicadorvariables(idIndicador):
+  cursor = db.getIndicadorVariables(idIndicador)
+  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+  content = "{\"data\":" + json_object + "}"
+  return Response(content, mimetype='application/json')
 
 @app.route('/sources/<nombre>/')
 def getSources(nombre=""):

@@ -397,6 +397,39 @@ def getValorIndicador(l_indicadorId, l_fecha = datetime.today(),l_essimulacion=0
     except Exception as error:
         print("Error obteniendo el valor de un indicador...",error)
             
+def getIndicador(l_indicadorId):
+    try:
+        stmt = "select * from indicadores where id = ?"
+        data_tuple = (l_indicadorId, )
+        rdo = dbEjecutar(stmt, data_tuple)
+        if not rdo:
+            return -1
+        else:
+            return rdo
+    except Exception as error:
+        raise("Error obteniendo los datos de un indicador..." + error)
+
+def getIndicadorVariables(l_indicadorId):
+    try:
+        indi = dbEjecutar("select formula from indicadores where id = ?",(l_indicadorId,) )
+        print(indi)
+        vars = getVariableList(indi[0][0])
+        lista = ""
+        stmt = "select * from variables where id in ("
+        for v in vars:
+            if lista != "":
+                lista = lista + ", "
+            lista = lista +  "'" + v + "'"
+        print(lista)
+        stmt = stmt + lista + ")"
+        rdo = dbEjecutar(stmt)
+        if not rdo:
+            return -1
+        else:
+            return rdo
+    except Exception as error:
+        raise("Error obteniendo las variables asociadas para un indicador:" + error)
+
 def getPonderacionIndicador(l_indicadorId, l_fecha=datetime.today(), l_valorHasta=-1):
     try:
         stmt = """

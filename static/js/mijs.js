@@ -57,7 +57,7 @@ function ui_mostrarSelectIndicadores(id, lugar,data){
     // console.log(data);
     let rdo=data.data.reduce((acum,valor)=>{
         return acum+"<option value='"+valor.id+"'>"+valor.descripcion+"</option>";
-    },"<select id='"+id+"' onchange='ui_mostrarDatos" + id + "(" + String.fromCharCode(34) + id + String.fromCharCode(34) + "," + String.fromCharCode(34) + lugar + String.fromCharCode(34) + ");'><option selected>Seleccione para visualizar</option>")+"</select>";
+    },"<select  class=" + String.fromCharCode(34) + "w3-input" + String.fromCharCode(34) + " id='"+id+"' onchange='ui_mostrarDatos" + id + "(" + String.fromCharCode(34) + id + String.fromCharCode(34) + "," + String.fromCharCode(34) + lugar + String.fromCharCode(34) + ");'><option selected>Seleccione para visualizar</option>")+"</select>";
     myDiv.innerHTML=rdo;
 }
 
@@ -67,7 +67,8 @@ function ui_mostrarSelectVariables(id, lugar,data){
     // console.log(data);
     let rdo=data.data.reduce((acum,valor)=>{
         return acum+"<option value='"+valor.id+"'>"+valor.descripcion+"</option>";
-    },"<select id='"+id+"' onchange='ui_mostrarDatos" + id + "(" + String.fromCharCode(34) + id + String.fromCharCode(34) + "," + String.fromCharCode(34) + lugar + String.fromCharCode(34) + ");'><option selected>Seleccione para visualizar</option>")+"</select>";
+    },"<select class=" + String.fromCharCode(34) + "w3-input" + String.fromCharCode(34) + " id='"+id+"' onchange='ui_mostrarDatos" + id + "(" + 
+    String.fromCharCode(34) + id + String.fromCharCode(34) + "," + String.fromCharCode(34) + lugar + String.fromCharCode(34) + ");'><option selected>Seleccione para visualizar</option>")+"</select>";
     myDiv.innerHTML=rdo;
 }
 
@@ -179,6 +180,22 @@ async function ui_mostrarDatosSources(valor){
     }
 }
 
+async function ui_mostrarDatosIndicador(valor){
+    console.log("cargando datos de", valor);
+    if(valor != "Seleccione"){
+        //Traigo los datos de la tabla
+        document.getElementById(RESULTADOS).innerHTML="cargando...";
+        // window.open(BASE_API+"indicador/" + valor);
+        
+        let indicador = await obtener("indicadores/"+valor+"/")
+        let variables = await obtener("indicadores/"+valor+"/variables/")
+
+        console.log(indicador,variables);
+
+    } else {
+        document.getElementById(RESULTADOS).innerHTML="..."
+    }
+}
 
 async function mostrarSources(id,lugar){
     let myDiv= document.getElementById(lugar);
@@ -188,24 +205,25 @@ async function mostrarSources(id,lugar){
     // console.log(data);
     let rdo = tablas.data.reduce((acum,valor)=>{
         return acum+"<option value='"+valor.tabla+"'>"+valor.tabla+"</option>";
-    },"<select id='"+id+"' onchange='ui_mostrarDatosSources(this.value);'><option selected value='Seleccione'>----Seleccione----</option>")+"</select>";
-// },"<select id='"+id+"' onchange='ui_mostrarDatos" + id + "(this)" + String.fromCharCode(34) + id + String.fromCharCode(34) + "," + String.fromCharCode(34) + lugar + String.fromCharCode(34) + ");'><option selected>Seleccione para visualizar</option>")+"</select>";
+    },"<select  class=" + String.fromCharCode(34) + "w3-input" + String.fromCharCode(34) + " id='"+id+"' onchange='ui_mostrarDatosSources(this.value);'><option selected value='Seleccione'>----Seleccione----</option>")+"</select>";
     myDiv.innerHTML=rdo;
 }
 
-function mostrarIndicadores(id,myDiv){
-    document.getElementById(myDiv).innerHTML="Cargando...";
-    //Obtengo los Indicadores
-    obtener("sources/indicadores/",id, myDiv, ui_mostrarSelectIndicadores)
+async function mostrarIndicadores(id,lugar){
+    document.getElementById(lugar).innerHTML="Cargando...";
+    let myDiv= document.getElementById(lugar);
+    myDiv.innerHTML = "Cargando...";
+    //Obtengo los Nombres de las tablas
+    let indicadores = await obtener("sources/indicadores/")
+    console.log(indicadores);
+    let rdo = indicadores.data.reduce((acum,valor)=>{
+        return acum+"<option value='"+valor.id+"'>"+valor.descripcion+"</option>";
+    },"<select  class=" + String.fromCharCode(34) + "w3-input" + String.fromCharCode(34) + 
+    " id='"+id+"' onchange='ui_mostrarDatosIndicador(this.value);'><option selected value='Seleccione'>----Seleccione----</option>")+"</select>";
+    myDiv.innerHTML=rdo;
 
 }
 
-function mostrarVariables(id,myDiv){
-    document.getElementById(myDiv).innerHTML="Cargando...";
-    //Obtengo los Indicadores
-    obtener("sources/variables/",id, myDiv, ui_mostrarSelectVariables)
-
-}
 
 async function calcularIndicadores(){
     let fecha = document.getElementById("fecha").value;
@@ -216,6 +234,9 @@ async function calcularIndicadores(){
 
 function inicializar(){
     mostrarSources('idSource','sources');
+    mostrarIndicadores('idIndicador','indicadores');
+
+
     let f = new Date();
     let mes = ((f.getMonth()+1)<10?"0":"")+(f.getMonth()+1);
     let anio= f.getFullYear();
