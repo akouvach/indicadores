@@ -39,10 +39,14 @@ def favicon():
     )
 
 
-@app.route('/inicializarbase')
-def inicializarbase():  
-  solver.cargarDatos()
-  return jsonify('OK')
+@app.route('/inicializarbase/<fechahasta>')
+@app.route('/inicializarbase/')
+def inicializarbase(fechahasta=date.today()):  
+  try:
+    solver.cargarDatos(fechahasta)
+    return jsonify('OK')
+  except Exception as error:
+    return jsonify('Error calculating variables:'+error)
 
 
 @app.route('/calcularvalores/<fecha>/', methods=['POST'])

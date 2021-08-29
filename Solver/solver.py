@@ -4,8 +4,7 @@ from datetime import date, datetime, timedelta
 import Solver.db as db
 from Solver.varios import getVariableList
 
-
-def calcularVariables(miFecha=datetime.today()):
+def calcularVariables(miFecha = date.today()):
     try:
         records = db.getVariablesData()
         for row in records:
@@ -55,7 +54,8 @@ def calcularIndicadores(miFecha=datetime.today()):
             calcularIndicador(indicador, formula, agruparPor, miFecha, 1)
 
     except Exception as error:
-        print("--Error while calcularIndicadores", error)
+
+        raise("Error calculating variables"+ error)
 
 
 def calcularIndicador(indicador, formula, agruparPor, miFecha, aleatorio=0):
@@ -127,21 +127,31 @@ def calcularValores(miFecha=date.today()):
         return "True"
 
     except Exception as error:
-        print("--Error while calcularValores", error)
-        return "False"
+        raise("Error calculating variables: "+error )
 
 
-def cargarDatos():
-    inicio = datetime.date.today() - datetime.timedelta(weeks=24)  # Seis meses atras
-    fin = datetime.date.today()
+#db.createDb()
+def cargarDatos(fechahasta):
+    try:
+        #calcular de enero hasta hoy. dia a día
+        inicio = date(2021,1,1)
+        fin    = fechahasta
 
-    lista_fechas = [inicio + timedelta(days=d) for d in range((fin - inicio).days + 1)] 
+        lista_fechas = [inicio + timedelta(days=d) for d in range((fin - inicio).days + 1)] 
 
-    deleteResultadosData()
-    calcularVariables()
-    
-    for fecha in lista_fechas:
-        calcularIndicadores(fecha)
+        deleteResultadosData()
+        calcularVariables(inicio)
+        
+        for fecha in lista_fechas:
+            try:
+                print("calculando indicadores para:",fecha)
+                calcularIndicadores(fecha)
+            except Exception as error:
+                raise("Error calculating variables" + error)
+
+    except Exception as error:
+        raise("Error calculating variables" + error)
+
 
 
 def deleteResultadosData():

@@ -1,33 +1,35 @@
 {% extends 'base/base.html' %}
 
 {% block content %}
-<table class='w3-table'>
-    <tr>
-        <td>
-            <input type='date' id='fecha' name='fecha'>
-            <button onclick="calcularIndicadores();">Calcular indicadores</button>
-        </td>
-        <td><button>Calcular attrition</button></td>
-        <td><button>Estimar indicadores futuros</button></td>
-    </tr>    
-    <tr>
-        <td><label for="sources">Sources</label></td>
-        <td><label for="indicadores">Indicadores</label></td>
-        <td><label for="variables">Variables</label></td>
-    </tr>
-    <tr>
-        <td><div id="sources"></div></td>
-        <td><div id="indicadores"></div></td>
-        <td><div id="variables"></div></td>
-    </tr>
-    <tr>
-        <td colspan="3"><hr size=1 color=grey></td>
-    </tr>
-    <tr>
-        <td colspan="3"><div id="resultados"></div></td>
-    </tr>
+<div class="w3-container">
 
-</table>
+    <table class='w3-table'>
+        <tr>
+            <td>
+                <input type='date' id='fecha' name='fecha'>
+                <button onclick="calcularIndicadores();">Calcular indicadores</button>
+            </td>
+            <td><button>Calcular attrition</button>
+                <button>Estimar indicadores futuros</button>
+            </td>
+        </tr>    
+        <tr>
+            <td><label for="idSourse">Sources</label></td>
+            <td><label for="idIndicador">Indicadores</label></td>
+        </tr>
+        <tr>
+            <td><div id="sources"></div></td>
+            <td><div id="indicadores"></div></td>
+        </tr>
+        <tr>
+            <td colspan="2"><hr size=1 color=grey></td>
+        </tr>
+        <tr>
+            <td colspan="2"><div id="resultados"></div></td>
+        </tr>
+    
+    </table>
+</div>
 
 <script src="{{ url_for('static',filename='js/mijs.js') }}"></script>
 <script type="text/javascript">

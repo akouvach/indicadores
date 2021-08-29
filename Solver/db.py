@@ -95,10 +95,7 @@ def getTabla(nombre):
 def getMisTablas(tabla=None):
     try:
         if not tabla:
-            stmt = """Select name as tabla from sqlite_master 
-                where type in ('table','view') 
-                and name not in ('indicadores','variables','misTablas')
-                order by 1;"""
+            stmt = """select * from mistablas;"""
             records = dbEjecutar(stmt)
             return records
         else:
@@ -125,7 +122,7 @@ def getVariablesData():
 def getIndicadoresData(indicador=0):
     try:
         cnx = openDb()
-        if not indicador:
+        if not indicador or indicador==0:
             stmt = "Select * from indicadores"
         else:
             stmt = "Select * from indicadores where id = " + str(indicador)
@@ -133,7 +130,20 @@ def getIndicadoresData(indicador=0):
         return rdo
 
     except Exception as error:
-        print("--Error while getIndicadoresData", error)
+        raise("--Error while getIndicadoresData"+ error)
+
+
+def getIndicadoresAKData(indicador=0):
+    try:
+        if(indicador==0):
+            stmt = "Select * from indicadores"
+        else:
+            stmt = "select * from indicadores where id = "+str(indicador)
+        rdo = dbEjecutar(stmt)
+        return rdo
+
+    except Exception as error:
+        raise("--Error while getIndicadoresAKData"+ error)
 
 
 def getAttritionData():
@@ -190,12 +200,20 @@ def getIndicadoresValoresPivotData(indicador=0):
 
 def deleteResultadosData():
     try:
-        records = dbEjecutar("Delete from variablesValores;")
-        records = dbEjecutar("Delete from indicadoresValores;")
-        return records
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+        cursor.execute("Delete from variablesValores;")
+        cursor.execute("Delete from indicadoresValores;")
+        dbConn.commit()
+        cursor.close()
+        return True
 
     except Exception as error:
         print("--Error while deleteResultadosData", error)
+
+    finally:
+        if dbConn:
+            closeDb(dbConn)
 
 
 def deleteVariablesValoresData(l_variableId, l_fecha, l_grupo):
@@ -242,7 +260,7 @@ def deleteIndicadoresValoresData(l_indicadorId, l_grupo, l_fecha):
             closeDb(dbConn)
 
 
-def insertVariablesValoresData(l_variableId, l_grupo="", l_fecha=datetime.today(), l_valor=-1, l_essimulacion=0):
+def insertVariablesValoresData(l_variableId, l_fecha=datetime.today(), l_grupo="", l_valor=-1, l_essimulacion=0):
     try:
         dbConn = openDb()
         cursor = dbConn.cursor()
@@ -386,7 +404,7 @@ def getPonderacionIndicador(l_indicadorId, l_fecha = datetime.today(), l_valorHa
 def getGruposIndicador(l_indicadorId, l_fecha = datetime.today()):
     try:
         #voy a buscar la variables que componen a un indicador
-        indicador = getIndicadoresData(l_indicadorId)
+        indicador = getIndicadoresAKData(l_indicadorId)
         formula = indicador[0][2]
         variables = getVariableList(formula)
         filtroIndicadores =""

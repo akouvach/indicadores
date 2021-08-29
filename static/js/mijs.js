@@ -102,11 +102,11 @@ function ui_mostrarTabla(id, lugar, datos, pagina=1){
     let myDiv = document.getElementById(lugar);
     // console.log("mostrando tabla",datos, datos.data.length)
     
-    let mensaje = "<table class='w3-table w3-bordered'>";
+    let mensaje = "<table class='w3-table-all w3-hoverable'>";
 
     // hago un ciclo para colocar los titulos
     let titulos = datos.data[0];
-    mensaje += "<thead><tr><th>Nro</th>";
+    mensaje += "<thead><tr class='w3-orange'><th>Nro</th>";
     for(var j in titulos){
         mensaje += "<th>" + j + "</th>";
     }
@@ -115,16 +115,20 @@ function ui_mostrarTabla(id, lugar, datos, pagina=1){
     mensaje+="<tbody>";
            
     //ahora recorro todos los elementos del vector para poner los datos
-    for(let r=(pagina-1);r<((pagina-1)+cantxpagina);r++){
+    for(let r=(pagina-1);r<((pagina-1)*cantxpagina+cantxpagina);r++){
     // for (var i in datos.data) {
-        mensaje += "<tr><td>"+r+"</td>";
-        if(datos.data.hasOwnProperty(r)){
-            let miObj = datos.data[r];
-            for(var j in miObj){
-                mensaje += "<td>" + miObj[j] + "</td>";
-            }
-        } 
-        mensaje += "</tr>";
+        if(datos.data[r]){
+            mensaje += "<tr><td>"+r+"</td>";
+            if(datos.data.hasOwnProperty(r)){
+                let miObj = datos.data[r];
+                for(var j in miObj){
+                    mensaje += "<td>" + miObj[j] + "</td>";
+                }
+            } 
+            mensaje += "</tr>";
+        } else {
+            break;
+        }
     }
 
     mensaje+="</tbody>";
@@ -203,6 +207,13 @@ function mostrarVariables(id,myDiv){
 
 }
 
+async function calcularIndicadores(){
+    let fecha = document.getElementById("fecha").value;
+    let data = await enviar("calcularvalores/" + fecha + "/",{});
+    alert(data);
+
+}
+
 function inicializar(){
     mostrarSources('idSource','sources');
     let f = new Date();
@@ -216,12 +227,4 @@ function inicializar(){
     // mostrarIndicadores('idIndicador','indicadores');
     // mostrarVariables('idVariable','variables');
     
-}
-
-async function calcularIndicadores(){
-    let fecha = document.getElementById("fecha").value;
-    console.log(fecha);
-    let data = await enviar("calcularvalores/" + fecha + "/",{});
-    alert(data);
-
 }
