@@ -62,7 +62,10 @@ def inicializarbase(fechahasta=date.today()):
 @app.route('/calcularvalores/<fecha>/', methods=['POST'])
 @app.route('/calcularvalores/', methods=['POST'])
 def calcularvalores(fecha=date.today()): 
-  solver.calcularValores(fecha)
+  if(isinstance(fecha, str)):
+    solver.calcularValores(datetime.strptime(fecha, '%Y-%m-%d').date())
+  else:
+    solver.calcularValores(fecha)
   return jsonify('OK')
 
 

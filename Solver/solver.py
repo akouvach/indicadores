@@ -41,7 +41,7 @@ def calcularVariables(miFecha = date.today()):
 
 def calcularIndicadores(miFecha=datetime.today()):
     try:
-        records = db.getIndicadoresData()    
+        records = db.getIndicadoresAKData()  
         for row in records:
             indicador = row[0]
             formula = row[2]

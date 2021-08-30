@@ -11,66 +11,12 @@ const BASE_API = protocol + window.location.host+"/";
 // }
 // const BASE_API=(window.location.host=="localhost:5000")?"http://localhost:5000/":"https://powermykpi.azurewebsites.net/";
 
-console.log(window.location.host);
+console.log(BASE_API);
 
 const RESULTADOS = "resultados";
-let cantxpagina=50;
+let cantxpagina=100;
 
 
-function ui_mostrarDatosidIndicador(id,lugar){
-    console.log("mostrarDatosIdIndicador...",id, lugar);
-
-    let miIndicador = document.getElementById(id).value;
-
-    console.log(miIndicador);
-
-    // if(miTabla != "Seleccione para visualizar"){
-    //     //Imprimo
-    //     //Traigo los datos de la tabla
-    //     let rdo = obtener("sources/"+miTabla+"/",id, "resultados",ui_mostrarTabla)
-    // } else {
-    //     document.getElementById(lugar).innerHTML="..."
-    // }
-}
-
-function ui_mostrarDatosidVariable(id,lugar){
-    console.log("mostrarDatosIdVariable...",id, lugar);
-
-    let miIndicador = document.getElementById(id).value;
-
-    console.log(miIndicador);
-
-    // if(miTabla != "Seleccione para visualizar"){
-    //     //Imprimo
-    //     //Traigo los datos de la tabla
-    //     let rdo = obtener("sources/"+miTabla+"/",id, "resultados",ui_mostrarTabla)
-    // } else {
-    //     document.getElementById(lugar).innerHTML="..."
-    // }
-}
-
-
-
-function ui_mostrarSelectIndicadores(id, lugar,data){
-    console.log("mostrarndo select...",lugar,id, data);
-    let myDiv= document.getElementById(lugar);
-    // console.log(data);
-    let rdo=data.data.reduce((acum,valor)=>{
-        return acum+"<option value='"+valor.id+"'>"+valor.descripcion+"</option>";
-    },"<select  class=" + String.fromCharCode(34) + "w3-input" + String.fromCharCode(34) + " id='"+id+"' onchange='ui_mostrarDatos" + id + "(" + String.fromCharCode(34) + id + String.fromCharCode(34) + "," + String.fromCharCode(34) + lugar + String.fromCharCode(34) + ");'><option selected>Seleccione para visualizar</option>")+"</select>";
-    myDiv.innerHTML=rdo;
-}
-
-function ui_mostrarSelectVariables(id, lugar,data){
-    console.log("mostrarndo select...",lugar,id, data);
-    let myDiv= document.getElementById(lugar);
-    // console.log(data);
-    let rdo=data.data.reduce((acum,valor)=>{
-        return acum+"<option value='"+valor.id+"'>"+valor.descripcion+"</option>";
-    },"<select class=" + String.fromCharCode(34) + "w3-input" + String.fromCharCode(34) + " id='"+id+"' onchange='ui_mostrarDatos" + id + "(" + 
-    String.fromCharCode(34) + id + String.fromCharCode(34) + "," + String.fromCharCode(34) + lugar + String.fromCharCode(34) + ");'><option selected>Seleccione para visualizar</option>")+"</select>";
-    myDiv.innerHTML=rdo;
-}
 
 function obtener(myUrl){
     console.log("obteniendo..",BASE_API+myUrl);
@@ -160,25 +106,6 @@ function ui_mostrarTabla(id, lugar, datos, pagina=1){
 }
 
 
-async function ui_mostrarDatosSources(valor){
-    console.log("cargando datos de", valor);
-    if(valor != "Seleccione"){
-        //Traigo los datos de la tabla
-        document.getElementById(RESULTADOS).innerHTML="cargando...";
-        let data = await obtener("sources/"+valor+"/")
-
-        //Almaceno los datos para paginar después
-        let datosTabla = {};
-        datosTabla.id = "";
-        datosTabla.lugar = RESULTADOS;
-        datosTabla.datos = data;
-        sessionStorage.setItem("datosTabla",JSON.stringify(datosTabla));
-        ui_mostrarTabla("",RESULTADOS,data);
-
-    } else {
-        document.getElementById(RESULTADOS).innerHTML="..."
-    }
-}
 
 function mostrarIndicadorDetalles(indicador, variables, lugar, ultimosValores){
     let myDiv = document.getElementById(lugar);
@@ -220,7 +147,7 @@ function mostrarIndicadorDetalles(indicador, variables, lugar, ultimosValores){
         </div>
 
     </div>`;
-    console.log(ultimosValores)
+    // console.log(ultimosValores)
 
 
     myDiv.innerHTML = tabla;
@@ -228,8 +155,28 @@ function mostrarIndicadorDetalles(indicador, variables, lugar, ultimosValores){
             
 }
 
-async function ui_mostrarDatosIndicador(valor){
+async function ui_mostrarDatosSources(valor){
     console.log("cargando datos de", valor);
+    if(valor != "Seleccione"){
+        //Traigo los datos de la tabla
+        document.getElementById(RESULTADOS).innerHTML="cargando...";
+        let data = await obtener("sources/"+valor+"/")
+
+        //Almaceno los datos para paginar después
+        let datosTabla = {};
+        datosTabla.id = "";
+        datosTabla.lugar = RESULTADOS;
+        datosTabla.datos = data;
+        sessionStorage.setItem("datosTabla",JSON.stringify(datosTabla));
+        ui_mostrarTabla("",RESULTADOS,data);
+
+    } else {
+        document.getElementById(RESULTADOS).innerHTML="..."
+    }
+}
+
+async function ui_mostrarDatosIndicador(valor){
+    // console.log("cargando datos de", valor);
     if(valor != "Seleccione"){
         //Traigo los datos de la tabla
         document.getElementById(RESULTADOS).innerHTML="cargando...";
@@ -255,7 +202,9 @@ async function mostrarSources(id,lugar){
     // console.log(data);
     let rdo = tablas.data.reduce((acum,valor)=>{
         return acum+"<option value='"+valor.tabla+"'>"+valor.tabla+"</option>";
-    },"<select  class=" + String.fromCharCode(34) + "w3-input" + String.fromCharCode(34) + " id='"+id+"' onchange='ui_mostrarDatosSources(this.value);'><option selected value='Seleccione'>----Seleccione----</option>")+"</select>";
+    },"<select  class=" + String.fromCharCode(34) + 
+    "w3-input" + String.fromCharCode(34) + " id='"+id+
+    "' onchange='ui_mostrarDatosSources(this.value);'><option selected value='Seleccione'>----Seleccione----</option>")+"</select>";
     myDiv.innerHTML=rdo;
 }
 
@@ -265,10 +214,11 @@ async function mostrarIndicadores(id,lugar){
     myDiv.innerHTML = "Cargando...";
     //Obtengo los Nombres de las tablas
     let indicadores = await obtener("sources/indicadores/")
-    console.log(indicadores);
+    // console.log(indicadores);
     let rdo = indicadores.data.reduce((acum,valor)=>{
         return acum+"<option value='"+valor.id+"'>"+valor.descripcion+"</option>";
-    },"<select  class=" + String.fromCharCode(34) + "w3-input" + String.fromCharCode(34) + 
+    },"<select  class=" + String.fromCharCode(34) + 
+    "w3-input" + String.fromCharCode(34) + 
     " id='"+id+"' onchange='ui_mostrarDatosIndicador(this.value);'><option selected value='Seleccione'>----Seleccione----</option>")+"</select>";
     myDiv.innerHTML=rdo;
 
@@ -292,7 +242,7 @@ function inicializar(){
     let anio= f.getFullYear();
     let dia = (f.getDate()<10?"0":"")+f.getDate();
     let miFecha = anio+"-"+ mes+"-"+dia;
-    console.log("efe:",f, miFecha);
+    // console.log("efe:",f, miFecha);
     document.getElementById("fecha").value = miFecha;
 
     // mostrarIndicadores('idIndicador','indicadores');
