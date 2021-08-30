@@ -66,6 +66,22 @@ def calcularvalores(fecha=date.today()):
   return jsonify('OK')
 
 
+@app.route('/resultados/<int:nroIndicador>/ultimos/')
+def resultadosultimos(nroIndicador=0):  
+  content = ""
+  cursor = db.getResultados(nroIndicador,1)
+  if (cursor is None):
+    abort(404, description="Resource not found")
+  else:
+    json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+    content = "{\"data\":" + json_object + "}"
+
+  return Response(
+    content, 
+    mimetype='application/json',
+    headers={'Content-Disposition':'attachment;filename=indicadores.json'}
+  )
+
 @app.route('/resultados/<int:nroIndicador>/')
 @app.route('/resultados/')
 def resultados(nroIndicador=0):  

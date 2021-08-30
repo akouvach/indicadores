@@ -169,13 +169,17 @@ def getIndicadoresValoresData(indicador=0):
     except Exception as error:
         print("--Error while getIndicadoresValoresData", error)
 ### Juntarla con getIndicadoresValoresData
-def getResultados(l_indicador=0):
+def getResultados(l_indicador=0, ultimos=0):
     try:
         stmt = ""
         if(l_indicador==0):
-            stmt = "select * from IndicadoresValores;"
+            
+            stmt = "select * from IndicadoresValores order by fecha desc "
         else:
-            stmt = "select * from IndicadoresValores where indicadorId = " + str(l_indicador) + ";"
+            stmt = "select * from IndicadoresValores where indicadorId = " + str(l_indicador) + " order by fecha desc "
+        if(ultimos!=0):
+            #le agrego el limit de 100
+            stmt = stmt + " limit 100; "
         records = dbEjecutar(stmt)
         return records
 

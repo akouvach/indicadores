@@ -180,6 +180,54 @@ async function ui_mostrarDatosSources(valor){
     }
 }
 
+function mostrarIndicadorDetalles(indicador, variables, lugar, ultimosValores){
+    let myDiv = document.getElementById(lugar);
+    let tabla = `
+    <div class='w3-container'>
+        <div class="w3-card-4">
+
+            <header class="w3-container w3-blue">
+            <h1>
+            <span class="w3-badge w3-red">${ indicador[0].id }</span>
+            ${ indicador[0].descripcion }
+            </h1>
+            </header>
+            
+            <div class="w3-container">
+            <p><b>Formula:</b> ${ indicador[0].formula }</p>            
+            <p><b>Agrupado por:</b> ${ indicador[0].agrupadopor }</p>
+            </div>
+            
+            <footer class="w3-container w3-blue">
+            <h5>Variables</h5>
+            </footer>
+
+            <div class="w3-container">
+            <p>${ variables.reduce( (acum, data) => acum + 
+                "<p><b>" + data.id + "</b></p>" +
+                "<p>" + data.formula + "</p>" +
+                "<p>" + data.agrupadopor + "</p>","") }
+            </p>            
+            </div>
+
+            <footer class="w3-container w3-blue">
+            <h5>Ultimos valores</h5>
+            </footer>
+
+            <div class="w3-container" id="ultimosValoresIndicador">
+            </div>
+            
+        </div>
+
+    </div>`;
+    console.log(ultimosValores)
+
+
+    myDiv.innerHTML = tabla;
+    ui_mostrarTabla(indicador, 'ultimosValoresIndicador', ultimosValores)
+            
+}
+
 async function ui_mostrarDatosIndicador(valor){
     console.log("cargando datos de", valor);
     if(valor != "Seleccione"){
@@ -189,8 +237,10 @@ async function ui_mostrarDatosIndicador(valor){
         
         let indicador = await obtener("indicadores/"+valor+"/")
         let variables = await obtener("indicadores/"+valor+"/variables/")
+        let ultimos = await obtener("resultados/"+valor+"/ultimos/")
 
-        console.log(indicador,variables);
+
+        mostrarIndicadorDetalles(indicador.data, variables.data, RESULTADOS, ultimos);
 
     } else {
         document.getElementById(RESULTADOS).innerHTML="..."
