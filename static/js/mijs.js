@@ -11,65 +11,12 @@ const BASE_API = protocol + window.location.host+"/";
 // }
 // const BASE_API=(window.location.host=="localhost:5000")?"http://localhost:5000/":"https://powermykpi.azurewebsites.net/";
 
-console.log(window.location.host);
+console.log(BASE_API);
 
 const RESULTADOS = "resultados";
-let cantxpagina=50;
+let cantxpagina=100;
 
 
-function ui_mostrarDatosidIndicador(id,lugar){
-    console.log("mostrarDatosIdIndicador...",id, lugar);
-
-    let miIndicador = document.getElementById(id).value;
-
-    console.log(miIndicador);
-
-    // if(miTabla != "Seleccione para visualizar"){
-    //     //Imprimo
-    //     //Traigo los datos de la tabla
-    //     let rdo = obtener("sources/"+miTabla+"/",id, "resultados",ui_mostrarTabla)
-    // } else {
-    //     document.getElementById(lugar).innerHTML="..."
-    // }
-}
-
-function ui_mostrarDatosidVariable(id,lugar){
-    console.log("mostrarDatosIdVariable...",id, lugar);
-
-    let miIndicador = document.getElementById(id).value;
-
-    console.log(miIndicador);
-
-    // if(miTabla != "Seleccione para visualizar"){
-    //     //Imprimo
-    //     //Traigo los datos de la tabla
-    //     let rdo = obtener("sources/"+miTabla+"/",id, "resultados",ui_mostrarTabla)
-    // } else {
-    //     document.getElementById(lugar).innerHTML="..."
-    // }
-}
-
-
-
-function ui_mostrarSelectIndicadores(id, lugar,data){
-    console.log("mostrarndo select...",lugar,id, data);
-    let myDiv= document.getElementById(lugar);
-    // console.log(data);
-    let rdo=data.data.reduce((acum,valor)=>{
-        return acum+"<option value='"+valor.id+"'>"+valor.descripcion+"</option>";
-    },"<select id='"+id+"' onchange='ui_mostrarDatos" + id + "(" + String.fromCharCode(34) + id + String.fromCharCode(34) + "," + String.fromCharCode(34) + lugar + String.fromCharCode(34) + ");'><option selected>Seleccione para visualizar</option>")+"</select>";
-    myDiv.innerHTML=rdo;
-}
-
-function ui_mostrarSelectVariables(id, lugar,data){
-    console.log("mostrarndo select...",lugar,id, data);
-    let myDiv= document.getElementById(lugar);
-    // console.log(data);
-    let rdo=data.data.reduce((acum,valor)=>{
-        return acum+"<option value='"+valor.id+"'>"+valor.descripcion+"</option>";
-    },"<select id='"+id+"' onchange='ui_mostrarDatos" + id + "(" + String.fromCharCode(34) + id + String.fromCharCode(34) + "," + String.fromCharCode(34) + lugar + String.fromCharCode(34) + ");'><option selected>Seleccione para visualizar</option>")+"</select>";
-    myDiv.innerHTML=rdo;
-}
 
 function obtener(myUrl){
     console.log("obteniendo..",BASE_API+myUrl);
@@ -159,6 +106,55 @@ function ui_mostrarTabla(id, lugar, datos, pagina=1){
 }
 
 
+
+function mostrarIndicadorDetalles(indicador, variables, lugar, ultimosValores){
+    let myDiv = document.getElementById(lugar);
+    let tabla = `
+    <div class='w3-container'>
+        <div class="w3-card-4">
+
+            <header class="w3-container w3-blue">
+            <h1>
+            <span class="w3-badge w3-red">${ indicador[0].id }</span>
+            ${ indicador[0].descripcion }
+            </h1>
+            </header>
+            
+            <div class="w3-container">
+            <p><b>Formula:</b> ${ indicador[0].formula }</p>            
+            <p><b>Agrupado por:</b> ${ indicador[0].agrupadopor }</p>
+            </div>
+            
+            <footer class="w3-container w3-blue">
+            <h5>Variables</h5>
+            </footer>
+
+            <div class="w3-container">
+            <p>${ variables.reduce( (acum, data) => acum + 
+                "<p><b>" + data.id + "</b></p>" +
+                "<p>" + data.formula + "</p>" +
+                "<p>" + data.agrupadopor + "</p>","") }
+            </p>            
+            </div>
+
+            <footer class="w3-container w3-blue">
+            <h5>Ultimos valores</h5>
+            </footer>
+
+            <div class="w3-container" id="ultimosValoresIndicador">
+            </div>
+            
+        </div>
+
+    </div>`;
+    // console.log(ultimosValores)
+
+
+    myDiv.innerHTML = tabla;
+    ui_mostrarTabla(indicador, 'ultimosValoresIndicador', ultimosValores)
+            
+}
+
 async function ui_mostrarDatosSources(valor){
     console.log("cargando datos de", valor);
     if(valor != "Seleccione"){
@@ -179,6 +175,24 @@ async function ui_mostrarDatosSources(valor){
     }
 }
 
+async function ui_mostrarDatosIndicador(valor){
+    // console.log("cargando datos de", valor);
+    if(valor != "Seleccione"){
+        //Traigo los datos de la tabla
+        document.getElementById(RESULTADOS).innerHTML="cargando...";
+        // window.open(BASE_API+"indicador/" + valor);
+        
+        let indicador = await obtener("indicadores/"+valor+"/")
+        let variables = await obtener("indicadores/"+valor+"/variables/")
+        let ultimos = await obtener("resultados/"+valor+"/ultimos/")
+
+
+        mostrarIndicadorDetalles(indicador.data, variables.data, RESULTADOS, ultimos);
+
+    } else {
+        document.getElementById(RESULTADOS).innerHTML="..."
+    }
+}
 
 async function mostrarSources(id,lugar){
     let myDiv= document.getElementById(lugar);
@@ -188,24 +202,28 @@ async function mostrarSources(id,lugar){
     // console.log(data);
     let rdo = tablas.data.reduce((acum,valor)=>{
         return acum+"<option value='"+valor.tabla+"'>"+valor.tabla+"</option>";
-    },"<select id='"+id+"' onchange='ui_mostrarDatosSources(this.value);'><option selected value='Seleccione'>----Seleccione----</option>")+"</select>";
-// },"<select id='"+id+"' onchange='ui_mostrarDatos" + id + "(this)" + String.fromCharCode(34) + id + String.fromCharCode(34) + "," + String.fromCharCode(34) + lugar + String.fromCharCode(34) + ");'><option selected>Seleccione para visualizar</option>")+"</select>";
+    },"<select  class=" + String.fromCharCode(34) + 
+    "w3-input" + String.fromCharCode(34) + " id='"+id+
+    "' onchange='ui_mostrarDatosSources(this.value);'><option selected value='Seleccione'>----Seleccione----</option>")+"</select>";
     myDiv.innerHTML=rdo;
 }
 
-function mostrarIndicadores(id,myDiv){
-    document.getElementById(myDiv).innerHTML="Cargando...";
-    //Obtengo los Indicadores
-    obtener("sources/indicadores/",id, myDiv, ui_mostrarSelectIndicadores)
+async function mostrarIndicadores(id,lugar){
+    document.getElementById(lugar).innerHTML="Cargando...";
+    let myDiv= document.getElementById(lugar);
+    myDiv.innerHTML = "Cargando...";
+    //Obtengo los Nombres de las tablas
+    let indicadores = await obtener("sources/indicadores/")
+    // console.log(indicadores);
+    let rdo = indicadores.data.reduce((acum,valor)=>{
+        return acum+"<option value='"+valor.id+"'>"+valor.descripcion+"</option>";
+    },"<select  class=" + String.fromCharCode(34) + 
+    "w3-input" + String.fromCharCode(34) + 
+    " id='"+id+"' onchange='ui_mostrarDatosIndicador(this.value);'><option selected value='Seleccione'>----Seleccione----</option>")+"</select>";
+    myDiv.innerHTML=rdo;
 
 }
 
-function mostrarVariables(id,myDiv){
-    document.getElementById(myDiv).innerHTML="Cargando...";
-    //Obtengo los Indicadores
-    obtener("sources/variables/",id, myDiv, ui_mostrarSelectVariables)
-
-}
 
 async function calcularIndicadores(){
     let fecha = document.getElementById("fecha").value;
@@ -216,12 +234,15 @@ async function calcularIndicadores(){
 
 function inicializar(){
     mostrarSources('idSource','sources');
+    mostrarIndicadores('idIndicador','indicadores');
+
+
     let f = new Date();
     let mes = ((f.getMonth()+1)<10?"0":"")+(f.getMonth()+1);
     let anio= f.getFullYear();
     let dia = (f.getDate()<10?"0":"")+f.getDate();
     let miFecha = anio+"-"+ mes+"-"+dia;
-    console.log("efe:",f, miFecha);
+    // console.log("efe:",f, miFecha);
     document.getElementById("fecha").value = miFecha;
 
     // mostrarIndicadores('idIndicador','indicadores');

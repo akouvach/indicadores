@@ -28,7 +28,6 @@ app = Flask(__name__, template_folder="templates")
 def inicio():  
   return render_template('index.html')
 
-
 @app.route('/status')
 def status():  
   param = request.ars.get("params1", "No contiene este parámetro")
@@ -63,9 +62,28 @@ def inicializarbase(fechahasta=date.today()):
 @app.route('/calcularvalores/<fecha>/', methods=['POST'])
 @app.route('/calcularvalores/', methods=['POST'])
 def calcularvalores(fecha=date.today()): 
-  solver.calcularValores(fecha)
+  if(isinstance(fecha, str)):
+    solver.calcularValores(datetime.strptime(fecha, '%Y-%m-%d').date())
+  else:
+    solver.calcularValores(fecha)
   return jsonify('OK')
 
+
+@app.route('/resultados/<int:nroIndicador>/ultimos/')
+def resultadosultimos(nroIndicador=0):  
+  content = ""
+  cursor = db.getResultados(nroIndicador,1)
+  if (cursor is None):
+    abort(404, description="Resource not found")
+  else:
+    json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+    content = "{\"data\":" + json_object + "}"
+
+  return Response(
+    content, 
+    mimetype='application/json',
+    headers={'Content-Disposition':'attachment;filename=indicadores.json'}
+  )
 
 @app.route('/resultados/<int:nroIndicador>/')
 @app.route('/resultados/')
@@ -116,6 +134,21 @@ def getTablas():
 
   return Response(content, mimetype='application/json')
 
+
+        
+@app.route('/indicadores/<int:idIndicador>/')
+def getIndicador(idIndicador):
+  cursor = db.getIndicador(idIndicador)
+  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+  content = "{\"data\":" + json_object + "}"
+  return Response(content, mimetype='application/json')
+
+@app.route('/indicadores/<int:idIndicador>/variables/')
+def getIndicadorvariables(idIndicador):
+  cursor = db.getIndicadorVariables(idIndicador)
+  json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+  content = "{\"data\":" + json_object + "}"
+  return Response(content, mimetype='application/json')
 
 @app.route('/sources/<nombre>/')
 def getSources(nombre=""):

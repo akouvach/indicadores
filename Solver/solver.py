@@ -41,7 +41,7 @@ def calcularVariables(miFecha = date.today()):
 
 def calcularIndicadores(miFecha=datetime.today()):
     try:
-        records = db.getIndicadoresData()    
+        records = db.getIndicadoresAKData()  
         for row in records:
             indicador = row[0]
             descripcion = row[1]
@@ -53,7 +53,7 @@ def calcularIndicadores(miFecha=datetime.today()):
             ))
 
             # Se utiliza el valor de cada variable para evaluar la expresión de cada indicador
-            calcularIndicador(indicador, formula, agruparPor, miFecha, 1)
+            calcularIndicador(indicador, formula, agruparPor, miFecha, 0)
 
     except Exception as error:
 

@@ -4,34 +4,76 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>-Power my KPI-</title>    
+    <title>-Power My KPI-</title>    
     <link rel="stylesheet" href="{{ url_for('static',filename='css/w3.css') }}">
 </head>
 <body>
     
     <div class="w3-container">
-        <table>
-            <tr>
-                <td><img height="{{ 80 }} " src="{{ url_for('static',filename='img/logo.png') }}" alt="Logo"></td>
-                <td><h1>Power my KPI</h1></td>
-            </tr>
-        </table>
+        
+        <div class="w3-container">
+            <table class="w3-table">
+                <tr>
+                    <td width="80"><img height="{{ 80 }} " src="{{ url_for('static',filename='img/logo.png') }}" alt="Logo"></td>
+                    <td><h1>Power my KPI</h1></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="w3-container">
+
+            <table class='w3-table'>
+                <tr>
+                    <td>
+                        <input class="w3-input" type='date' id='fecha' name='fecha'>
+                        <button onclick="calcularIndicadores();">Calcular indicadores</button>
+                    </td>
+                    <td>
+                        <button>Calcular attrition</button>
+                        <button>Estimar indicadores futuros</button>
+                    </td>
+                </tr>    
+        
+                <tr>
+                    <td><label for="idSourse">Sources</label></td>
+                    <td><label for="idIndicador">Indicadores</label></td>
+                </tr>
+                <tr>
+                    <td><div id="sources"></div></td>
+                    <td><div id="indicadores"></div></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><hr size=1 color=grey></td>
+                </tr>
+            
+            </table>
+        </div>
+        
         
 
+
         {% block content %}
-        {% endblock %}            
 
-        <hr size=5 color=darkblue>
-        <p>
-            /resultados (trae todo)
-            <br>/resultados/1 (trae el los resultados del indicador 1)
-            <br>/resultados_pivot (trae los datos de pivot)
-            <br>/resultados_pivot/1 (trae los datos de pivot del indicador 1)
-        </p>
+        {% endblock %}    
+        
+        <div class="w3-container">
+        
+            <hr size=5 color=darkblue>
+            <p>
+                /resultados (trae todo)
+                <br>/resultados/1 (trae el los resultados del indicador 1)
+                <br>/resultados_pivot (trae los datos de pivot)
+                <br>/resultados_pivot/1 (trae los datos de pivot del indicador 1)
+            </p>      
+        </div>
 
 
-      </div>
 
-      
+    </div>
+
+    <script src="{{ url_for('static',filename='js/mijs.js') }}"></script>
+    <script type="text/javascript">inicializar();</script>
+
+
 </body>
 </html>
