@@ -44,11 +44,12 @@ def calcularIndicadores(miFecha=datetime.today()):
         records = db.getIndicadoresData()    
         for row in records:
             indicador = row[0]
+            descripcion = row[1]
             formula = row[2]
             agruparPor = row[3]
 
             print("\nId: {} Descripción: {} Fórmula: {} Agrupación: {}\n".format(
-                indicador, row[1], formula, agruparPor
+                indicador, descripcion, formula, agruparPor
             ))
 
             # Se utiliza el valor de cada variable para evaluar la expresión de cada indicador

@@ -130,7 +130,7 @@ def getIndicadoresData(indicador=0):
         return rdo
 
     except Exception as error:
-        raise("--Error while getIndicadoresData"+ error)
+        raise("--Error while getIndicadoresData" + error)
 
 
 def getIndicadoresAKData(indicador=0):
@@ -138,12 +138,12 @@ def getIndicadoresAKData(indicador=0):
         if(indicador==0):
             stmt = "Select * from indicadores"
         else:
-            stmt = "select * from indicadores where id = "+str(indicador)
+            stmt = "select * from indicadores where id = " + str(indicador)
         rdo = dbEjecutar(stmt)
         return rdo
 
     except Exception as error:
-        raise("--Error while getIndicadoresAKData"+ error)
+        raise("--Error while getIndicadoresAKData" + error)
 
 
 def getAttritionData():
@@ -180,7 +180,7 @@ def getResultados(l_indicador=0):
         return records
 
     except Exception as error:
-        print("Error al recuperar los resultados de los indicadores..",error)
+        print("Error al recuperar los resultados de los indicadores..", error)
 ###
 
 
