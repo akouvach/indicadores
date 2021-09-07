@@ -15,7 +15,7 @@
             <table class="w3-table">
                 <tr>
                     <td width="80"><img height="{{ 80 }} " src="{{ url_for('static',filename='img/logo.png') }}" alt="Logo"></td>
-                    <td><h1>Power my KPI</h1></td>
+                    <td><h1>PowerMyKPI</h1></td>
                 </tr>
             </table>
         </div>
@@ -26,17 +26,17 @@
                 <tr>
                     <td>
                         <input class="w3-input" type='date' id='fecha' name='fecha'>
-                        <button onclick="calcularIndicadores();">Calcular indicadores</button>
+                        <button onclick="calcularIndicadores();">Calculate indicators</button>
                     </td>
                     <td>
-                        <button>Calcular attrition</button>
-                        <button>Estimar indicadores futuros</button>
+                        <button onclick="calcularAttrition();">Calculate attrition</button>
+                        <button onclick="calcularFuturo();">Estimate indicators</button>
                     </td>
                 </tr>    
         
                 <tr>
                     <td><label for="idSourse">Sources</label></td>
-                    <td><label for="idIndicador">Indicadores</label></td>
+                    <td><label for="idIndicador">Indicators</label></td>
                 </tr>
                 <tr>
                     <td><div id="sources"></div></td>

@@ -232,6 +232,18 @@ async function calcularIndicadores(){
 
 }
 
+async function calcularAttrition(){
+    let data = await enviar("attrition/", {});
+    alert(data);
+
+}
+
+async function calcularFuturo(){
+    let data = await enviar("kpi-prediction/",{});
+    alert(data);
+
+}
+
 function inicializar(){
     mostrarSources('idSource','sources');
     mostrarIndicadores('idIndicador','indicadores');
