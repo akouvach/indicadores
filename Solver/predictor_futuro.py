@@ -47,7 +47,7 @@ def clean_dataframe(dataframe):
 
     # Los datos atípicos son llevados a la expresión de dato nulo
     #data_n = data.copy()
-    dataframe[(dataframe["valor"] <= r3s_inf) | (dataframe["valor"] >= r3s_sup)] = np.nan
+    dataframe[(dataframe["valor"] < (r3s_inf - 0.00001)) | (dataframe["valor"] > (r3s_sup + 0.00001))] = np.nan
 
     # Se interpolan los datos nulos
     dataframe.interpolate(inplace=True)
@@ -62,7 +62,7 @@ def train_test_split(dataframe, threshold=180, split=3):
 
     # Se establece el look back del modelo. Este define cuantos pasos temporales previos serán tomados en cuenta
     # para predecir la siguiente instacia de la serie de tiempo
-    look_back = 90
+    look_back = 80
     # día_1, día_2, ..., día_penúltimo, día_final                   -
     # [1,     2,    ..., n-1,           n]                          |
     # [2,     3,    ..., n-1,           n] shape[0] - look_back (cantidad de días para separar train/test)
@@ -81,11 +81,11 @@ def train_test_split(dataframe, threshold=180, split=3):
     # resultados (últimos 30 días)
     n_split = int(X.shape[0] * (1 - 1/split))
 
-    X_train = X[:n_split, :]
-    y_train = y[:n_split]
+    X_train = X[:-31, :] # se deberia usar esto: X[:n_split, :]
+    y_train = y[:-31] # se deberia usar esto: y[:n_split]
 
-    X_test = X[n_split:, :]
-    y_test = y[n_split:]
+    X_test = X[-31:, :] # se deberia usar esto: X[n_split:, :]
+    y_test = y[-31:] # se deberia usar esto: y[n_split:]
 
     return X_train, X_test, y_train, y_test
 
@@ -160,6 +160,7 @@ def run_future_machine_learning_model(data): # data=create_indicador_dataframe()
 
 
 if __name__ == "__main__":
+    # BAD;DEV - BAD;AP
     indicadores_file = "indicadores.db"
     cnx = sqlite3.connect(os.path.abspath(indicadores_file))
 

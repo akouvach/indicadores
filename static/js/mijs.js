@@ -233,13 +233,13 @@ async function calcularIndicadores(){
 }
 
 async function calcularAttrition(){
-    let data = await enviar("attrition/", {});
+    let data = await enviar("attrition", {});
     alert(data);
 
 }
 
 async function calcularFuturo(){
-    let data = await enviar("kpi-prediction/",{});
+    let data = await enviar("kpi-prediction",{});
     alert(data);
 
 }

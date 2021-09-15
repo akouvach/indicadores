@@ -168,7 +168,7 @@ def getSources(nombre=""):
   return Response(content, mimetype='application/json')
 
 
-@app.route('/attrition')
+@app.route('/attrition', methods=['POST', 'GET'])
 def getPrediccionAttrition():
   cursor = db.getAttritionData()
   pre_process_data = process_data(cursor)
@@ -190,22 +190,23 @@ def getPrediccionAttrition():
   )
 
 
-@app.route('/kpi-prediction')
+@app.route('/kpi-prediction', methods=['POST', 'GET'])
 def getPrediccionFutura():
   cursor = db.getIndicadoresValoresData()
-  data = cursor[cursor["esSimulacion"] == 0]
+  data = cursor[(cursor["esSimulacion"] == 0) & (cursor["esPrediccion"] == 0)]
   data.dropna(axis=0, inplace=True)
   ind_dict = create_indicadores_dict(data)
   ind_df = create_indicador_dataframe(data, ind_dict)
 
   prediction = run_future_machine_learning_model(ind_df.items())
-  breakpoint()
 
   data_frame_content = ""
   for indicador, data_frame in prediction.items():
     json_object = data_frame.to_json(orient="records", indent=2)
-    data_frame_content = data_frame_content + f"\"{indicador}\": {json_object}"
-  content = "{\"data\":[" + data_frame_content + "]}"
+    data_frame_content = data_frame_content + f"\n\"{indicador}\": {json_object}"
+    data_frame_content = data_frame_content + ", "
+  data_frame_content = data_frame_content[: -2]
+  content = "{\"data\":{" + data_frame_content + "}}"
 
   return Response(
     content, 
