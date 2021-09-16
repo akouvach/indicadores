@@ -176,7 +176,10 @@ def getPrediccionAttrition():
   probability = run_attrition_machine_learning_model(splitted_data)
   result_df = pd.concat([cursor, probability], axis=1)
 
-  db.insertAttritionData(result_df)
+  fecha=datetime.today().strftime('%Y-%m-%d')
+  db.deleteAttitionData(fecha)
+
+  db.insertAttritionData(result_df,fecha)
   json_df = result_df[["EmployeeNumber", "probability"]].copy()
   json_df.rename(columns={"EmployeeNumber": "employee_id", "probability": "attrition_value"}, inplace=True)
   json_df["date"] = [datetime.today().strftime('%Y-%m-%d')]*json_df.shape[0]

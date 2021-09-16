@@ -53,7 +53,7 @@ def calcularIndicadores(miFecha=datetime.today()):
             ))
 
             # Se utiliza el valor de cada variable para evaluar la expresión de cada indicador
-            calcularIndicador(indicador, formula, agruparPor, miFecha, 0)
+            calcularIndicador(indicador, formula, agruparPor, miFecha, 1)
 
     except Exception as error:
 
@@ -78,7 +78,7 @@ def calcularIndicador(indicador, formula, agruparPor, miFecha, aleatorio=0):
             
             rdoIndicador = eval(formula)
             if aleatorio:
-                rdoIndicador = rdoIndicador + random.random()*100
+                rdoIndicador = rdoIndicador + random.random()*10
 
             rdoPonderado = db.getPonderacionIndicador(indicador, miFecha, rdoIndicador)[0][0]
             

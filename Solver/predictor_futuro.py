@@ -8,7 +8,7 @@ import pandas as pd
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
 
-from Solver.db import getValoresPonderados, insertIndicadoresValoresDataFrameData
+from Solver.db import getValoresPonderados, deleteIndicadoresValoresDataFrameData, insertIndicadoresValoresDataFrameData
 
 
 def create_indicadores_dict(data):
@@ -131,7 +131,9 @@ def run_future_machine_learning_model(data): # data=create_indicador_dataframe()
             X_ms_futuro = np.append(X_ms_futuro[1:], y_os_pred)
 
         y_ms_futuro_pred = np.array(y_ms_futuro_pred)
-        fecha_futuro = [datetime.date.today() + datetime.timedelta(days=i) for i in range(31)]
+        fecha_actual= datetime.date.today()
+
+        fecha_futuro = [fecha_actual + datetime.timedelta(days=i) for i in range(31)]
 
         df_futuro = pd.DataFrame(
             data={
@@ -154,6 +156,7 @@ def run_future_machine_learning_model(data): # data=create_indicador_dataframe()
         
         df_futuro["valorPonderado"] = valores_ponderados
         machine_learning_result[(indicador[0], indicador[1])] = df_futuro
+        deleteIndicadoresValoresDataFrameData(fecha_actual)
         insertIndicadoresValoresDataFrameData(df_futuro)
 
     return machine_learning_result
