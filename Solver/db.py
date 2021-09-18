@@ -187,6 +187,26 @@ def getResultados(l_indicador=0, ultimos=0):
         print("Error al recuperar los resultados de los indicadores..", error)
 ###
 
+def getPredicciones(l_indicador, l_grupo):
+    try:
+
+        sqlite_query = """select fecha,valor,valorPonderado from IndicadoresValores 
+        where esPrediccion = 1 and indicadorId = ? and grupo = ? 
+        order by fecha desc limit 100;"""
+
+        data_tuple = (l_indicador, l_grupo)
+
+        rdo = dbEjecutar(sqlite_query, data_tuple)
+        if not rdo:
+            return None
+        else:
+            return rdo
+
+    except Exception as error:
+        print("--Error while obtainin predictions", error)
+        raise Exception("Error al obtener predicciones")
+
+
 
 def getValoresPonderados(indicador, valor):
     try:

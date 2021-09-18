@@ -35,17 +35,92 @@ function enviar(myUrl,data){
     return rdo
 }
 
+async function verEstimaciones(indicador,grupo){
+    //Actualizo los valores
+    document.getElementById("estimationsDetail").innerHTML="Loading...";
+    let data = await obtener("predicciones/"+indicador+"/"+grupo+"/")
+
+    if (data.data.length >0){
+        ui_mostrarTabla("estimaciones","estimationsDetail",data);
+    } else {
+        document.getElementById("estimationsDetail").innerHTML="No data found..."
+    }
+
+
+    document.getElementById("estimationHeader").innerHTML = "Indicator:" + indicador + " Group:" + grupo;
+    
+    
+    document.getElementById('id01').style.display='block';
+
+}
+
+
+function ui_mostrarTablaIndicadores(id, lugar, datos, pagina=1){
+    // console.log("entro",Date.UTC())
+    
+    let myDiv = document.getElementById(lugar);
+    // console.log("mostrando tabla",datos, datos.data.length)
+    
+    let mensaje = "<table class='w3-table-all w3-hoverable w3-border'>";
+
+    // hago un ciclo para colocar los titulos
+    let titulos = datos.data[0];
+    mensaje += "<thead><tr class='w3-orange'><th>Nro</th>";
+    for(var j in titulos){
+        mensaje += "<th>" + j + "</th>";
+    }
+    mensaje += "<th>Est.</th>";
+    mensaje += "</tr></thead>";
+
+    mensaje+="<tbody>";
+           
+    //ahora recorro todos los elementos del vector para poner los datos
+    for(let r=0;r<datos.data.length;r++){
+    // for (var i in datos.data) {
+        if(datos.data[r]){
+            mensaje += "<tr><td>"+r+"</td>";
+            miIndicador=0;
+            miGrupo = "--";
+            if(datos.data.hasOwnProperty(r)){
+                let miObj = datos.data[r];
+                for(var j in miObj){
+                    if(j=="indicadorId"){
+                        miIndicador=miObj[j]
+                    }
+                    if(j=="grupo"){
+                        miGrupo=miObj[j]
+                    }
+                    
+                    mensaje += "<td>" + miObj[j] + "</td>";
+                }
+            } 
+            mensaje += "<td><button onclick=" + 
+            String.fromCharCode(34) +
+            "verEstimaciones(" + miIndicador + ", '" + miGrupo + "');" + 
+            String.fromCharCode(34) +
+            ">...</button></td>";
+            mensaje += "</tr>";
+        } else {
+            break;
+        }
+    }
+
+    mensaje+="</tbody>";
+    mensaje+="<tfoot><tr><td colspan='"+Object.keys(titulos).length+"'>Rows:" + datos.data.length + " | " ;
+
+    mensaje+="</td></tr></tfoot>";
+    
+    mensaje += "</table>";
+    myDiv.innerHTML = mensaje;
+    
+
+}
+
 function ui_mostrarTabla(id, lugar, datos, pagina=1){
     // console.log("entro",Date.UTC())
-    let datosTabla = JSON.parse(sessionStorage.getItem("datosTabla"));
 
-    if(id==""){
-        console.log("session..",datosTabla);
-        id = datosTabla.id;
-        lugar = datosTabla.lugar;
-        datos = datosTabla.datos;
-    }
-    
+
+
     let myDiv = document.getElementById(lugar);
     // console.log("mostrando tabla",datos, datos.data.length)
     
@@ -62,7 +137,7 @@ function ui_mostrarTabla(id, lugar, datos, pagina=1){
     mensaje+="<tbody>";
            
     //ahora recorro todos los elementos del vector para poner los datos
-    for(let r=(pagina-1);r<((pagina-1)*cantxpagina+cantxpagina);r++){
+    for(let r=0;r<datos.data.length;r++){
     // for (var i in datos.data) {
         if(datos.data[r]){
             mensaje += "<tr><td>"+r+"</td>";
@@ -79,23 +154,7 @@ function ui_mostrarTabla(id, lugar, datos, pagina=1){
     }
 
     mensaje+="</tbody>";
-    mensaje+="<tfoot><tr><td colspan='"+Object.keys(titulos).length+"'>Filas procesadas:" + datos.data.length + " | " ;
-
-    if(datos.data.length > cantxpagina){
-        //debo realizar paginación
-        if(pagina>1){
-            //agrego un botón para bajar la página
-            mensaje+="<button><</button>";
-        }
-        if(pagina*cantxpagina<datos.data.length){
-            //le agrego uno para la siguiente página
-            mensaje+="<button onclick='ui_mostrarTabla("+ 
-            String.fromCharCode(34)+String.fromCharCode(34)+","+
-            String.fromCharCode(34)+String.fromCharCode(34)+","+
-            String.fromCharCode(34)+String.fromCharCode(34)+","+
-            ++pagina + ")';>></button>";
-        }
-    }
+    mensaje+="<tfoot><tr><td colspan='"+Object.keys(titulos).length+"'>Rows:" + datos.data.length + " | " ;
 
     mensaje+="</td></tr></tfoot>";
     
@@ -122,7 +181,7 @@ function mostrarIndicadorDetalles(indicador, variables, lugar, ultimosValores){
             
             <div class="w3-container">
             <p><b>Formula:</b> ${ indicador[0].formula }</p>            
-            <p><b>Agrupado por:</b> ${ indicador[0].agrupadopor }</p>
+            <p><b>Group by:</b> ${ indicador[0].agrupadopor }</p>
             </div>
             
             <footer class="w3-container w3-blue">
@@ -138,7 +197,7 @@ function mostrarIndicadorDetalles(indicador, variables, lugar, ultimosValores){
             </div>
 
             <footer class="w3-container w3-blue">
-            <h5>Ultimos valores</h5>
+            <h5>Last values</h5>
             </footer>
 
             <div class="w3-container" id="ultimosValoresIndicador">
@@ -156,7 +215,6 @@ function mostrarIndicadorDetalles(indicador, variables, lugar, ultimosValores){
 }
 
 async function ui_mostrarDatosSources(valor){
-    console.log("cargando datos de", valor);
     if(valor != "Seleccione"){
         //Traigo los datos de la tabla
         document.getElementById(RESULTADOS).innerHTML="cargando...";
@@ -168,8 +226,11 @@ async function ui_mostrarDatosSources(valor){
         datosTabla.lugar = RESULTADOS;
         datosTabla.datos = data;
         sessionStorage.setItem("datosTabla",JSON.stringify(datosTabla));
-        ui_mostrarTabla("",RESULTADOS,data);
-
+        if(valor == "current_indicator_value"){
+            ui_mostrarTablaIndicadores("",RESULTADOS,data);
+        } else{
+            ui_mostrarTabla("",RESULTADOS,data);
+        }
     } else {
         document.getElementById(RESULTADOS).innerHTML="..."
     }
