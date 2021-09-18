@@ -14,7 +14,12 @@
         <div class="w3-container">
             <table class="w3-table">
                 <tr>
-                    <td width="80"><img height="{{ 80 }} " src="{{ url_for('static',filename='img/logo.png') }}" alt="Logo"></td>
+                    <td width="80">
+                        <a href="/">
+                            <img height="{{ 80 }} " src="{{ url_for('static',filename='img/logo.png') }}" alt="Logo">
+                            
+                        </a>
+                    </td>
                     <td><h1>PowerMyKPI</h1></td>
                 </tr>
             </table>
@@ -22,31 +27,85 @@
 
         <div class="w3-container">
 
-            <table class='w3-table'>
+
+            <div class="w3-row">
+                <div class="w3-panel w3-light-blue w3-col m8 l9">
+                    <div class="w3-container w3-padding">
+                        <div class="w3-panel w3-black">
+                            <h5>Visualizations</h5>
+                        </div>
+                        <div class="w3-row w3-padding">
+                                    <label for="idSourse">Sources</label>
+                                    <div id="sources">...</div>
+                        </div>
+                        <div class="w3-row w3-padding">
+                                    <label for="idIndicador">Indicators</label>
+                                    <div id="indicadores">...</div>
+                        </div>
+
+                    </div>
+                
+                </div>
+                <div class="w3-panel w3-light-green w3-col m4 l3">
+                    <div class="w3-panel w3-black">
+                        <h5>Processing</h5>
+                    </div>
+                    <div class="w3-container w3-padding">
+
+                        <div class="w3-row w3-padding">
+                            <div class="w3-col m8 l9">
+                                <input class="w3-input w3-border w3-round" type='date' id='fecha' name='fecha'>
+    
+                            </div>
+                            <div class="w3-col m4 l3">
+                                <button onclick="calcularIndicadores();">Calculate indicators</button>
+    
+                            </div>
+    
+                        </div>
+                        <div class="w3-row w3-padding">
+                            <button onclick="calcularAttrition();">Calculate attrition</button>
+                        </div>
+                        <div class="w3-row w3-padding">
+                            <button onclick="calcularFuturo();">Estimate indicators</button>
+                        </div>
+                    </div>
+                                
+                </div>
+            </div>
+
+            <!-- <table class='w3-table w3-border'>
                 <tr>
                     <td>
-                        <input class="w3-input" type='date' id='fecha' name='fecha'>
+                        <input class="w3-input w3-border" type='date' id='fecha' name='fecha'>
+                    </td>
+                    <td>
                         <button onclick="calcularIndicadores();">Calculate indicators</button>
                     </td>
                     <td>
                         <button onclick="calcularAttrition();">Calculate attrition</button>
+                    </td>
+                    <td>
                         <button onclick="calcularFuturo();">Estimate indicators</button>
                     </td>
-                </tr>    
+                </tr> 
+                <tr>
+                    <td colspan="4"><hr size=2></td>
+                </tr>   
         
                 <tr>
-                    <td><label for="idSourse">Sources</label></td>
-                    <td><label for="idIndicador">Indicators</label></td>
+                    <td colspan="2"><label for="idSourse">Sources</label></td>
+                    <td colspan="2"><label for="idIndicador">Indicators</label></td>
                 </tr>
                 <tr>
-                    <td><div id="sources"></div></td>
-                    <td><div id="indicadores"></div></td>
+                    <td colspan="2"><div id="sources"></div></td>
+                    <td colspan="2"><div id="indicadores"></div></td>
                 </tr>
                 <tr>
                     <td colspan="2"><hr size=1 color=grey></td>
                 </tr>
             
-            </table>
+            </table> -->
         </div>
         
         
@@ -62,8 +121,8 @@
             <p>
                 /resultados (trae todo)
                 <br>/resultados/1 (trae el los resultados del indicador 1)
-                <br>/resultados_pivot (trae los datos de pivot)
-                <br>/resultados_pivot/1 (trae los datos de pivot del indicador 1)
+                <br>/resultados-pivot (trae los datos de pivot)
+                <br>/resultados-pivot/1 (trae los datos de pivot del indicador 1)
             </p>      
         </div>
 

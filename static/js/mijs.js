@@ -49,7 +49,7 @@ function ui_mostrarTabla(id, lugar, datos, pagina=1){
     let myDiv = document.getElementById(lugar);
     // console.log("mostrando tabla",datos, datos.data.length)
     
-    let mensaje = "<table class='w3-table-all w3-hoverable'>";
+    let mensaje = "<table class='w3-table-all w3-hoverable w3-border'>";
 
     // hago un ciclo para colocar los titulos
     let titulos = datos.data[0];
