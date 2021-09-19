@@ -300,6 +300,70 @@ def deleteIndicadoresValoresData(l_indicadorId, l_grupo, l_fecha):
             closeDb(dbConn)
 
 
+def deleteIndicadoresValoresDataFrameData(indicador, grupo, fecha_actual):
+    try:
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+
+        sqlite_insert_query = """delete from indicadoresValores
+            where indicadorId = ? and grupo = ? and Fecha >= ? and esPrediccion = 1;"""
+
+        data_tuple = (int(indicador), grupo, fecha_actual)
+        count = cursor.execute(sqlite_insert_query, data_tuple)
+        dbConn.commit()
+        cursor.close()
+
+    except Exception as error:
+        print("--Error while deleteIndicadoresValoresDataFrameData", error)
+        raise Exception("Error al borrar predicción de indicadores")
+
+    finally:
+        if dbConn:
+            closeDb(dbConn)
+
+
+def deleteIndicadoresValoresPivotData():
+    try:
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+
+        sqlite_insert_query = """delete from indicadoresValoresPivot;"""
+
+        count = cursor.execute(sqlite_insert_query)
+        dbConn.commit()
+        cursor.close()
+
+    except Exception as error:
+        print("--Error while deleteIndicadoresValoresPivotData", error)
+        raise Exception("Error al borrar indicadores valores pivot")
+
+    finally:
+        if dbConn:
+            closeDb(dbConn)
+
+
+def deleteAttitionData(fecha):
+    try:
+        dbConn = openDb()
+        cursor = dbConn.cursor()
+
+        sqlite_insert_query = """delete from employeeAttrition
+            where date = ?;"""
+
+        data_tuple = (fecha,)
+        count = cursor.execute(sqlite_insert_query, data_tuple)
+        dbConn.commit()
+        cursor.close()
+
+    except Exception as error:
+        print("--Error while deleteAttitionData", error)
+        raise Exception("Error al borrar Attrition")
+
+    finally:
+        if dbConn:
+            closeDb(dbConn)
+
+
 def insertVariablesValoresData(l_variableId, l_fecha=datetime.today(), l_grupo="", l_valor=-1, l_essimulacion=0):
     try:
         dbConn = openDb()
@@ -346,27 +410,6 @@ def insertIndicadoresValoresData(l_indicadorId, l_grupo="", l_fecha=datetime.tod
             closeDb(dbConn)
 
 
-def deleteIndicadoresValoresDataFrameData(fecha_actual):
-    try:
-        dbConn = openDb()
-        cursor = dbConn.cursor()
-
-        sqlite_insert_query = """delete from indicadoresValores
-            where date >= ? and esPrediccion=1;"""
-
-        data_tuple = (fecha_actual,)
-        count = cursor.execute(sqlite_insert_query, data_tuple)
-        dbConn.commit()
-        cursor.close()
-
-    except Exception as error:
-        print("--Error while deleteAttritionData", error)
-        raise Exception("Error al borrar Attrition")
-
-    finally:
-        if dbConn:
-            closeDb(dbConn)
-
 def insertIndicadoresValoresDataFrameData(data_frame):
     try:
         dbConn = openDb()
@@ -395,29 +438,6 @@ def insertIndicadoresValoresPivotData(data_frame):
     finally:
         if dbConn:
             closeDb(dbConn)
-
-def deleteAttitionData(fecha):
-    try:
-        dbConn = openDb()
-        cursor = dbConn.cursor()
-
-        sqlite_insert_query = """delete from employeeAttrition
-            where date = ?;"""
-
-        data_tuple = (fecha,)
-        count = cursor.execute(sqlite_insert_query, data_tuple)
-        dbConn.commit()
-        cursor.close()
-
-    except Exception as error:
-        print("--Error while deleteAttritionData", error)
-        raise Exception("Error al borrar Attrition")
-
-    finally:
-        if dbConn:
-            closeDb(dbConn)
-
-
 
 
 def insertAttritionData(data, fecha=datetime.today().strftime('%Y-%m-%d')):

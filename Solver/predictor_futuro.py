@@ -156,7 +156,7 @@ def run_future_machine_learning_model(data): # data=create_indicador_dataframe()
         
         df_futuro["valorPonderado"] = valores_ponderados
         machine_learning_result[(indicador[0], indicador[1])] = df_futuro
-        deleteIndicadoresValoresDataFrameData(fecha_actual)
+        deleteIndicadoresValoresDataFrameData(indicador[0], indicador[1], fecha_actual)
         insertIndicadoresValoresDataFrameData(df_futuro)
 
     return machine_learning_result

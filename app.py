@@ -66,6 +66,15 @@ def calcularvalores(fecha=date.today()):
     solver.calcularValores(datetime.strptime(fecha, '%Y-%m-%d').date())
   else:
     solver.calcularValores(fecha)
+
+  # Se actualizan los valores pivot despues de calcular los indicadores
+  cursor = db.getIndicadoresValoresData()
+  data = cursor[cursor["esSimulacion"] == 0]
+  data.dropna(axis=0, inplace=True)
+  pivot_table_data = create_pivot_table(data)
+  db.deleteIndicadoresValoresPivotData()
+  db.insertIndicadoresValoresPivotData(pivot_table_data)
+
   return jsonify('OK')
 
 
@@ -130,6 +139,7 @@ def resultados_pivot(nroIndicador=0):
   data = cursor[cursor["esSimulacion"] == 0]
   data.dropna(axis=0, inplace=True)
   pivot_table_data = create_pivot_table(data)
+  db.deleteIndicadoresValoresPivotData()
   db.insertIndicadoresValoresPivotData(pivot_table_data)
 
   # Se filtran, de requerirse, los valores solicitados
@@ -153,7 +163,6 @@ def getTablas():
 
   return Response(content, mimetype='application/json')
 
-
         
 @app.route('/indicadores/<int:idIndicador>/')
 def getIndicador(idIndicador):
@@ -162,12 +171,14 @@ def getIndicador(idIndicador):
   content = "{\"data\":" + json_object + "}"
   return Response(content, mimetype='application/json')
 
+
 @app.route('/indicadores/<int:idIndicador>/variables/')
 def getIndicadorvariables(idIndicador):
   cursor = db.getIndicadorVariables(idIndicador)
   json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
   content = "{\"data\":" + json_object + "}"
   return Response(content, mimetype='application/json')
+
 
 @app.route('/sources/<nombre>/')
 def getSources(nombre=""):
@@ -195,10 +206,10 @@ def getPrediccionAttrition():
   probability = run_attrition_machine_learning_model(splitted_data)
   result_df = pd.concat([cursor, probability], axis=1)
 
-  fecha=datetime.today().strftime('%Y-%m-%d')
+  fecha = datetime.today().strftime('%Y-%m-%d')
   db.deleteAttitionData(fecha)
 
-  db.insertAttritionData(result_df,fecha)
+  db.insertAttritionData(result_df, fecha)
   json_df = result_df[["EmployeeNumber", "probability"]].copy()
   json_df.rename(columns={"EmployeeNumber": "employee_id", "probability": "attrition_value"}, inplace=True)
   json_df["date"] = [datetime.today().strftime('%Y-%m-%d')]*json_df.shape[0]
