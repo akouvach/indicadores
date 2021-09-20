@@ -28,52 +28,43 @@
 
         <div class="w3-container">
 
+            <div class="w3-panel ">
 
-            <div class="w3-row">
-                <div class="w3-panel w3-light-blue w3-col m8 l9">
-                    <div class="w3-container w3-padding">
-                        <div class="w3-panel w3-black">
-                            <h5>Visualizations</h5>
-                        </div>
-                        <div class="w3-row w3-padding">
-                                    <label for="idSourse">Sources</label>
-                                    <div id="sources">...</div>
-                        </div>
-                        <div class="w3-row w3-padding">
-                                    <label for="idIndicador">Indicators</label>
-                                    <div id="indicadores">...</div>
-                        </div>
-
-                    </div>
-                
+                <div class="w3-panel w3-black">
+                    <h5>Visualizations</h5>
                 </div>
-                <div class="w3-panel w3-light-green w3-col m4 l3">
-                    <div class="w3-panel w3-black">
-                        <h5>Processing</h5>
+                <div class="w3-row">
+                    <div class="w3-col m6 l6 w3-padding"  >
+                                <label for="idSourse"><h5>Predefined views</h5></label>
+                                <div id="sources">...</div>
                     </div>
-                    <div class="w3-container w3-padding">
-
-                        <div class="w3-row w3-padding">
-                            <div class="w3-col m8 l9">
-                                <input class="w3-input w3-border w3-round" type='date' id='fecha' name='fecha'>
-    
-                            </div>
-                            <div class="w3-col m4 l3">
-                                <button onclick="calcularIndicadores();">Calculate indicators</button>
-    
-                            </div>
-    
-                        </div>
-                        <div class="w3-row w3-padding">
-                            <button onclick="calcularAttrition();">Calculate attrition</button>
-                        </div>
-                        <div class="w3-row w3-padding">
-                            <button onclick="calcularFuturo();">Estimate indicators</button>
-                        </div>
+                    <div class="w3-col m6 l6 w3-padding" >
+                                <label for="idIndicador"><h5>Indicators definitions</h5></label>
+                                <div id="indicadores">...</div>
                     </div>
-                                
                 </div>
+
+            </div>            
+
+            <div class="w3-panel">
+                <div class="w3-panel w3-black">
+                    <h5>Processing</h5>
+                </div>
+                <div class="w3-container w3-padding">
+                    <input class="w3-input w3-border w3-round" style="width:200px" type='date' id='fecha' name='fecha'>
+                </div>
+                <div class="w3-container w3-padding">
+                    <button onclick="calcularIndicadores();" class="w3-btn w3-blue">Calculate indicators</button>
+            
+                    <button onclick="calcularFuturo();" class="w3-btn w3-blue">Estimate indicators</button>
+     
+                </div>
+                            
             </div>
+
+        </div>
+
+
 
             <!-- <table class='w3-table w3-border'>
                 <tr>
@@ -107,7 +98,7 @@
                 </tr>
             
             </table> -->
-        </div>
+
         
         
 

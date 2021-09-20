@@ -166,7 +166,7 @@ function ui_mostrarTabla(id, lugar, datos, pagina=1){
 
 
 
-function mostrarIndicadorDetalles(indicador, variables, lugar, ultimosValores){
+function mostrarIndicadorDetalles(indicador, variables, lugar){
     let myDiv = document.getElementById(lugar);
     let tabla = `
     <div class='w3-container'>
@@ -210,7 +210,7 @@ function mostrarIndicadorDetalles(indicador, variables, lugar, ultimosValores){
 
 
     myDiv.innerHTML = tabla;
-    ui_mostrarTabla(indicador, 'ultimosValoresIndicador', ultimosValores)
+    // ui_mostrarTabla(indicador, 'ultimosValoresIndicador', ultimosValores)
             
 }
 
@@ -220,13 +220,7 @@ async function ui_mostrarDatosSources(valor){
         document.getElementById(RESULTADOS).innerHTML="cargando...";
         let data = await obtener("sources/"+valor+"/")
 
-        //Almaceno los datos para paginar después
-        let datosTabla = {};
-        datosTabla.id = "";
-        datosTabla.lugar = RESULTADOS;
-        datosTabla.datos = data;
-        sessionStorage.setItem("datosTabla",JSON.stringify(datosTabla));
-        console.log("valor:",valor);
+
         if(valor == "current_indicators_values"){
             ui_mostrarTablaIndicadores("",RESULTADOS,data);
         } else{
@@ -251,10 +245,10 @@ async function ui_mostrarDatosIndicador(valor){
         
         let indicador = await obtener("indicadores/"+valor+"/")
         let variables = await obtener("indicadores/"+valor+"/variables/")
-        let ultimos = await obtener("resultados/"+valor+"/ultimos/")
+        // let ultimos = await obtener("resultados/"+valor+"/ultimos/")
 
 
-        mostrarIndicadorDetalles(indicador.data, variables.data, RESULTADOS, ultimos);
+        mostrarIndicadorDetalles(indicador.data, variables.data, RESULTADOS);
 
     } else {
         document.getElementById(RESULTADOS).innerHTML="..."
@@ -270,23 +264,23 @@ async function mostrarSources(id,lugar){
     let rdo = tablas.data.reduce((acum,valor)=>{
         return acum+"<option value='"+valor.tabla+"'>"+valor.tabla+"</option>";
     },"<select  class=" + String.fromCharCode(34) + 
-    "w3-input" + String.fromCharCode(34) + " id='"+id+
-    "' onchange='ui_mostrarDatosSources(this.value);'><option selected value='Seleccione'>----Seleccione----</option>")+"</select>";
+    "w3-select w3-border" + String.fromCharCode(34) + " id='"+id+
+    "' onchange='ui_mostrarDatosSources(this.value);'><option selected value='Seleccione'>Choose an option</option>")+"</select>";
     myDiv.innerHTML=rdo;
 }
 
 async function mostrarIndicadores(id,lugar){
-    document.getElementById(lugar).innerHTML="Cargando...";
+    document.getElementById(lugar).innerHTML="loading...";
     let myDiv= document.getElementById(lugar);
-    myDiv.innerHTML = "Cargando...";
+    myDiv.innerHTML = "loading...";
     //Obtengo los Nombres de las tablas
     let indicadores = await obtener("sources/indicadores/")
     // console.log(indicadores);
     let rdo = indicadores.data.reduce((acum,valor)=>{
         return acum+"<option value='"+valor.id+"'>"+valor.descripcion+"</option>";
     },"<select  class=" + String.fromCharCode(34) + 
-    "w3-input" + String.fromCharCode(34) + 
-    " id='"+id+"' onchange='ui_mostrarDatosIndicador(this.value);'><option selected value='Seleccione'>----Seleccione----</option>")+"</select>";
+    "w3-select w3-border" + String.fromCharCode(34) + 
+    " id='"+id+"' onchange='ui_mostrarDatosIndicador(this.value);'><option selected value='Seleccione'>Choose an option</option>")+"</select>";
     myDiv.innerHTML=rdo;
 
 }
