@@ -226,6 +226,7 @@ async function ui_mostrarDatosSources(valor){
         datosTabla.lugar = RESULTADOS;
         datosTabla.datos = data;
         sessionStorage.setItem("datosTabla",JSON.stringify(datosTabla));
+        console.log("valor:",valor);
         if(valor == "current_indicators_values"){
             ui_mostrarTablaIndicadores("",RESULTADOS,data);
         } else{
@@ -337,7 +338,7 @@ function mostrarGrafico1(){
         },
         options: {}
     });
-    
+
 
 }
 function inicializar(){
