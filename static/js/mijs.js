@@ -226,7 +226,7 @@ async function ui_mostrarDatosSources(valor){
         datosTabla.lugar = RESULTADOS;
         datosTabla.datos = data;
         sessionStorage.setItem("datosTabla",JSON.stringify(datosTabla));
-        if(valor == "current_indicator_value"){
+        if(valor == "current_indicators_value"){
             ui_mostrarTablaIndicadores("",RESULTADOS,data);
         } else{
             ui_mostrarTabla("",RESULTADOS,data);
