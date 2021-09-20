@@ -180,6 +180,19 @@ def getIndicadorvariables(idIndicador):
   return Response(content, mimetype='application/json')
 
 
+@app.route('/ultimos_promedios/<int:ultimos>/')
+def getUltimosPromedios(ultimos=10):
+  content = ""
+  cursor = db.getUltimosPromedios(ultimos)
+
+  if len(cursor) > 0:
+    json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
+    content = "{\"data\":" + json_object + "}"
+  else:
+    content = "{\"data\": 'no se encontraron resultados'}"
+  
+  return Response(content, mimetype='application/json')
+
 @app.route('/sources/<nombre>/')
 def getSources(nombre=""):
   content = ""
@@ -322,5 +335,5 @@ def getTest():
 #   return 'init database'
 
 if __name__ == "__main__":
-  app.run(debug=True, host ='0.0.0.0')
+  app.run(host ='0.0.0.0')
 

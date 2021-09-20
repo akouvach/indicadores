@@ -133,6 +133,28 @@ def getIndicadoresData(indicador=0):
         raise("--Error while getIndicadoresData" + error)
 
 
+
+
+def getUltimosPromedios(ultimos=10):
+    try:
+        stmt = """Select *
+            FROM
+            (
+            Select indicadorId, fecha, 
+            (Select max(fecha) as maxima from indicadoresValores) as ultima,
+            julianday((Select max(fecha) as maxima from indicadoresValores)) - julianday(fecha) as dif,
+            avg(valor) as promedio, avg(valorPonderado) as promedioponderado 
+            from indicadoresValores 
+            group by indicadorid, fecha
+            ) TEMPO 
+            where dif<=?"""
+        data_tuple = (ultimos,)
+        rdo = dbEjecutar(stmt,data_tuple)
+        return rdo
+
+    except Exception as error:
+        raise("--Error while getultimosPromedios" + error)
+
 def getIndicadoresAKData(indicador=0):
     try:
         if(indicador==0):

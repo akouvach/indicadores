@@ -235,6 +235,11 @@ async function ui_mostrarDatosSources(valor){
         document.getElementById(RESULTADOS).innerHTML="..."
     }
 }
+async function obtenerUltimosPromedios(dias=10){
+
+    let data = await obtener("/ultimos_promedios/"+dias+"/")
+    console.log(data);
+}
 
 async function ui_mostrarDatosIndicador(valor){
     // console.log("cargando datos de", valor);
@@ -305,6 +310,36 @@ async function calcularFuturo(){
 
 }
 
+function mostrarGrafico1(){
+
+    obtenerUltimosPromedios(10);
+
+    //armo los datos
+    let graf_datos=[{
+        type: 'line',
+        label: 'line Dataset',
+        data: [10, 20, 30, 40]
+    }, {
+        type: 'line',
+        label: 'Line Dataset',
+        data: [50, 50, 50, 50],
+    }];
+
+    let graf_labels = ['January', 'February', 'March', 'April'];
+
+
+
+    var ctx = document.getElementById('myChart');
+    var mixedChart = new Chart(ctx, {
+        data: {
+            datasets: graf_datos,
+            labels: graf_labels
+        },
+        options: {}
+    });
+    
+
+}
 function inicializar(){
     mostrarSources('idSource','sources');
     mostrarIndicadores('idIndicador','indicadores');
@@ -320,5 +355,8 @@ function inicializar(){
 
     // mostrarIndicadores('idIndicador','indicadores');
     // mostrarVariables('idVariable','variables');
+
+   mostrarGrafico1();
+
     
 }
