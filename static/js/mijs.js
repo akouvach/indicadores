@@ -217,7 +217,7 @@ function mostrarIndicadorDetalles(indicador, variables, lugar){
 async function ui_mostrarDatosSources(valor){
     if(valor != "Seleccione"){
         //Traigo los datos de la tabla
-        document.getElementById(RESULTADOS).innerHTML="cargando...";
+        document.getElementById(RESULTADOS).innerHTML="loading...";
         let data = await obtener("sources/"+valor+"/")
 
 
@@ -240,7 +240,7 @@ async function ui_mostrarDatosIndicador(valor){
     // console.log("cargando datos de", valor);
     if(valor != "Seleccione"){
         //Traigo los datos de la tabla
-        document.getElementById(RESULTADOS).innerHTML="cargando...";
+        document.getElementById(RESULTADOS).innerHTML="loading...";
         // window.open(BASE_API+"indicador/" + valor);
         
         let indicador = await obtener("indicadores/"+valor+"/")
@@ -257,7 +257,7 @@ async function ui_mostrarDatosIndicador(valor){
 
 async function mostrarSources(id,lugar){
     let myDiv= document.getElementById(lugar);
-    myDiv.innerHTML = "Cargando...";
+    myDiv.innerHTML = "loading...";
     //Obtengo los Nombres de las tablas
     let tablas = await obtener("sources")
     // console.log(data);
