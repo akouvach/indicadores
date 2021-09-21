@@ -369,6 +369,7 @@ async function mostrarGrafico1(){
         },
         radius: 0,
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: 'top',
@@ -469,6 +470,7 @@ async function mostrarGrafico2(){
         },
         radius: 0,
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: 'top',
