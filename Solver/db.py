@@ -135,9 +135,10 @@ def getIndicadoresData(indicador=0):
 
 
 
-def getUltimosPromedios(ultimos=10):
+
+def getUltimosPromediosFechas(ultimos=10):
     try:
-        stmt = """Select *
+        stmt = """Select distinct fecha 
             FROM
             (
             Select indicadorId, fecha, 
@@ -148,6 +149,58 @@ def getUltimosPromedios(ultimos=10):
             group by indicadorid, fecha
             ) TEMPO 
             where dif<=?"""
+        data_tuple = (ultimos,)
+        rdo = dbEjecutar(stmt,data_tuple)
+        return rdo
+
+    except Exception as error:
+        raise("--Error while getultimosPromediosFecha" + str(error))
+
+
+def getUltimosPromediosIndicadores(ultimos=10):
+    try:
+        stmt = """Select distinct indicadores.* 
+            FROM
+            (
+            Select indicadorId, fecha, 
+            (Select max(fecha) as maxima from indicadoresValores) as ultima,
+            julianday((Select max(fecha) as maxima from indicadoresValores)) - julianday(fecha) as dif,
+            avg(valor) as promedio, avg(valorPonderado) as promedioponderado 
+            from indicadoresValores 
+            group by indicadorid, fecha
+            ) TEMPO inner join indicadores on (tempo.indicadorId = indicadores.id) 
+            where dif<=?"""
+        data_tuple = (ultimos,)
+        rdo = dbEjecutar(stmt,data_tuple)
+        return rdo
+
+    except Exception as error:
+        raise("--Error while getultimosPromediosFecha" + str(error))
+
+def getUltimosPromedios(ultimos=10):
+    try:
+        stmt = """Select tempo.* 
+            FROM
+            (
+            Select 'v' as type, indicadorId, fecha,
+            (Select max(fecha) as maxima from indicadoresValores where esPrediccion=0) as ultima,
+            julianday((Select max(fecha) as maxima from indicadoresValores where esPrediccion=0)) - julianday(fecha) as dif,
+            avg(valor) as promedio, avg(valorPonderado) as promedioponderado 
+            from indicadoresValores 
+			where esPrediccion = 0
+            group by indicadorid, fecha
+			union
+			Select 'p' as type, indicadorId, fecha,
+            (Select max(fecha) as maxima from indicadoresValores where esPrediccion=1) as ultima,
+            julianday((Select max(fecha) as maxima from indicadoresValores where esPrediccion=1)) - julianday(fecha) as dif,
+            avg(valor) as promedio, avg(valorPonderado) as promedioponderado 
+            from indicadoresValores 
+			where esPrediccion = 1
+			and julianday(fecha) > (Select julianday(max(fecha)) as maxima from indicadoresValores where esPrediccion=0)
+            group by indicadorid, fecha
+            ) TEMPO 
+            where dif<=? 
+            order by indicadorId, type desc, fecha"""
         data_tuple = (ultimos,)
         rdo = dbEjecutar(stmt,data_tuple)
         return rdo

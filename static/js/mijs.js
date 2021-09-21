@@ -234,6 +234,7 @@ async function obtenerUltimosPromedios(dias=10){
 
     let data = await obtener("/ultimos_promedios/"+dias+"/")
     console.log(data);
+    return data;
 }
 
 async function ui_mostrarDatosIndicador(valor){
@@ -302,39 +303,210 @@ async function calcularAttrition(){
 async function calcularFuturo(){
     let data = await enviar("kpi-prediction",{});
     alert(data);
-
+    
 }
 
-function mostrarGrafico1(){
+async function mostrarGrafico1(){
+    
+    let data = await obtenerUltimosPromedios(30);
+    var ctx = document.getElementById('myChart');
 
-    obtenerUltimosPromedios(10);
+    // const skipped = (ctx, value) => ctx.p0.skip || ctx.p1.skip ? value : undefined;
+    // const down = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y ? value : undefined;
 
     //armo los datos
-    let graf_datos=[{
-        type: 'line',
-        label: 'line Dataset',
-        data: [10, 20, 30, 40]
-    }, {
-        type: 'line',
-        label: 'Line Dataset',
-        data: [50, 50, 50, 50],
-    }];
+    // let graf_datos=[{
+    //     label: 'My First Dataset',
+    //     data: [65, 59, NaN, 48, 56, 57, 40],
+    //     borderColor: 'rgb(75, 192, 192)',
+    //     segment: {
+    //       borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') || down(ctx, 'rgb(192,75,75)'),
+    //       borderDash: ctx => skipped(ctx, [6, 6]),
+    //     }
+    //   }, {
+    //     label: 'My second Dataset',
+    //     data: [55, 79, 77, NaN, 88, 55, 44],
+    //     borderColor: 'rgb(75, 192, 192)',
+    //     segment: {
+    //       borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') || down(ctx, 'rgb(192,75,75)'),
+    //       borderDash: ctx => skipped(ctx, [6, 6]),
+    //     }
+    //   }];
 
-    let graf_labels = ['January', 'February', 'March', 'April'];
+         //armo los datos
+    let graf_datos=[];
+    data.indicadores.forEach(i=>{
+        let ds={};
+        ds.label = i.descripcion;
+        ds.data = [];
+        data.data.forEach(d=>{
+            if(d.indicadorId==i.id){
+                ds.data.push(d.promedio);
+                // console.log("agregando...",d.promedio);
+            }
+        });
+        ds.borderColor=`rgb(${i.color_r},${i.color_g},${i.color_b})`;
 
+        // ds.segment= {
+        //     borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') || down(ctx, 'rgb(192,75,75)'),
+        //     borderDash: ctx => skipped(ctx, [6, 6]),
+        // }
 
-
-    var ctx = document.getElementById('myChart');
-    var mixedChart = new Chart(ctx, {
-        data: {
-            datasets: graf_datos,
-            labels: graf_labels
-        },
-        options: {}
+        
+        graf_datos.push(ds);
     });
+    
+
+
+
+    const map1 = data.fechas.map(x => x.fecha);
+    let graf_labels = map1;
+
+    const genericOptions = {
+        fill: false,
+        interaction: {
+          intersect: false
+        },
+        radius: 0,
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Average Indicators values'
+            }
+        }
+      };
+
+    const config = {
+        type: 'line',
+        data: {
+          labels: graf_labels,
+          datasets: graf_datos
+        },
+        options: genericOptions
+    };
+
+    
+
+
+
+      var mixedChart = new Chart(ctx,config);
+
+    // var mixedChart = new Chart(ctx, {
+    //     data: {
+    //         datasets: graf_datos,
+    //         labels: graf_labels
+    //     },
+    //     options: {}
+    // });
 
 
 }
+
+async function mostrarGrafico2(){
+    
+    let data = await obtenerUltimosPromedios(30);
+    var ctx = document.getElementById('myChart2');
+
+    // const skipped = (ctx, value) => ctx.p0.skip || ctx.p1.skip ? value : undefined;
+    // const down = (ctx, value) => ctx.p0.parsed.y > ctx.p1.parsed.y ? value : undefined;
+
+    //armo los datos
+    // let graf_datos=[{
+    //     label: 'My First Dataset',
+    //     data: [65, 59, NaN, 48, 56, 57, 40],
+    //     borderColor: 'rgb(75, 192, 192)',
+    //     segment: {
+    //       borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') || down(ctx, 'rgb(192,75,75)'),
+    //       borderDash: ctx => skipped(ctx, [6, 6]),
+    //     }
+    //   }, {
+    //     label: 'My second Dataset',
+    //     data: [55, 79, 77, NaN, 88, 55, 44],
+    //     borderColor: 'rgb(75, 192, 192)',
+    //     segment: {
+    //       borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') || down(ctx, 'rgb(192,75,75)'),
+    //       borderDash: ctx => skipped(ctx, [6, 6]),
+    //     }
+    //   }];
+
+         //armo los datos
+    let graf_datos=[];
+    data.indicadores.forEach(i=>{
+        let ds={};
+        ds.label = i.descripcion;
+        ds.data = [];
+        data.data.forEach(d=>{
+            if(d.indicadorId==i.id){
+                ds.data.push(d.promedioponderado);
+                // console.log("agregando...",d.promedio);
+            }
+        });
+        ds.borderColor=`rgb(${i.color_r},${i.color_g},${i.color_b})`;
+
+        // ds.segment= {
+        //     borderColor: ctx => skipped(ctx, 'rgb(0,0,0,0.2)') || down(ctx, 'rgb(192,75,75)'),
+        //     borderDash: ctx => skipped(ctx, [6, 6]),
+        // }
+
+        
+        graf_datos.push(ds);
+    });
+    
+
+
+
+    const map1 = data.fechas.map(x => x.fecha);
+    let graf_labels = map1;
+
+    const genericOptions = {
+        fill: false,
+        interaction: {
+          intersect: false
+        },
+        radius: 0,
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top',
+            },
+            title: {
+                display: true,
+                text: 'Average Indicators ponderated values'
+            }
+        }
+      };
+
+    const config = {
+        type: 'line',
+        data: {
+          labels: graf_labels,
+          datasets: graf_datos
+        },
+        options: genericOptions
+    };
+
+    
+
+
+
+      var mixedChart = new Chart(ctx,config);
+
+    // var mixedChart = new Chart(ctx, {
+    //     data: {
+    //         datasets: graf_datos,
+    //         labels: graf_labels
+    //     },
+    //     options: {}
+    // });
+
+
+}
+
+
 function inicializar(){
     mostrarSources('idSource','sources');
     mostrarIndicadores('idIndicador','indicadores');
@@ -352,6 +524,7 @@ function inicializar(){
     // mostrarVariables('idVariable','variables');
 
    mostrarGrafico1();
+   mostrarGrafico2();
 
     
 }

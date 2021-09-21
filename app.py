@@ -183,11 +183,16 @@ def getIndicadorvariables(idIndicador):
 @app.route('/ultimos_promedios/<int:ultimos>/')
 def getUltimosPromedios(ultimos=10):
   content = ""
-  cursor = db.getUltimosPromedios(ultimos)
+  cursor_data = db.getUltimosPromedios(ultimos)
+  cursor_fechas = db.getUltimosPromediosFechas(ultimos)
+  cursor_indicadores = db.getUltimosPromediosIndicadores(ultimos)
 
-  if len(cursor) > 0:
-    json_object = json.dumps([dict(ix) for ix in cursor], indent=2)
-    content = "{\"data\":" + json_object + "}"
+
+  if len(cursor_data) > 0:
+    json_object = json.dumps([dict(ix) for ix in cursor_data], indent=2)
+    json_fechas = json.dumps([dict(ix) for ix in cursor_fechas], indent=2)
+    json_indicadores = json.dumps([dict(ix) for ix in cursor_indicadores], indent=2)
+    content = "{\"data\":" + json_object + ",\"fechas\":" + json_fechas + ",\"indicadores\":" + json_indicadores +  "}"
   else:
     content = "{\"data\": 'no se encontraron resultados'}"
   
