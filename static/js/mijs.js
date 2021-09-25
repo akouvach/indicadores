@@ -19,7 +19,7 @@ let cantxpagina=100;
 
 
 function obtener(myUrl){
-    console.log("obteniendo..",BASE_API+myUrl);
+    // console.log("obteniendo..",BASE_API+myUrl);
     let rdo = fetch(BASE_API+myUrl)
     .then(response=>response.json())
     .then(data=>data);
@@ -28,7 +28,7 @@ function obtener(myUrl){
 }
 
 function enviar(myUrl,data){
-    console.log("enviando..",BASE_API+myUrl);
+    // console.log("enviando..",BASE_API+myUrl);
     let rdo = fetch(BASE_API+myUrl,{method:'POST', body:JSON.stringify(data)})
     .then(response=>response.json())
     .then(data=>data);
@@ -233,7 +233,7 @@ async function ui_mostrarDatosSources(valor){
 async function obtenerUltimosPromedios(dias=10){
 
     let data = await obtener("/ultimos_promedios/"+dias+"/")
-    console.log(data);
+    // console.log(data);
     return data;
 }
 
