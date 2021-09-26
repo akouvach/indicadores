@@ -169,7 +169,7 @@ function ui_mostrarTabla(id, lugar, datos, pagina=1){
 function mostrarIndicadorDetalles(indicador, variables, lugar){
     let myDiv = document.getElementById(lugar);
     let tabla = `
-    <div class='w3-container'>
+    <div class='w3-container w3-padding'>
         <div class="w3-card-4">
 
             <header class="w3-container w3-blue">
@@ -196,16 +196,12 @@ function mostrarIndicadorDetalles(indicador, variables, lugar){
             </p>            
             </div>
 
-            <footer class="w3-container w3-blue">
-            <h5>Last values</h5>
-            </footer>
 
-            <div class="w3-container" id="ultimosValoresIndicador">
-            </div>
             
         </div>
 
-    </div>`;
+    </div>
+    <div class='w3-container w3-padding'></div>`;
     // console.log(ultimosValores)
 
 
