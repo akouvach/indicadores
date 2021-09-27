@@ -151,7 +151,29 @@ def resultados_pivot(nroIndicador=0):
   return Response(
     content, 
     mimetype='application/json',
-    headers={'Content-Disposition':'attachment;filename=indicadores.json'}
+    headers={'Content-Disposition':'attachment;filename=resultados_pivot.json'}
+  )
+
+
+@app.route('/resultados-pivot-join/')
+def resultados_pivot_join():
+  # Se actualiza primero la base de datos, la tabla indicadoresValoresPivot
+  cursor = db.getIndicadoresValoresData()
+  data = cursor[cursor["esSimulacion"] == 0]
+  data.dropna(axis=0, inplace=True)
+  pivot_table_data = create_pivot_table(data)
+  db.deleteIndicadoresValoresPivotData()
+  db.insertIndicadoresValoresPivotData(pivot_table_data)
+
+  # Se filtran, de requerirse, los valores solicitados
+  cursor_pivot = db.getIndicadoresValoresPivotDataJoin()
+  json_object = cursor_pivot.to_json(orient="records", indent=2)
+  content = "{\"data\":" + json_object + "}"
+
+  return Response(
+    content, 
+    mimetype='application/json',
+    headers={'Content-Disposition':'attachment;filename=resultados_pivot_join.json'}
   )
 
 

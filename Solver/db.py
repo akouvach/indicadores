@@ -262,6 +262,7 @@ def getResultados(l_indicador=0, ultimos=0):
         print("Error al recuperar los resultados de los indicadores..", error)
 ###
 
+
 def getPredicciones(l_indicador, l_grupo):
     try:
 
@@ -311,6 +312,16 @@ def getIndicadoresValoresPivotData(indicador=0):
 
     except Exception as error:
         print("--Error while getIndicadoresValoresPivotData", error)
+### A solicitud de Diego por conveniencia en la tabla Pivot
+def getIndicadoresValoresPivotDataJoin():
+    try:
+        cnx = openDb()
+        stmt = "Select i.agrupadopor, ivp.* from indicadoresValoresPivot as ivp join indicadores i on i.id = ivp.indicadorId"
+        rdo = pd.read_sql_query(stmt, cnx)
+        return rdo
+
+    except Exception as error:
+        print("--Error while getIndicadoresValoresPivotDataJoin", error)
 
 
 def deleteResultadosData():
