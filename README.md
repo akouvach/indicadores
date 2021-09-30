@@ -51,6 +51,7 @@ pat d29d7126-e24d-4ab9-927f-0629c18d11b7
 az webapp up 
 para actualizar el código en la webapp 
 
+
 python -m venv .venv
 .venv\scripts\activate
 pip install -r requirements.txt
